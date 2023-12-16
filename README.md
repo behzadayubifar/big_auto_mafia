@@ -1,16 +1,33 @@
-# auto_mafia
+# Auto Mafia
 
-A new Flutter project.
+A flutter mafia app which is built:
+to play mafia without any need to someone being god (also known as narrator).
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- without any need to god
+- processes the night's events and give you the result in a glimspse
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Logo](assets\screenshots\logo.png)
+
+## Screenshots
+
+<!-- Row 1 -->
+<p align="center">
+  <img src="assets\screenshots\konstantin.png" width="200" alt="konstantin">
+  <img src="assets\screenshots\saul.png" width="200" alt="saul">
+  <img src="assets\screenshots\matador.png" width="200" alt="matador">
+</p>
+
+<!-- Row 2 -->
+<p align="center">
+  <img src="assets\screenshots\nightsresults.png" width="200" alt="Screenshot 5">
+  <img src="assets\screenshots\overlay.png" width="200" alt="Screenshot 6">
+  <img src="assets\screenshots\what_is_role.png" width="200" alt="Screenshot 7">
+</p>
+
+
+
+
