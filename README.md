@@ -24,8 +24,8 @@ to play mafia without any need to someone being god (also known as narrator).
 <!-- Row 2 -->
 <p align="center">
   <img src="assets\screenshots\nightsresults.png" width="200" alt="Screenshot 5">
-  <img src="assets\screenshots\overlay.png" width="200" alt="Screenshot 6">
   <img src="assets\screenshots\what_is_role.png" width="200" alt="Screenshot 7">
+  <img src="assets\screenshots\overlay.png" width="200" alt="Screenshot 6">
 </p>
 
 
