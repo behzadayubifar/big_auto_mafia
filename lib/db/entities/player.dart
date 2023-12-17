@@ -6,9 +6,9 @@ part 'player.g.dart';
 @Collection()
 class Player {
   Id? id;
-  late String name;
+  String? name;
   // later we will add images for each player
   // role is var because of face-off
-  PseudoRole? role;
+  Role? role;
   bool nightDone = false;
 }

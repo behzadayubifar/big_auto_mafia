@@ -31,7 +31,7 @@ const PlayerSchema = CollectionSchema(
       id: 2,
       name: r'role',
       type: IsarType.object,
-      target: r'PseudoRole',
+      target: r'Role',
     )
   },
   estimateSize: _playerEstimateSize,
@@ -41,7 +41,7 @@ const PlayerSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {r'PseudoRole': PseudoRoleSchema},
+  embeddedSchemas: {r'Role': RoleSchema},
   getId: _playerGetId,
   getLinks: _playerGetLinks,
   attach: _playerAttach,
@@ -54,13 +54,17 @@ int _playerEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.name.length * 3;
+  {
+    final value = object.name;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final value = object.role;
     if (value != null) {
-      bytesCount += 3 +
-          PseudoRoleSchema.estimateSize(
-              value, allOffsets[PseudoRole]!, allOffsets);
+      bytesCount +=
+          3 + RoleSchema.estimateSize(value, allOffsets[Role]!, allOffsets);
     }
   }
   return bytesCount;
@@ -74,10 +78,10 @@ void _playerSerialize(
 ) {
   writer.writeString(offsets[0], object.name);
   writer.writeBool(offsets[1], object.nightDone);
-  writer.writeObject<PseudoRole>(
+  writer.writeObject<Role>(
     offsets[2],
     allOffsets,
-    PseudoRoleSchema.serialize,
+    RoleSchema.serialize,
     object.role,
   );
 }
@@ -90,11 +94,11 @@ Player _playerDeserialize(
 ) {
   final object = Player();
   object.id = id;
-  object.name = reader.readString(offsets[0]);
+  object.name = reader.readStringOrNull(offsets[0]);
   object.nightDone = reader.readBool(offsets[1]);
-  object.role = reader.readObjectOrNull<PseudoRole>(
+  object.role = reader.readObjectOrNull<Role>(
     offsets[2],
-    PseudoRoleSchema.deserialize,
+    RoleSchema.deserialize,
     allOffsets,
   );
   return object;
@@ -108,13 +112,13 @@ P _playerDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
       return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readObjectOrNull<PseudoRole>(
+      return (reader.readObjectOrNull<Role>(
         offset,
-        PseudoRoleSchema.deserialize,
+        RoleSchema.deserialize,
         allOffsets,
       )) as P;
     default:
@@ -278,8 +282,24 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterFilterCondition> nameIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'name',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> nameIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'name',
+      ));
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterFilterCondition> nameEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -292,7 +312,7 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
   }
 
   QueryBuilder<Player, Player, QAfterFilterCondition> nameGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -307,7 +327,7 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
   }
 
   QueryBuilder<Player, Player, QAfterFilterCondition> nameLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -322,8 +342,8 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
   }
 
   QueryBuilder<Player, Player, QAfterFilterCondition> nameBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -436,7 +456,7 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
 
 extension PlayerQueryObject on QueryBuilder<Player, Player, QFilterCondition> {
   QueryBuilder<Player, Player, QAfterFilterCondition> role(
-      FilterQuery<PseudoRole> q) {
+      FilterQuery<Role> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'role');
     });
@@ -531,7 +551,7 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Player, String, QQueryOperations> nameProperty() {
+  QueryBuilder<Player, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
     });
@@ -543,7 +563,7 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Player, PseudoRole?, QQueryOperations> roleProperty() {
+  QueryBuilder<Player, Role?, QQueryOperations> roleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'role');
     });

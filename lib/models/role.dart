@@ -28,6 +28,7 @@ Map<RoleName, String> roleNames = {
   RoleName.saul: "سائول گودمن",
 };
 
+@embedded
 class Role {
   Role();
   String? roleName;
@@ -57,37 +58,36 @@ class Role {
   });
 }
 
-@embedded
-class PseudoRole extends Role {
-  PseudoRole();
-  String? roleName;
-  String? description;
-  @Enumerated(EnumType.ordinal32)
-  RoleType? type;
-  int? heart;
-  int? code;
-  bool isBlocked = false;
-  bool handCuffed = false;
-  bool isReversible = true;
-  bool isSaved = false;
-  bool isShot = false;
-  bool disclosured = false;
-  PseudoRole.start({
-    required this.roleName,
-    required this.type,
-    required this.description,
-    required this.heart,
-    this.code,
-    this.isBlocked = false,
-    this.handCuffed = false,
-    this.isReversible = true,
-    this.isSaved = false,
-    this.isShot = false,
-    this.disclosured = false,
-  });
-}
+// @embedded
+// class PseudoRole extends Role {
+//   PseudoRole();
+//   String? roleName;
+//   String? description;
+//   @Enumerated(EnumType.ordinal32)
+//   RoleType? type;
+//   int? heart;
+//   int? code;
+//   bool isBlocked = false;
+//   bool handCuffed = false;
+//   bool isReversible = true;
+//   bool isSaved = false;
+//   bool isShot = false;
+//   bool disclosured = false;
+//   PseudoRole.start({
+//     required this.roleName,
+//     required this.type,
+//     required this.description,
+//     required this.heart,
+//     this.code,
+//     this.isBlocked = false,
+//     this.handCuffed = false,
+//     this.isReversible = true,
+//     this.isSaved = false,
+//     this.isShot = false,
+//     this.disclosured = false,
+//   });
+// }
 
-@embedded
 class Citizen extends Role {
   Citizen();
   Citizen.start()
@@ -100,7 +100,6 @@ class Citizen extends Role {
         );
 }
 
-@embedded
 class Watson extends Role {
   Watson();
   // later we will add a bool isSavedOnce to check if watson saved someone once or not
@@ -118,7 +117,6 @@ class Watson extends Role {
   set isSavedOnce(_) => _isSavedOnce = true;
 }
 
-@embedded
 class Leon extends Role {
   Leon();
   int _shotCount = 0;
@@ -138,7 +136,6 @@ class Leon extends Role {
   set shotCount(_) => _shotCount++;
 }
 
-@embedded
 class Kane extends Role {
   Kane();
   late final bool? _hasGussed;
@@ -155,7 +152,6 @@ class Kane extends Role {
   set hasGuessed(_) => _hasGussed = true;
 }
 
-@embedded
 class Konstantin extends Role {
   Konstantin();
   late final bool? _hasReturned;
@@ -172,7 +168,6 @@ class Konstantin extends Role {
   set hasReturned(_) => _hasReturned = true;
 }
 
-@embedded
 class Nostradamous extends Role {
   Nostradamous();
   late final RoleType _whichSideWillWin;
@@ -190,7 +185,6 @@ class Nostradamous extends Role {
   set whichSideWillWin(RoleType chosenSide) => _whichSideWillWin = chosenSide;
 }
 
-@embedded
 class Godfather extends Role {
   Godfather();
   Godfather.start()
@@ -203,7 +197,6 @@ class Godfather extends Role {
         );
 }
 
-@embedded
 class Matador extends Role {
   Matador();
   Matador.start()
@@ -216,7 +209,6 @@ class Matador extends Role {
         );
 }
 
-@embedded
 class Saul extends Role {
   Saul();
   late final bool _hasBuyed;
