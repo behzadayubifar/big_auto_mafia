@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    isar = IsarService();
+    // isar = IsarService();
   }
 
   @override

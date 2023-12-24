@@ -41,14 +41,16 @@ dependencies:
   flutter_svg: ^2.0.9
   loading_animation_widget: ^1.2.0+4
   isar: ^3.1.0+1
+  flutter_animate: ^4.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  custom_lint:
+  riverpod_lint:
   build_runner:
   flutter_gen_runner:
-  custom_lint:
-  riverpod_generator: ^2.3.9
+  riverpod_generator: ^2.3.3
   isar_generator: ^3.1.0+1
   path_provider: ^2.1.1
   isar_flutter_libs: ^3.1.0+1

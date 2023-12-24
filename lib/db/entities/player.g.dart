@@ -37,79 +37,159 @@ const PlayerSchema = CollectionSchema(
       name: r'handCuffed',
       type: IsarType.bool,
     ),
-    r'hasBuyed': PropertySchema(
+    r'hasBeenSlaughtered': PropertySchema(
       id: 4,
+      name: r'hasBeenSlaughtered',
+      type: IsarType.bool,
+    ),
+    r'hasBuyed': PropertySchema(
+      id: 5,
       name: r'hasBuyed',
       type: IsarType.bool,
     ),
     r'hasGussed': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'hasGussed',
       type: IsarType.bool,
     ),
     r'hasReturned': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'hasReturned',
       type: IsarType.bool,
     ),
     r'heart': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'heart',
       type: IsarType.long,
     ),
+    r'isAlive': PropertySchema(
+      id: 9,
+      name: r'isAlive',
+      type: IsarType.bool,
+    ),
     r'isBlocked': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'isBlocked',
       type: IsarType.bool,
     ),
+    r'isCitizen': PropertySchema(
+      id: 11,
+      name: r'isCitizen',
+      type: IsarType.bool,
+    ),
+    r'isDead': PropertySchema(
+      id: 12,
+      name: r'isDead',
+      type: IsarType.bool,
+    ),
+    r'isGodfather': PropertySchema(
+      id: 13,
+      name: r'isGodfather',
+      type: IsarType.bool,
+    ),
+    r'isInCitizenSide': PropertySchema(
+      id: 14,
+      name: r'isInCitizenSide',
+      type: IsarType.bool,
+    ),
+    r'isInMafiaSide': PropertySchema(
+      id: 15,
+      name: r'isInMafiaSide',
+      type: IsarType.bool,
+    ),
+    r'isKane': PropertySchema(
+      id: 16,
+      name: r'isKane',
+      type: IsarType.bool,
+    ),
+    r'isKonstantin': PropertySchema(
+      id: 17,
+      name: r'isKonstantin',
+      type: IsarType.bool,
+    ),
+    r'isLeon': PropertySchema(
+      id: 18,
+      name: r'isLeon',
+      type: IsarType.bool,
+    ),
+    r'isMatador': PropertySchema(
+      id: 19,
+      name: r'isMatador',
+      type: IsarType.bool,
+    ),
+    r'isNostradamous': PropertySchema(
+      id: 20,
+      name: r'isNostradamous',
+      type: IsarType.bool,
+    ),
+    r'isNotInMafiaSide': PropertySchema(
+      id: 21,
+      name: r'isNotInMafiaSide',
+      type: IsarType.bool,
+    ),
     r'isReversible': PropertySchema(
-      id: 9,
+      id: 22,
       name: r'isReversible',
       type: IsarType.bool,
     ),
+    r'isSaul': PropertySchema(
+      id: 23,
+      name: r'isSaul',
+      type: IsarType.bool,
+    ),
     r'isSaved': PropertySchema(
-      id: 10,
+      id: 24,
       name: r'isSaved',
       type: IsarType.bool,
     ),
     r'isSavedOnce': PropertySchema(
-      id: 11,
+      id: 25,
       name: r'isSavedOnce',
       type: IsarType.bool,
     ),
     r'isShot': PropertySchema(
-      id: 12,
+      id: 26,
       name: r'isShot',
       type: IsarType.bool,
     ),
+    r'isSlaughtered': PropertySchema(
+      id: 27,
+      name: r'isSlaughtered',
+      type: IsarType.bool,
+    ),
+    r'isWatson': PropertySchema(
+      id: 28,
+      name: r'isWatson',
+      type: IsarType.bool,
+    ),
     r'nightDone': PropertySchema(
-      id: 13,
+      id: 29,
       name: r'nightDone',
       type: IsarType.bool,
     ),
     r'playerName': PropertySchema(
-      id: 14,
+      id: 30,
       name: r'playerName',
       type: IsarType.string,
     ),
     r'roleName': PropertySchema(
-      id: 15,
+      id: 31,
       name: r'roleName',
       type: IsarType.string,
     ),
     r'shotCount': PropertySchema(
-      id: 16,
+      id: 32,
       name: r'shotCount',
       type: IsarType.long,
     ),
     r'type': PropertySchema(
-      id: 17,
+      id: 33,
       name: r'type',
       type: IsarType.int,
       enumMap: _PlayertypeEnumValueMap,
     ),
     r'whichSideWillWin': PropertySchema(
-      id: 18,
+      id: 34,
       name: r'whichSideWillWin',
       type: IsarType.int,
       enumMap: _PlayerwhichSideWillWinEnumValueMap,
@@ -166,21 +246,37 @@ void _playerSerialize(
   writer.writeString(offsets[1], object.description);
   writer.writeBool(offsets[2], object.disclosured);
   writer.writeBool(offsets[3], object.handCuffed);
-  writer.writeBool(offsets[4], object.hasBuyed);
-  writer.writeBool(offsets[5], object.hasGussed);
-  writer.writeBool(offsets[6], object.hasReturned);
-  writer.writeLong(offsets[7], object.heart);
-  writer.writeBool(offsets[8], object.isBlocked);
-  writer.writeBool(offsets[9], object.isReversible);
-  writer.writeBool(offsets[10], object.isSaved);
-  writer.writeBool(offsets[11], object.isSavedOnce);
-  writer.writeBool(offsets[12], object.isShot);
-  writer.writeBool(offsets[13], object.nightDone);
-  writer.writeString(offsets[14], object.playerName);
-  writer.writeString(offsets[15], object.roleName);
-  writer.writeLong(offsets[16], object.shotCount);
-  writer.writeInt(offsets[17], object.type?.index);
-  writer.writeInt(offsets[18], object.whichSideWillWin?.index);
+  writer.writeBool(offsets[4], object.hasBeenSlaughtered);
+  writer.writeBool(offsets[5], object.hasBuyed);
+  writer.writeBool(offsets[6], object.hasGussed);
+  writer.writeBool(offsets[7], object.hasReturned);
+  writer.writeLong(offsets[8], object.heart);
+  writer.writeBool(offsets[9], object.isAlive);
+  writer.writeBool(offsets[10], object.isBlocked);
+  writer.writeBool(offsets[11], object.isCitizen);
+  writer.writeBool(offsets[12], object.isDead);
+  writer.writeBool(offsets[13], object.isGodfather);
+  writer.writeBool(offsets[14], object.isInCitizenSide);
+  writer.writeBool(offsets[15], object.isInMafiaSide);
+  writer.writeBool(offsets[16], object.isKane);
+  writer.writeBool(offsets[17], object.isKonstantin);
+  writer.writeBool(offsets[18], object.isLeon);
+  writer.writeBool(offsets[19], object.isMatador);
+  writer.writeBool(offsets[20], object.isNostradamous);
+  writer.writeBool(offsets[21], object.isNotInMafiaSide);
+  writer.writeBool(offsets[22], object.isReversible);
+  writer.writeBool(offsets[23], object.isSaul);
+  writer.writeBool(offsets[24], object.isSaved);
+  writer.writeBool(offsets[25], object.isSavedOnce);
+  writer.writeBool(offsets[26], object.isShot);
+  writer.writeBool(offsets[27], object.isSlaughtered);
+  writer.writeBool(offsets[28], object.isWatson);
+  writer.writeBool(offsets[29], object.nightDone);
+  writer.writeString(offsets[30], object.playerName);
+  writer.writeString(offsets[31], object.roleName);
+  writer.writeLong(offsets[32], object.shotCount);
+  writer.writeInt(offsets[33], object.type?.index);
+  writer.writeInt(offsets[34], object.whichSideWillWin?.index);
 }
 
 Player _playerDeserialize(
@@ -192,25 +288,26 @@ Player _playerDeserialize(
   final object = Player();
   object.code = reader.readLongOrNull(offsets[0]);
   object.description = reader.readStringOrNull(offsets[1]);
-  object.disclosured = reader.readBool(offsets[2]);
-  object.handCuffed = reader.readBool(offsets[3]);
-  object.hasBuyed = reader.readBoolOrNull(offsets[4]);
-  object.hasGussed = reader.readBool(offsets[5]);
-  object.hasReturned = reader.readBool(offsets[6]);
-  object.heart = reader.readLongOrNull(offsets[7]);
+  object.disclosured = reader.readBoolOrNull(offsets[2]);
+  object.handCuffed = reader.readBoolOrNull(offsets[3]);
+  object.hasBeenSlaughtered = reader.readBoolOrNull(offsets[4]);
+  object.hasBuyed = reader.readBoolOrNull(offsets[5]);
+  object.hasGussed = reader.readBool(offsets[6]);
+  object.hasReturned = reader.readBool(offsets[7]);
+  object.heart = reader.readLongOrNull(offsets[8]);
   object.id = id;
-  object.isBlocked = reader.readBool(offsets[8]);
-  object.isReversible = reader.readBool(offsets[9]);
-  object.isSaved = reader.readBool(offsets[10]);
-  object.isSavedOnce = reader.readBool(offsets[11]);
-  object.isShot = reader.readBool(offsets[12]);
-  object.nightDone = reader.readBool(offsets[13]);
-  object.playerName = reader.readStringOrNull(offsets[14]);
-  object.roleName = reader.readStringOrNull(offsets[15]);
-  object.shotCount = reader.readLong(offsets[16]);
-  object.type = _PlayertypeValueEnumMap[reader.readIntOrNull(offsets[17])];
+  object.isBlocked = reader.readBoolOrNull(offsets[10]);
+  object.isReversible = reader.readBoolOrNull(offsets[22]);
+  object.isSaved = reader.readBoolOrNull(offsets[24]);
+  object.isSavedOnce = reader.readBool(offsets[25]);
+  object.isShot = reader.readBoolOrNull(offsets[26]);
+  object.nightDone = reader.readBoolOrNull(offsets[29]);
+  object.playerName = reader.readStringOrNull(offsets[30]);
+  object.roleName = reader.readStringOrNull(offsets[31]);
+  object.shotCount = reader.readLong(offsets[32]);
+  object.type = _PlayertypeValueEnumMap[reader.readIntOrNull(offsets[33])];
   object.whichSideWillWin =
-      _PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offsets[18])];
+      _PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offsets[34])];
   return object;
 }
 
@@ -226,23 +323,23 @@ P _playerDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 4:
       return (reader.readBoolOrNull(offset)) as P;
     case 5:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 6:
       return (reader.readBool(offset)) as P;
     case 7:
-      return (reader.readLongOrNull(offset)) as P;
-    case 8:
       return (reader.readBool(offset)) as P;
+    case 8:
+      return (reader.readLongOrNull(offset)) as P;
     case 9:
       return (reader.readBool(offset)) as P;
     case 10:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 11:
       return (reader.readBool(offset)) as P;
     case 12:
@@ -250,14 +347,46 @@ P _playerDeserializeProp<P>(
     case 13:
       return (reader.readBool(offset)) as P;
     case 14:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 15:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 16:
-      return (reader.readLong(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 17:
-      return (_PlayertypeValueEnumMap[reader.readIntOrNull(offset)]) as P;
+      return (reader.readBool(offset)) as P;
     case 18:
+      return (reader.readBool(offset)) as P;
+    case 19:
+      return (reader.readBool(offset)) as P;
+    case 20:
+      return (reader.readBool(offset)) as P;
+    case 21:
+      return (reader.readBool(offset)) as P;
+    case 22:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 23:
+      return (reader.readBool(offset)) as P;
+    case 24:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 25:
+      return (reader.readBool(offset)) as P;
+    case 26:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 27:
+      return (reader.readBool(offset)) as P;
+    case 28:
+      return (reader.readBool(offset)) as P;
+    case 29:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 30:
+      return (reader.readStringOrNull(offset)) as P;
+    case 31:
+      return (reader.readStringOrNull(offset)) as P;
+    case 32:
+      return (reader.readLong(offset)) as P;
+    case 33:
+      return (_PlayertypeValueEnumMap[reader.readIntOrNull(offset)]) as P;
+    case 34:
       return (_PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offset)])
           as P;
     default:
@@ -588,8 +717,24 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterFilterCondition> disclosuredIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'disclosured',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> disclosuredIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'disclosured',
+      ));
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterFilterCondition> disclosuredEqualTo(
-      bool value) {
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'disclosured',
@@ -598,11 +743,55 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterFilterCondition> handCuffedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'handCuffed',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> handCuffedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'handCuffed',
+      ));
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterFilterCondition> handCuffedEqualTo(
-      bool value) {
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'handCuffed',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition>
+      hasBeenSlaughteredIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'hasBeenSlaughtered',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition>
+      hasBeenSlaughteredIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'hasBeenSlaughtered',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> hasBeenSlaughteredEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hasBeenSlaughtered',
         value: value,
       ));
     });
@@ -790,8 +979,34 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterFilterCondition> isBlockedEqualTo(
+  QueryBuilder<Player, Player, QAfterFilterCondition> isAliveEqualTo(
       bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isAlive',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isBlockedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isBlocked',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isBlockedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isBlocked',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isBlockedEqualTo(
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isBlocked',
@@ -800,8 +1015,134 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterFilterCondition> isReversibleEqualTo(
+  QueryBuilder<Player, Player, QAfterFilterCondition> isCitizenEqualTo(
       bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isCitizen',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isDeadEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDead',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isGodfatherEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isGodfather',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isInCitizenSideEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isInCitizenSide',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isInMafiaSideEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isInMafiaSide',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isKaneEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isKane',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isKonstantinEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isKonstantin',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isLeonEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isLeon',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isMatadorEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isMatador',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isNostradamousEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isNostradamous',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isNotInMafiaSideEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isNotInMafiaSide',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isReversibleIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isReversible',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isReversibleIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isReversible',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isReversibleEqualTo(
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isReversible',
@@ -810,8 +1151,34 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterFilterCondition> isSavedEqualTo(
+  QueryBuilder<Player, Player, QAfterFilterCondition> isSaulEqualTo(
       bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isSaul',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isSavedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isSaved',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isSavedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isSaved',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isSavedEqualTo(
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isSaved',
@@ -830,8 +1197,24 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterFilterCondition> isShotIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isShot',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isShotIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isShot',
+      ));
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterFilterCondition> isShotEqualTo(
-      bool value) {
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isShot',
@@ -840,8 +1223,44 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterFilterCondition> nightDoneEqualTo(
+  QueryBuilder<Player, Player, QAfterFilterCondition> isSlaughteredEqualTo(
       bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isSlaughtered',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> isWatsonEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isWatson',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> nightDoneIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'nightDone',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> nightDoneIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'nightDone',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> nightDoneEqualTo(
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'nightDone',
@@ -1389,6 +1808,18 @@ extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> sortByHasBeenSlaughtered() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasBeenSlaughtered', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByHasBeenSlaughteredDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasBeenSlaughtered', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> sortByHasBuyed() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hasBuyed', Sort.asc);
@@ -1437,6 +1868,18 @@ extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsAlive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAlive', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsAliveDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAlive', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> sortByIsBlocked() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isBlocked', Sort.asc);
@@ -1449,6 +1892,138 @@ extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsCitizen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCitizen', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsCitizenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCitizen', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsDead() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDead', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsDeadDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDead', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsGodfather() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isGodfather', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsGodfatherDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isGodfather', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsInCitizenSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isInCitizenSide', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsInCitizenSideDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isInCitizenSide', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsInMafiaSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isInMafiaSide', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsInMafiaSideDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isInMafiaSide', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsKane() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isKane', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsKaneDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isKane', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsKonstantin() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isKonstantin', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsKonstantinDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isKonstantin', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsLeon() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLeon', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsLeonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLeon', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsMatador() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMatador', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsMatadorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMatador', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsNostradamous() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNostradamous', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsNostradamousDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNostradamous', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsNotInMafiaSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNotInMafiaSide', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsNotInMafiaSideDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNotInMafiaSide', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> sortByIsReversible() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isReversible', Sort.asc);
@@ -1458,6 +2033,18 @@ extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
   QueryBuilder<Player, Player, QAfterSortBy> sortByIsReversibleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isReversible', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsSaul() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSaul', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsSaulDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSaul', Sort.desc);
     });
   }
 
@@ -1494,6 +2081,30 @@ extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
   QueryBuilder<Player, Player, QAfterSortBy> sortByIsShotDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isShot', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsSlaughtered() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSlaughtered', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsSlaughteredDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSlaughtered', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsWatson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isWatson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByIsWatsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isWatson', Sort.desc);
     });
   }
 
@@ -1619,6 +2230,18 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> thenByHasBeenSlaughtered() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasBeenSlaughtered', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByHasBeenSlaughteredDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasBeenSlaughtered', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> thenByHasBuyed() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hasBuyed', Sort.asc);
@@ -1679,6 +2302,18 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsAlive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAlive', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsAliveDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAlive', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> thenByIsBlocked() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isBlocked', Sort.asc);
@@ -1691,6 +2326,138 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsCitizen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCitizen', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsCitizenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCitizen', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsDead() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDead', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsDeadDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDead', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsGodfather() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isGodfather', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsGodfatherDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isGodfather', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsInCitizenSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isInCitizenSide', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsInCitizenSideDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isInCitizenSide', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsInMafiaSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isInMafiaSide', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsInMafiaSideDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isInMafiaSide', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsKane() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isKane', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsKaneDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isKane', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsKonstantin() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isKonstantin', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsKonstantinDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isKonstantin', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsLeon() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLeon', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsLeonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLeon', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsMatador() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMatador', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsMatadorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMatador', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsNostradamous() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNostradamous', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsNostradamousDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNostradamous', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsNotInMafiaSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNotInMafiaSide', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsNotInMafiaSideDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNotInMafiaSide', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> thenByIsReversible() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isReversible', Sort.asc);
@@ -1700,6 +2467,18 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
   QueryBuilder<Player, Player, QAfterSortBy> thenByIsReversibleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isReversible', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsSaul() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSaul', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsSaulDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSaul', Sort.desc);
     });
   }
 
@@ -1736,6 +2515,30 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
   QueryBuilder<Player, Player, QAfterSortBy> thenByIsShotDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isShot', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsSlaughtered() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSlaughtered', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsSlaughteredDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSlaughtered', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsWatson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isWatson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByIsWatsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isWatson', Sort.desc);
     });
   }
 
@@ -1838,6 +2641,12 @@ extension PlayerQueryWhereDistinct on QueryBuilder<Player, Player, QDistinct> {
     });
   }
 
+  QueryBuilder<Player, Player, QDistinct> distinctByHasBeenSlaughtered() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hasBeenSlaughtered');
+    });
+  }
+
   QueryBuilder<Player, Player, QDistinct> distinctByHasBuyed() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hasBuyed');
@@ -1862,15 +2671,93 @@ extension PlayerQueryWhereDistinct on QueryBuilder<Player, Player, QDistinct> {
     });
   }
 
+  QueryBuilder<Player, Player, QDistinct> distinctByIsAlive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isAlive');
+    });
+  }
+
   QueryBuilder<Player, Player, QDistinct> distinctByIsBlocked() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isBlocked');
     });
   }
 
+  QueryBuilder<Player, Player, QDistinct> distinctByIsCitizen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isCitizen');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsDead() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isDead');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsGodfather() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isGodfather');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsInCitizenSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isInCitizenSide');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsInMafiaSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isInMafiaSide');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsKane() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isKane');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsKonstantin() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isKonstantin');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsLeon() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isLeon');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsMatador() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isMatador');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsNostradamous() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isNostradamous');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsNotInMafiaSide() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isNotInMafiaSide');
+    });
+  }
+
   QueryBuilder<Player, Player, QDistinct> distinctByIsReversible() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isReversible');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsSaul() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isSaul');
     });
   }
 
@@ -1889,6 +2776,18 @@ extension PlayerQueryWhereDistinct on QueryBuilder<Player, Player, QDistinct> {
   QueryBuilder<Player, Player, QDistinct> distinctByIsShot() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isShot');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsSlaughtered() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isSlaughtered');
+    });
+  }
+
+  QueryBuilder<Player, Player, QDistinct> distinctByIsWatson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isWatson');
     });
   }
 
@@ -1950,15 +2849,21 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Player, bool, QQueryOperations> disclosuredProperty() {
+  QueryBuilder<Player, bool?, QQueryOperations> disclosuredProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'disclosured');
     });
   }
 
-  QueryBuilder<Player, bool, QQueryOperations> handCuffedProperty() {
+  QueryBuilder<Player, bool?, QQueryOperations> handCuffedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'handCuffed');
+    });
+  }
+
+  QueryBuilder<Player, bool?, QQueryOperations> hasBeenSlaughteredProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hasBeenSlaughtered');
     });
   }
 
@@ -1986,19 +2891,97 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Player, bool, QQueryOperations> isBlockedProperty() {
+  QueryBuilder<Player, bool, QQueryOperations> isAliveProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isAlive');
+    });
+  }
+
+  QueryBuilder<Player, bool?, QQueryOperations> isBlockedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isBlocked');
     });
   }
 
-  QueryBuilder<Player, bool, QQueryOperations> isReversibleProperty() {
+  QueryBuilder<Player, bool, QQueryOperations> isCitizenProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isCitizen');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isDeadProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isDead');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isGodfatherProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isGodfather');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isInCitizenSideProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isInCitizenSide');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isInMafiaSideProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isInMafiaSide');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isKaneProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isKane');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isKonstantinProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isKonstantin');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isLeonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isLeon');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isMatadorProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isMatador');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isNostradamousProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isNostradamous');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isNotInMafiaSideProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isNotInMafiaSide');
+    });
+  }
+
+  QueryBuilder<Player, bool?, QQueryOperations> isReversibleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isReversible');
     });
   }
 
-  QueryBuilder<Player, bool, QQueryOperations> isSavedProperty() {
+  QueryBuilder<Player, bool, QQueryOperations> isSaulProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isSaul');
+    });
+  }
+
+  QueryBuilder<Player, bool?, QQueryOperations> isSavedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSaved');
     });
@@ -2010,13 +2993,25 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Player, bool, QQueryOperations> isShotProperty() {
+  QueryBuilder<Player, bool?, QQueryOperations> isShotProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isShot');
     });
   }
 
-  QueryBuilder<Player, bool, QQueryOperations> nightDoneProperty() {
+  QueryBuilder<Player, bool, QQueryOperations> isSlaughteredProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isSlaughtered');
+    });
+  }
+
+  QueryBuilder<Player, bool, QQueryOperations> isWatsonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isWatson');
+    });
+  }
+
+  QueryBuilder<Player, bool?, QQueryOperations> nightDoneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nightDone');
     });

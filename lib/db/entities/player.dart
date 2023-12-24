@@ -14,13 +14,21 @@ class Player {
   RoleType? type;
   int? heart;
   int? code;
-  bool isBlocked = false;
-  bool handCuffed = false;
-  bool isReversible = true;
-  bool isSaved = false;
-  bool isShot = false;
-  bool disclosured = false;
-  bool nightDone = false;
+  // default = null |
+  // true = isBlocked and night code must set to this player's code |
+  // whenever the game is going to night, this player's isBlocked will be set
+  // to false if it was true
+  // or to null if it was false
+  // now protocol for matadar: if a player is chosen by matador, his/her isBlocked will be set to true
+  // and if isBlocked is false, it means that the player was chosen by matador last night
+  // and if isBlocked is null, it means that the player was not chosen by matador last night and can be chosen again
+  bool? isBlocked = false;
+  bool? handCuffed;
+  bool? isReversible = true;
+  bool? isSaved = false;
+  bool? isShot = false;
+  bool? disclosured = false;
+  bool? nightDone = false;
   // watson-specific
   bool isSavedOnce = false;
   // leon-specific
@@ -34,6 +42,8 @@ class Player {
   RoleType? whichSideWillWin;
   // saul-specific
   bool? hasBuyed;
+  //
+  bool? hasBeenSlaughtered;
 
 // use this method for creating a player in isar.services in a loop (that method which has loop in it will take a [*list<Map<String PlayerName, RoleName roleName>>*] and will create them in isar)
 // name and assigned role will be passed to this method from ui and will be saved in isar
@@ -95,4 +105,53 @@ class Player {
           ..heart = allRoles[RoleName.matador]!.heart;
     }
   }
+
+  // a getter for checking alive players (whose hearts are not 0)
+  bool get isAlive => heart != 0;
+
+  // a getter for retrieving dead players (whose hearts are 0)
+  bool get isDead => heart == 0;
+
+  // for finding sides & roles of players ------------------------------------
+
+  // a getter for checking if a player is a citizen
+  bool get isInCitizenSide => type == RoleType.citizen;
+
+  // a getter for checking if a player is a mafia
+  bool get isInMafiaSide => type == RoleType.mafia;
+
+  // a getter for checking if a player is not a mafia
+  bool get isNotInMafiaSide => type != RoleType.mafia;
+
+  // a getter for checking if a player is a watson
+  bool get isWatson => roleName == allRoles[RoleName.watson]!.name;
+
+  // a getter for checking if a player is a leon
+  bool get isLeon => roleName == allRoles[RoleName.leon]!.name;
+
+  // a getter for checking if a player is a kane
+  bool get isKane => roleName == allRoles[RoleName.kane]!.name;
+
+  // a getter for checking if a player is a konstantin
+  bool get isKonstantin => roleName == allRoles[RoleName.konstantin]!.name;
+
+  // a getter for checking if a player is a nostradamous
+  bool get isNostradamous => roleName == allRoles[RoleName.nostradamous]!.name;
+
+  // a getter for checking if a player is a citizen
+  bool get isCitizen => type == RoleType.citizen;
+
+  // a getter for checking if a player is a saul
+  bool get isSaul => roleName == allRoles[RoleName.saul]!.name;
+
+  // a getter for checking if a player is a matador
+  bool get isMatador => roleName == allRoles[RoleName.matador]!.name;
+
+  // a getter for checking if a player is a godfather
+  bool get isGodfather => roleName == allRoles[RoleName.godfather]!.name;
+
+  // a getter for checking if a player is slaughtered
+  bool get isSlaughtered => hasBeenSlaughtered == true;
+
+  // **************************************************************************** ------------------------------------
 }
