@@ -45,6 +45,52 @@ class Player {
   //
   bool? hasBeenSlaughtered;
 
+  // a method for copying a player
+  Player copy({
+    String? playerName,
+    String? roleName,
+    String? description,
+    RoleType? type,
+    int? heart,
+    int? code,
+    bool? isBlocked,
+    bool? handCuffed,
+    bool? isReversible,
+    bool? isSaved,
+    bool? isShot,
+    bool? disclosured,
+    bool? nightDone,
+    bool? isSavedOnce,
+    int? shotCount,
+    bool? hasGussed,
+    bool? hasReturned,
+    RoleType? whichSideWillWin,
+    bool? hasBuyed,
+    bool? hasBeenSlaughtered,
+  }) {
+    return Player()
+      ..playerName = playerName ?? this.playerName
+      ..roleName = roleName ?? this.roleName
+      ..description = description ?? this.description
+      ..type = type ?? this.type
+      ..heart = heart ?? this.heart
+      ..code = code ?? this.code
+      ..isBlocked = isBlocked ?? this.isBlocked
+      ..handCuffed = handCuffed ?? this.handCuffed
+      ..isReversible = isReversible ?? this.isReversible
+      ..isSaved = isSaved ?? this.isSaved
+      ..isShot = isShot ?? this.isShot
+      ..disclosured = disclosured ?? this.disclosured
+      ..nightDone = nightDone ?? this.nightDone
+      ..isSavedOnce = isSavedOnce ?? this.isSavedOnce
+      ..shotCount = shotCount ?? this.shotCount
+      ..hasGussed = hasGussed ?? this.hasGussed
+      ..hasReturned = hasReturned ?? this.hasReturned
+      ..whichSideWillWin = whichSideWillWin ?? this.whichSideWillWin
+      ..hasBuyed = hasBuyed ?? this.hasBuyed
+      ..hasBeenSlaughtered = hasBeenSlaughtered ?? this.hasBeenSlaughtered;
+  }
+
 // use this method for creating a player in isar.services in a loop (that method which has loop in it will take a [*list<Map<String PlayerName, RoleName roleName>>*] and will create them in isar)
 // name and assigned role will be passed to this method from ui and will be saved in isar
   factory Player.initializeBasedOnRole(Map<String, RoleName> map) {

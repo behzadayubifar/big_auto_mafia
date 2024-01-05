@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class TextStyles {
   ///display1
-  static TextStyle display1 = GoogleFonts.lemonada(
+  static TextStyle displayLarge = GoogleFonts.lemonada(
     color: const Color(0xFF070E25),
     fontSize: 64,
     fontWeight: FontWeight.w600,
@@ -11,7 +11,7 @@ class TextStyles {
   );
 
   ///display2
-  static TextStyle display2 = GoogleFonts.lemonada(
+  static TextStyle displayMedium = GoogleFonts.lemonada(
     color: const Color(0xFF070E25),
     fontSize: 56,
     fontWeight: FontWeight.w600,
@@ -19,7 +19,7 @@ class TextStyles {
   );
 
   ///H1
-  static TextStyle h1 = GoogleFonts.lemonada(
+  static TextStyle displaySmall = GoogleFonts.lemonada(
     color: const Color(0xFF070E25),
     fontSize: 44,
     fontWeight: FontWeight.w600,
@@ -27,7 +27,7 @@ class TextStyles {
   );
 
   ///H2
-  static TextStyle h2 = GoogleFonts.lemonada(
+  static TextStyle headlineLarge = GoogleFonts.lemonada(
     color: const Color(0xFF070E25),
     fontSize: 40,
     fontWeight: FontWeight.w600,
@@ -35,7 +35,7 @@ class TextStyles {
   );
 
   ///H3
-  static TextStyle h3 = GoogleFonts.lemonada(
+  static TextStyle headlineMedium = GoogleFonts.lemonada(
     color: const Color(0xFF070E25),
     fontSize: 32,
     fontWeight: FontWeight.w600,
@@ -43,7 +43,7 @@ class TextStyles {
   );
 
   ///H4
-  static TextStyle h4 = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle headlineSmall = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xFF070E25),
     fontSize: 24,
     fontWeight: FontWeight.w600,
@@ -51,7 +51,7 @@ class TextStyles {
   );
 
   ///H5
-  static TextStyle h5 = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle titleLarge = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xFF070E25),
     fontSize: 20,
     fontWeight: FontWeight.w600,
@@ -59,7 +59,7 @@ class TextStyles {
   );
 
   ///H6
-  static TextStyle h6 = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle titleMedium = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xFF070E25),
     fontSize: 16,
     fontWeight: FontWeight.w600,
@@ -67,7 +67,7 @@ class TextStyles {
   );
 
   ///Body - XL
-  static TextStyle bodyXL = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle bodyLarge = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xB2070E25),
     fontSize: 20,
     fontWeight: FontWeight.w400,
@@ -75,7 +75,7 @@ class TextStyles {
   );
 
   ///Body - LG
-  static TextStyle bodyLG = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle bodyMedium = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xB2070E25),
     fontSize: 18,
     fontWeight: FontWeight.w300,
@@ -91,7 +91,7 @@ class TextStyles {
   );
 
   ///Body - SM
-  static TextStyle bodySM = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle bodySmall = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xB2070E25),
     fontSize: 14,
     fontWeight: FontWeight.w300,
@@ -107,7 +107,7 @@ class TextStyles {
   );
 
   ///Caption - md
-  static TextStyle captionMD = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle titleSmall = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xB2070E25),
     fontSize: 12,
     fontWeight: FontWeight.w500,
@@ -115,7 +115,7 @@ class TextStyles {
   );
 
   ///Button - LG
-  static TextStyle buttonLG = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle labelLarge = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xFF070E25),
     fontSize: 16,
     fontWeight: FontWeight.w500,
@@ -123,7 +123,7 @@ class TextStyles {
   );
 
   ///Button - SM
-  static TextStyle buttonSM = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle labelMedium = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xFF070E25),
     fontSize: 14,
     fontWeight: FontWeight.w500,
@@ -131,7 +131,7 @@ class TextStyles {
   );
 
   ///Overline - LG
-  static TextStyle overlineLG = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle labelSmall = GoogleFonts.ibmPlexSansArabic(
     color: const Color(0xFF5A38FF),
     fontSize: 14,
     fontWeight: FontWeight.w500,

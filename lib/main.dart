@@ -1,4 +1,5 @@
 import 'package:auto_mafia/routes/routes.dart';
+import 'package:auto_mafia/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,10 +14,11 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final _theme = ref.watch(autoMafiaThemeProvider);
     return MaterialApp.router(
       title: 'Auto Mafia',
       routerConfig: router,
-      theme: ThemeData(brightness: Brightness.dark),
+      theme: _theme,
       darkTheme: ThemeData(brightness: Brightness.dark),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
