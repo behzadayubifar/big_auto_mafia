@@ -7,6 +7,7 @@ part 'player.g.dart';
 class Player {
   Player();
   Id? id;
+  // night filed that is equal to the night number that is in night collection
   String? playerName;
   String? roleName;
   String? description;
@@ -26,7 +27,6 @@ class Player {
   bool? handCuffed;
   bool? isReversible = true;
   bool? isSaved = false;
-  bool? isShot = false;
   bool? disclosured = false;
   bool? nightDone = false;
   // watson-specific
@@ -57,7 +57,6 @@ class Player {
     bool? handCuffed,
     bool? isReversible,
     bool? isSaved,
-    bool? isShot,
     bool? disclosured,
     bool? nightDone,
     bool? isSavedOnce,
@@ -79,7 +78,6 @@ class Player {
       ..handCuffed = handCuffed ?? this.handCuffed
       ..isReversible = isReversible ?? this.isReversible
       ..isSaved = isSaved ?? this.isSaved
-      ..isShot = isShot ?? this.isShot
       ..disclosured = disclosured ?? this.disclosured
       ..nightDone = nightDone ?? this.nightDone
       ..isSavedOnce = isSavedOnce ?? this.isSavedOnce
@@ -97,58 +95,58 @@ class Player {
     switch (map.values.first) {
       case RoleName.citizen:
         return Player()
-          ..roleName = allRoles[RoleName.citizen]!.name
-          ..description = allRoles[RoleName.citizen]!.description
-          ..type = allRoles[RoleName.citizen]!.type
-          ..heart = allRoles[RoleName.citizen]!.heart;
+          ..roleName = allRoles[RoleName.citizen]!["roleName"]
+          ..description = allRoles[RoleName.citizen]!["description"]
+          ..type = allRoles[RoleName.citizen]!["type"]
+          ..heart = allRoles[RoleName.citizen]!["heart"];
       case RoleName.godfather:
         return Player()
-          ..roleName = allRoles[RoleName.godfather]!.name
-          ..description = allRoles[RoleName.godfather]!.description
-          ..type = allRoles[RoleName.godfather]!.type
-          ..heart = allRoles[RoleName.godfather]!.heart;
+          ..roleName = allRoles[RoleName.godfather]!['roleName']
+          ..description = allRoles[RoleName.godfather]!['description']
+          ..type = allRoles[RoleName.godfather]!['type']
+          ..heart = allRoles[RoleName.godfather]!['heart'];
       case RoleName.watson:
         return Player()
-          ..roleName = allRoles[RoleName.watson]!.name
-          ..description = allRoles[RoleName.watson]!.description
-          ..type = allRoles[RoleName.watson]!.type
-          ..heart = allRoles[RoleName.watson]!.heart;
+          ..roleName = allRoles[RoleName.watson]!['roleName']
+          ..description = allRoles[RoleName.watson]!['description']
+          ..type = allRoles[RoleName.watson]!['type']
+          ..heart = allRoles[RoleName.watson]!['heart'];
       case RoleName.leon:
         return Player()
-          ..roleName = allRoles[RoleName.leon]!.name
-          ..description = allRoles[RoleName.leon]!.description
-          ..type = allRoles[RoleName.leon]!.type
-          ..heart = allRoles[RoleName.leon]!.heart;
+          ..roleName = allRoles[RoleName.leon]!['roleName']
+          ..description = allRoles[RoleName.leon]!['description']
+          ..type = allRoles[RoleName.leon]!['type']
+          ..heart = allRoles[RoleName.leon]!['heart'];
       case RoleName.kane:
         return Player()
-          ..roleName = allRoles[RoleName.kane]!.name
-          ..description = allRoles[RoleName.kane]!.description
-          ..type = allRoles[RoleName.kane]!.type
-          ..heart = allRoles[RoleName.kane]!.heart;
+          ..roleName = allRoles[RoleName.kane]!['roleName']
+          ..description = allRoles[RoleName.kane]!['description']
+          ..type = allRoles[RoleName.kane]!['type']
+          ..heart = allRoles[RoleName.kane]!['heart'];
       case RoleName.konstantin:
         return Player()
-          ..roleName = allRoles[RoleName.konstantin]!.name
-          ..description = allRoles[RoleName.konstantin]!.description
-          ..type = allRoles[RoleName.konstantin]!.type
-          ..heart = allRoles[RoleName.konstantin]!.heart;
+          ..roleName = allRoles[RoleName.konstantin]!['roleName']
+          ..description = allRoles[RoleName.konstantin]!['description']
+          ..type = allRoles[RoleName.konstantin]!['type']
+          ..heart = allRoles[RoleName.konstantin]!['heart'];
       case RoleName.nostradamous:
         return Player()
-          ..roleName = allRoles[RoleName.nostradamous]!.name
-          ..description = allRoles[RoleName.nostradamous]!.description
-          ..type = allRoles[RoleName.nostradamous]!.type
-          ..heart = allRoles[RoleName.nostradamous]!.heart;
+          ..roleName = allRoles[RoleName.nostradamous]!['roleName']
+          ..description = allRoles[RoleName.nostradamous]!['description']
+          ..type = allRoles[RoleName.nostradamous]!['type']
+          ..heart = allRoles[RoleName.nostradamous]!['heart'];
       case RoleName.saul:
         return Player()
-          ..roleName = allRoles[RoleName.saul]!.name
-          ..description = allRoles[RoleName.saul]!.description
-          ..type = allRoles[RoleName.saul]!.type
-          ..heart = allRoles[RoleName.saul]!.heart;
+          ..roleName = allRoles[RoleName.saul]!['roleName']
+          ..description = allRoles[RoleName.saul]!['description']
+          ..type = allRoles[RoleName.saul]!['type']
+          ..heart = allRoles[RoleName.saul]!['heart'];
       case RoleName.matador:
         return Player()
-          ..roleName = allRoles[RoleName.matador]!.name
-          ..description = allRoles[RoleName.matador]!.description
-          ..type = allRoles[RoleName.matador]!.type
-          ..heart = allRoles[RoleName.matador]!.heart;
+          ..roleName = allRoles[RoleName.matador]!['roleName']
+          ..description = allRoles[RoleName.matador]!['description']
+          ..type = allRoles[RoleName.matador]!['type']
+          ..heart = allRoles[RoleName.matador]!['heart'];
     }
   }
 
@@ -170,31 +168,33 @@ class Player {
   bool get isNotInMafiaSide => type != RoleType.mafia;
 
   // a getter for checking if a player is a watson
-  bool get isWatson => roleName == allRoles[RoleName.watson]!.name;
+  bool get isWatson => roleName == roleNames[RoleName.watson]!;
 
   // a getter for checking if a player is a leon
-  bool get isLeon => roleName == allRoles[RoleName.leon]!.name;
+  bool get isLeon => roleName == allRoles[RoleName.leon]!['roleName'];
 
   // a getter for checking if a player is a kane
-  bool get isKane => roleName == allRoles[RoleName.kane]!.name;
+  bool get isKane => roleName == allRoles[RoleName.kane]!['roleName'];
 
   // a getter for checking if a player is a konstantin
-  bool get isKonstantin => roleName == allRoles[RoleName.konstantin]!.name;
+  bool get isKonstantin =>
+      roleName == allRoles[RoleName.konstantin]!['roleName'];
 
   // a getter for checking if a player is a nostradamous
-  bool get isNostradamous => roleName == allRoles[RoleName.nostradamous]!.name;
+  bool get isNostradamous =>
+      roleName == allRoles[RoleName.nostradamous]!['roleName'];
 
   // a getter for checking if a player is a citizen
   bool get isCitizen => type == RoleType.citizen;
 
   // a getter for checking if a player is a saul
-  bool get isSaul => roleName == allRoles[RoleName.saul]!.name;
+  bool get isSaul => roleName == allRoles[RoleName.saul]!['roleName'];
 
   // a getter for checking if a player is a matador
-  bool get isMatador => roleName == allRoles[RoleName.matador]!.name;
+  bool get isMatador => roleName == allRoles[RoleName.matador]!['roleName'];
 
   // a getter for checking if a player is a godfather
-  bool get isGodfather => roleName == allRoles[RoleName.godfather]!.name;
+  bool get isGodfather => roleName == allRoles[RoleName.godfather]!['roleName'];
 
   // a getter for checking if a player is slaughtered
   bool get isSlaughtered => hasBeenSlaughtered == true;

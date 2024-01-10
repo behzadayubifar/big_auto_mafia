@@ -1,27 +1,13 @@
-import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/logics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
-
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  late IsarService isar;
-  @override
-  void initState() {
-    super.initState();
-    // isar = IsarService();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      child: Text('Home Page'),
     );
   }
 }

@@ -147,49 +147,44 @@ const PlayerSchema = CollectionSchema(
       name: r'isSavedOnce',
       type: IsarType.bool,
     ),
-    r'isShot': PropertySchema(
-      id: 26,
-      name: r'isShot',
-      type: IsarType.bool,
-    ),
     r'isSlaughtered': PropertySchema(
-      id: 27,
+      id: 26,
       name: r'isSlaughtered',
       type: IsarType.bool,
     ),
     r'isWatson': PropertySchema(
-      id: 28,
+      id: 27,
       name: r'isWatson',
       type: IsarType.bool,
     ),
     r'nightDone': PropertySchema(
-      id: 29,
+      id: 28,
       name: r'nightDone',
       type: IsarType.bool,
     ),
     r'playerName': PropertySchema(
-      id: 30,
+      id: 29,
       name: r'playerName',
       type: IsarType.string,
     ),
     r'roleName': PropertySchema(
-      id: 31,
+      id: 30,
       name: r'roleName',
       type: IsarType.string,
     ),
     r'shotCount': PropertySchema(
-      id: 32,
+      id: 31,
       name: r'shotCount',
       type: IsarType.long,
     ),
     r'type': PropertySchema(
-      id: 33,
+      id: 32,
       name: r'type',
       type: IsarType.int,
       enumMap: _PlayertypeEnumValueMap,
     ),
     r'whichSideWillWin': PropertySchema(
-      id: 34,
+      id: 33,
       name: r'whichSideWillWin',
       type: IsarType.int,
       enumMap: _PlayerwhichSideWillWinEnumValueMap,
@@ -268,15 +263,14 @@ void _playerSerialize(
   writer.writeBool(offsets[23], object.isSaul);
   writer.writeBool(offsets[24], object.isSaved);
   writer.writeBool(offsets[25], object.isSavedOnce);
-  writer.writeBool(offsets[26], object.isShot);
-  writer.writeBool(offsets[27], object.isSlaughtered);
-  writer.writeBool(offsets[28], object.isWatson);
-  writer.writeBool(offsets[29], object.nightDone);
-  writer.writeString(offsets[30], object.playerName);
-  writer.writeString(offsets[31], object.roleName);
-  writer.writeLong(offsets[32], object.shotCount);
-  writer.writeInt(offsets[33], object.type?.index);
-  writer.writeInt(offsets[34], object.whichSideWillWin?.index);
+  writer.writeBool(offsets[26], object.isSlaughtered);
+  writer.writeBool(offsets[27], object.isWatson);
+  writer.writeBool(offsets[28], object.nightDone);
+  writer.writeString(offsets[29], object.playerName);
+  writer.writeString(offsets[30], object.roleName);
+  writer.writeLong(offsets[31], object.shotCount);
+  writer.writeInt(offsets[32], object.type?.index);
+  writer.writeInt(offsets[33], object.whichSideWillWin?.index);
 }
 
 Player _playerDeserialize(
@@ -300,14 +294,13 @@ Player _playerDeserialize(
   object.isReversible = reader.readBoolOrNull(offsets[22]);
   object.isSaved = reader.readBoolOrNull(offsets[24]);
   object.isSavedOnce = reader.readBool(offsets[25]);
-  object.isShot = reader.readBoolOrNull(offsets[26]);
-  object.nightDone = reader.readBoolOrNull(offsets[29]);
-  object.playerName = reader.readStringOrNull(offsets[30]);
-  object.roleName = reader.readStringOrNull(offsets[31]);
-  object.shotCount = reader.readLong(offsets[32]);
-  object.type = _PlayertypeValueEnumMap[reader.readIntOrNull(offsets[33])];
+  object.nightDone = reader.readBoolOrNull(offsets[28]);
+  object.playerName = reader.readStringOrNull(offsets[29]);
+  object.roleName = reader.readStringOrNull(offsets[30]);
+  object.shotCount = reader.readLong(offsets[31]);
+  object.type = _PlayertypeValueEnumMap[reader.readIntOrNull(offsets[32])];
   object.whichSideWillWin =
-      _PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offsets[34])];
+      _PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offsets[33])];
   return object;
 }
 
@@ -371,22 +364,20 @@ P _playerDeserializeProp<P>(
     case 25:
       return (reader.readBool(offset)) as P;
     case 26:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 27:
       return (reader.readBool(offset)) as P;
     case 28:
-      return (reader.readBool(offset)) as P;
-    case 29:
       return (reader.readBoolOrNull(offset)) as P;
+    case 29:
+      return (reader.readStringOrNull(offset)) as P;
     case 30:
       return (reader.readStringOrNull(offset)) as P;
     case 31:
-      return (reader.readStringOrNull(offset)) as P;
-    case 32:
       return (reader.readLong(offset)) as P;
-    case 33:
+    case 32:
       return (_PlayertypeValueEnumMap[reader.readIntOrNull(offset)]) as P;
-    case 34:
+    case 33:
       return (_PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offset)])
           as P;
     default:
@@ -1192,32 +1183,6 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isSavedOnce',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Player, Player, QAfterFilterCondition> isShotIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'isShot',
-      ));
-    });
-  }
-
-  QueryBuilder<Player, Player, QAfterFilterCondition> isShotIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'isShot',
-      ));
-    });
-  }
-
-  QueryBuilder<Player, Player, QAfterFilterCondition> isShotEqualTo(
-      bool? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isShot',
         value: value,
       ));
     });
@@ -2072,18 +2037,6 @@ extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterSortBy> sortByIsShot() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isShot', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Player, Player, QAfterSortBy> sortByIsShotDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isShot', Sort.desc);
-    });
-  }
-
   QueryBuilder<Player, Player, QAfterSortBy> sortByIsSlaughtered() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSlaughtered', Sort.asc);
@@ -2506,18 +2459,6 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterSortBy> thenByIsShot() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isShot', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Player, Player, QAfterSortBy> thenByIsShotDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isShot', Sort.desc);
-    });
-  }
-
   QueryBuilder<Player, Player, QAfterSortBy> thenByIsSlaughtered() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSlaughtered', Sort.asc);
@@ -2773,12 +2714,6 @@ extension PlayerQueryWhereDistinct on QueryBuilder<Player, Player, QDistinct> {
     });
   }
 
-  QueryBuilder<Player, Player, QDistinct> distinctByIsShot() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'isShot');
-    });
-  }
-
   QueryBuilder<Player, Player, QDistinct> distinctByIsSlaughtered() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSlaughtered');
@@ -2990,12 +2925,6 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
   QueryBuilder<Player, bool, QQueryOperations> isSavedOnceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSavedOnce');
-    });
-  }
-
-  QueryBuilder<Player, bool?, QQueryOperations> isShotProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isShot');
     });
   }
 

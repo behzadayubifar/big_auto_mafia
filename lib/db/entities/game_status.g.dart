@@ -17,28 +17,23 @@ const GameStatusSchema = CollectionSchema(
   name: r'GameStatus',
   id: 6844732361368701430,
   properties: {
-    r'inComplete': PropertySchema(
+    r'dayNumber': PropertySchema(
       id: 0,
-      name: r'inComplete',
-      type: IsarType.string,
-    ),
-    r'isNight': PropertySchema(
-      id: 1,
-      name: r'isNight',
-      type: IsarType.bool,
-    ),
-    r'night': PropertySchema(
-      id: 2,
-      name: r'night',
+      name: r'dayNumber',
       type: IsarType.long,
     ),
+    r'isDay': PropertySchema(
+      id: 1,
+      name: r'isDay',
+      type: IsarType.bool,
+    ),
     r'nightCode': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'nightCode',
       type: IsarType.long,
     ),
     r'timePassed': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'timePassed',
       type: IsarType.long,
     )
@@ -63,12 +58,6 @@ int _gameStatusEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.inComplete;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
   return bytesCount;
 }
 
@@ -78,11 +67,10 @@ void _gameStatusSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.inComplete);
-  writer.writeBool(offsets[1], object.isNight);
-  writer.writeLong(offsets[2], object.night);
-  writer.writeLong(offsets[3], object.nightCode);
-  writer.writeLong(offsets[4], object.timePassed);
+  writer.writeLong(offsets[0], object.dayNumber);
+  writer.writeBool(offsets[1], object.isDay);
+  writer.writeLong(offsets[2], object.nightCode);
+  writer.writeLong(offsets[3], object.timePassed);
 }
 
 GameStatus _gameStatusDeserialize(
@@ -92,12 +80,11 @@ GameStatus _gameStatusDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = GameStatus();
+  object.dayNumber = reader.readLong(offsets[0]);
   object.id = id;
-  object.inComplete = reader.readStringOrNull(offsets[0]);
-  object.isNight = reader.readBool(offsets[1]);
-  object.night = reader.readLong(offsets[2]);
-  object.nightCode = reader.readLongOrNull(offsets[3]);
-  object.timePassed = reader.readLong(offsets[4]);
+  object.isDay = reader.readBool(offsets[1]);
+  object.nightCode = reader.readLongOrNull(offsets[2]);
+  object.timePassed = reader.readLong(offsets[3]);
   return object;
 }
 
@@ -109,14 +96,12 @@ P _gameStatusDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 1:
       return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
-    case 3:
       return (reader.readLongOrNull(offset)) as P;
-    case 4:
+    case 3:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -214,6 +199,60 @@ extension GameStatusQueryWhere
 
 extension GameStatusQueryFilter
     on QueryBuilder<GameStatus, GameStatus, QFilterCondition> {
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> dayNumberEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dayNumber',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      dayNumberGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dayNumber',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> dayNumberLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dayNumber',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> dayNumberBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dayNumber',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> idIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -283,218 +322,12 @@ extension GameStatusQueryFilter
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'inComplete',
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'inComplete',
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> inCompleteEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> inCompleteBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'inComplete',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> inCompleteMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'inComplete',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inComplete',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      inCompleteIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'inComplete',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> isNightEqualTo(
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> isDayEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isNight',
+        property: r'isDay',
         value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> nightEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'night',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> nightGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'night',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> nightLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'night',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> nightBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'night',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
       ));
     });
   }
@@ -635,39 +468,27 @@ extension GameStatusQueryLinks
 
 extension GameStatusQuerySortBy
     on QueryBuilder<GameStatus, GameStatus, QSortBy> {
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByInComplete() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByDayNumber() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inComplete', Sort.asc);
+      return query.addSortBy(r'dayNumber', Sort.asc);
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByInCompleteDesc() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByDayNumberDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inComplete', Sort.desc);
+      return query.addSortBy(r'dayNumber', Sort.desc);
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsNight() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsDay() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isNight', Sort.asc);
+      return query.addSortBy(r'isDay', Sort.asc);
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsNightDesc() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsDayDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isNight', Sort.desc);
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByNight() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'night', Sort.asc);
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByNightDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'night', Sort.desc);
+      return query.addSortBy(r'isDay', Sort.desc);
     });
   }
 
@@ -698,6 +519,18 @@ extension GameStatusQuerySortBy
 
 extension GameStatusQuerySortThenBy
     on QueryBuilder<GameStatus, GameStatus, QSortThenBy> {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByDayNumber() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dayNumber', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByDayNumberDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dayNumber', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -710,39 +543,15 @@ extension GameStatusQuerySortThenBy
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByInComplete() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsDay() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inComplete', Sort.asc);
+      return query.addSortBy(r'isDay', Sort.asc);
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByInCompleteDesc() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsDayDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inComplete', Sort.desc);
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsNight() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isNight', Sort.asc);
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsNightDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isNight', Sort.desc);
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByNight() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'night', Sort.asc);
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByNightDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'night', Sort.desc);
+      return query.addSortBy(r'isDay', Sort.desc);
     });
   }
 
@@ -773,22 +582,15 @@ extension GameStatusQuerySortThenBy
 
 extension GameStatusQueryWhereDistinct
     on QueryBuilder<GameStatus, GameStatus, QDistinct> {
-  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByInComplete(
-      {bool caseSensitive = true}) {
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByDayNumber() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'inComplete', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'dayNumber');
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByIsNight() {
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByIsDay() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'isNight');
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByNight() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'night');
+      return query.addDistinctBy(r'isDay');
     });
   }
 
@@ -813,21 +615,15 @@ extension GameStatusQueryProperty
     });
   }
 
-  QueryBuilder<GameStatus, String?, QQueryOperations> inCompleteProperty() {
+  QueryBuilder<GameStatus, int, QQueryOperations> dayNumberProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'inComplete');
+      return query.addPropertyName(r'dayNumber');
     });
   }
 
-  QueryBuilder<GameStatus, bool, QQueryOperations> isNightProperty() {
+  QueryBuilder<GameStatus, bool, QQueryOperations> isDayProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isNight');
-    });
-  }
-
-  QueryBuilder<GameStatus, int, QQueryOperations> nightProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'night');
+      return query.addPropertyName(r'isDay');
     });
   }
 
@@ -855,40 +651,80 @@ const NightSchema = CollectionSchema(
   name: r'Night',
   id: -2452319164639997485,
   properties: {
-    r'inComplete': PropertySchema(
+    r'godfatherChoice': PropertySchema(
       id: 0,
+      name: r'godfatherChoice',
+      type: IsarType.string,
+    ),
+    r'inComplete': PropertySchema(
+      id: 1,
       name: r'inComplete',
       type: IsarType.string,
     ),
     r'isNight': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'isNight',
       type: IsarType.bool,
     ),
+    r'kaneChoice': PropertySchema(
+      id: 3,
+      name: r'kaneChoice',
+      type: IsarType.string,
+    ),
+    r'konstantinChoice': PropertySchema(
+      id: 4,
+      name: r'konstantinChoice',
+      type: IsarType.string,
+    ),
+    r'leonChoice': PropertySchema(
+      id: 5,
+      name: r'leonChoice',
+      type: IsarType.string,
+    ),
+    r'mafiasShot': PropertySchema(
+      id: 6,
+      name: r'mafiasShot',
+      type: IsarType.string,
+    ),
+    r'matadorChoice': PropertySchema(
+      id: 7,
+      name: r'matadorChoice',
+      type: IsarType.string,
+    ),
     r'nightCode': PropertySchema(
-      id: 2,
+      id: 8,
       name: r'nightCode',
       type: IsarType.long,
     ),
     r'nightNumber': PropertySchema(
-      id: 3,
+      id: 9,
       name: r'nightNumber',
       type: IsarType.long,
     ),
     r'playerNameWhoIsComingBack': PropertySchema(
-      id: 4,
+      id: 10,
       name: r'playerNameWhoIsComingBack',
       type: IsarType.string,
     ),
     r'playersWaitingForDoingTheirNightJob': PropertySchema(
-      id: 5,
+      id: 11,
       name: r'playersWaitingForDoingTheirNightJob',
       type: IsarType.stringList,
     ),
+    r'saulChoice': PropertySchema(
+      id: 12,
+      name: r'saulChoice',
+      type: IsarType.string,
+    ),
     r'timePassed': PropertySchema(
-      id: 6,
+      id: 13,
       name: r'timePassed',
       type: IsarType.long,
+    ),
+    r'watsonChoice': PropertySchema(
+      id: 14,
+      name: r'watsonChoice',
+      type: IsarType.string,
     )
   },
   estimateSize: _nightEstimateSize,
@@ -911,12 +747,18 @@ int _nightEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.godfatherChoice.length * 3;
   {
     final value = object.inComplete;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.kaneChoice.length * 3;
+  bytesCount += 3 + object.konstantinChoice.length * 3;
+  bytesCount += 3 + object.leonChoice.length * 3;
+  bytesCount += 3 + object.mafiasShot.length * 3;
+  bytesCount += 3 + object.matadorChoice.length * 3;
   {
     final value = object.playerNameWhoIsComingBack;
     if (value != null) {
@@ -935,6 +777,8 @@ int _nightEstimateSize(
       }
     }
   }
+  bytesCount += 3 + object.saulChoice.length * 3;
+  bytesCount += 3 + object.watsonChoice.length * 3;
   return bytesCount;
 }
 
@@ -944,14 +788,22 @@ void _nightSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.inComplete);
-  writer.writeBool(offsets[1], object.isNight);
-  writer.writeLong(offsets[2], object.nightCode);
-  writer.writeLong(offsets[3], object.nightNumber);
-  writer.writeString(offsets[4], object.playerNameWhoIsComingBack);
+  writer.writeString(offsets[0], object.godfatherChoice);
+  writer.writeString(offsets[1], object.inComplete);
+  writer.writeBool(offsets[2], object.isNight);
+  writer.writeString(offsets[3], object.kaneChoice);
+  writer.writeString(offsets[4], object.konstantinChoice);
+  writer.writeString(offsets[5], object.leonChoice);
+  writer.writeString(offsets[6], object.mafiasShot);
+  writer.writeString(offsets[7], object.matadorChoice);
+  writer.writeLong(offsets[8], object.nightCode);
+  writer.writeLong(offsets[9], object.nightNumber);
+  writer.writeString(offsets[10], object.playerNameWhoIsComingBack);
   writer.writeStringList(
-      offsets[5], object.playersWaitingForDoingTheirNightJob);
-  writer.writeLong(offsets[6], object.timePassed);
+      offsets[11], object.playersWaitingForDoingTheirNightJob);
+  writer.writeString(offsets[12], object.saulChoice);
+  writer.writeLong(offsets[13], object.timePassed);
+  writer.writeString(offsets[14], object.watsonChoice);
 }
 
 Night _nightDeserialize(
@@ -961,15 +813,23 @@ Night _nightDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Night();
+  object.godfatherChoice = reader.readString(offsets[0]);
   object.id = id;
-  object.inComplete = reader.readStringOrNull(offsets[0]);
-  object.isNight = reader.readBool(offsets[1]);
-  object.nightCode = reader.readLongOrNull(offsets[2]);
-  object.nightNumber = reader.readLong(offsets[3]);
-  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[4]);
+  object.inComplete = reader.readStringOrNull(offsets[1]);
+  object.isNight = reader.readBool(offsets[2]);
+  object.kaneChoice = reader.readString(offsets[3]);
+  object.konstantinChoice = reader.readString(offsets[4]);
+  object.leonChoice = reader.readString(offsets[5]);
+  object.mafiasShot = reader.readString(offsets[6]);
+  object.matadorChoice = reader.readString(offsets[7]);
+  object.nightCode = reader.readLongOrNull(offsets[8]);
+  object.nightNumber = reader.readLong(offsets[9]);
+  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[10]);
   object.playersWaitingForDoingTheirNightJob =
-      reader.readStringList(offsets[5]);
-  object.timePassed = reader.readLong(offsets[6]);
+      reader.readStringList(offsets[11]);
+  object.saulChoice = reader.readString(offsets[12]);
+  object.timePassed = reader.readLong(offsets[13]);
+  object.watsonChoice = reader.readString(offsets[14]);
   return object;
 }
 
@@ -981,19 +841,35 @@ P _nightDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readBool(offset)) as P;
-    case 2:
-      return (reader.readLongOrNull(offset)) as P;
-    case 3:
-      return (reader.readLong(offset)) as P;
-    case 4:
       return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readBool(offset)) as P;
+    case 3:
+      return (reader.readString(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
+    case 8:
+      return (reader.readLongOrNull(offset)) as P;
+    case 9:
       return (reader.readLong(offset)) as P;
+    case 10:
+      return (reader.readStringOrNull(offset)) as P;
+    case 11:
+      return (reader.readStringList(offset)) as P;
+    case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
+      return (reader.readLong(offset)) as P;
+    case 14:
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1087,6 +963,137 @@ extension NightQueryWhere on QueryBuilder<Night, Night, QWhereClause> {
 }
 
 extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'godfatherChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'godfatherChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'godfatherChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'godfatherChoice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'godfatherChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'godfatherChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'godfatherChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'godfatherChoice',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> godfatherChoiceIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'godfatherChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      godfatherChoiceIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'godfatherChoice',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterFilterCondition> idIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1306,6 +1313,657 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isNight',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'kaneChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'kaneChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'kaneChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'kaneChoice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'kaneChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'kaneChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'kaneChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'kaneChoice',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'kaneChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> kaneChoiceIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'kaneChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'konstantinChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'konstantinChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'konstantinChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'konstantinChoice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'konstantinChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'konstantinChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'konstantinChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'konstantinChoice',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> konstantinChoiceIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'konstantinChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      konstantinChoiceIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'konstantinChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'leonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'leonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'leonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'leonChoice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'leonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'leonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'leonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'leonChoice',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'leonChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> leonChoiceIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'leonChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mafiasShot',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mafiasShot',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mafiasShot',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mafiasShot',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'mafiasShot',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'mafiasShot',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'mafiasShot',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'mafiasShot',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mafiasShot',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> mafiasShotIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'mafiasShot',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'matadorChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'matadorChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'matadorChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'matadorChoice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'matadorChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'matadorChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'matadorChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'matadorChoice',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'matadorChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> matadorChoiceIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'matadorChoice',
+        value: '',
       ));
     });
   }
@@ -1833,6 +2491,136 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'saulChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'saulChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'saulChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'saulChoice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'saulChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'saulChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'saulChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'saulChoice',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'saulChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> saulChoiceIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'saulChoice',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterFilterCondition> timePassedEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -1885,6 +2673,136 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'watsonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'watsonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'watsonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'watsonChoice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'watsonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'watsonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'watsonChoice',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'watsonChoice',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'watsonChoice',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'watsonChoice',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension NightQueryObject on QueryBuilder<Night, Night, QFilterCondition> {}
@@ -1892,6 +2810,18 @@ extension NightQueryObject on QueryBuilder<Night, Night, QFilterCondition> {}
 extension NightQueryLinks on QueryBuilder<Night, Night, QFilterCondition> {}
 
 extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
+  QueryBuilder<Night, Night, QAfterSortBy> sortByGodfatherChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'godfatherChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByGodfatherChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'godfatherChoice', Sort.desc);
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterSortBy> sortByInComplete() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'inComplete', Sort.asc);
@@ -1913,6 +2843,66 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
   QueryBuilder<Night, Night, QAfterSortBy> sortByIsNightDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNight', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByKaneChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'kaneChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByKaneChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'kaneChoice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByKonstantinChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'konstantinChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByKonstantinChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'konstantinChoice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByLeonChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'leonChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByLeonChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'leonChoice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByMafiasShot() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mafiasShot', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByMafiasShotDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mafiasShot', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByMatadorChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'matadorChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByMatadorChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'matadorChoice', Sort.desc);
     });
   }
 
@@ -1953,6 +2943,18 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterSortBy> sortBySaulChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'saulChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortBySaulChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'saulChoice', Sort.desc);
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterSortBy> sortByTimePassed() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'timePassed', Sort.asc);
@@ -1964,9 +2966,33 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
       return query.addSortBy(r'timePassed', Sort.desc);
     });
   }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByWatsonChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'watsonChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByWatsonChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'watsonChoice', Sort.desc);
+    });
+  }
 }
 
 extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
+  QueryBuilder<Night, Night, QAfterSortBy> thenByGodfatherChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'godfatherChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByGodfatherChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'godfatherChoice', Sort.desc);
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -2000,6 +3026,66 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
   QueryBuilder<Night, Night, QAfterSortBy> thenByIsNightDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNight', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByKaneChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'kaneChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByKaneChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'kaneChoice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByKonstantinChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'konstantinChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByKonstantinChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'konstantinChoice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByLeonChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'leonChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByLeonChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'leonChoice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByMafiasShot() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mafiasShot', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByMafiasShotDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mafiasShot', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByMatadorChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'matadorChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByMatadorChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'matadorChoice', Sort.desc);
     });
   }
 
@@ -2040,6 +3126,18 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterSortBy> thenBySaulChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'saulChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenBySaulChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'saulChoice', Sort.desc);
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterSortBy> thenByTimePassed() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'timePassed', Sort.asc);
@@ -2051,9 +3149,29 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
       return query.addSortBy(r'timePassed', Sort.desc);
     });
   }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByWatsonChoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'watsonChoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByWatsonChoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'watsonChoice', Sort.desc);
+    });
+  }
 }
 
 extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
+  QueryBuilder<Night, Night, QDistinct> distinctByGodfatherChoice(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'godfatherChoice',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Night, Night, QDistinct> distinctByInComplete(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2064,6 +3182,43 @@ extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
   QueryBuilder<Night, Night, QDistinct> distinctByIsNight() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isNight');
+    });
+  }
+
+  QueryBuilder<Night, Night, QDistinct> distinctByKaneChoice(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'kaneChoice', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Night, Night, QDistinct> distinctByKonstantinChoice(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'konstantinChoice',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Night, Night, QDistinct> distinctByLeonChoice(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'leonChoice', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Night, Night, QDistinct> distinctByMafiasShot(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'mafiasShot', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Night, Night, QDistinct> distinctByMatadorChoice(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'matadorChoice',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -2094,9 +3249,23 @@ extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
     });
   }
 
+  QueryBuilder<Night, Night, QDistinct> distinctBySaulChoice(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'saulChoice', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Night, Night, QDistinct> distinctByTimePassed() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'timePassed');
+    });
+  }
+
+  QueryBuilder<Night, Night, QDistinct> distinctByWatsonChoice(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'watsonChoice', caseSensitive: caseSensitive);
     });
   }
 }
@@ -2105,6 +3274,12 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
   QueryBuilder<Night, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations> godfatherChoiceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'godfatherChoice');
     });
   }
 
@@ -2117,6 +3292,36 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
   QueryBuilder<Night, bool, QQueryOperations> isNightProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isNight');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations> kaneChoiceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'kaneChoice');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations> konstantinChoiceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'konstantinChoice');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations> leonChoiceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'leonChoice');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations> mafiasShotProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mafiasShot');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations> matadorChoiceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'matadorChoice');
     });
   }
 
@@ -2146,9 +3351,21 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Night, String, QQueryOperations> saulChoiceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'saulChoice');
+    });
+  }
+
   QueryBuilder<Night, int, QQueryOperations> timePassedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'timePassed');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations> watsonChoiceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'watsonChoice');
     });
   }
 }

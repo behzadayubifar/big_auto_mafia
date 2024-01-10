@@ -24,7 +24,7 @@ Map<RoleName, String> roleNames = {
   RoleName.saul: "سائول گودمن",
 };
 
-Map<RoleName, dynamic> allRoles = {
+Map<RoleName, Map<String, dynamic>> allRoles = {
   RoleName.citizen: {
     "roleName": roleNames[RoleName.citizen],
     "description":
