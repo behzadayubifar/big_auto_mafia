@@ -7,13 +7,39 @@ class GameStatus {
   Id? id;
   bool isDay = true;
   int dayNumber = 0;
-  int timePassed = 16;
+  int wholeGameTimePassed = 0;
+  // this must change in two times :
+  //    1. At the start of night, it must be set to (initial value)
+  //    2. when some player is going to do his/her job and entering the
+  //      - role panel, it must be set to (initial value)
+  //    3. when the player has done his/her job, it must be set to 0
+  // structure : [String playerName, String timeLeft]
+  List<String> timeLeft = ['', '0'];
 
   // if this is null && isNight == true it means that the list of players must be shown
 
-  int? nightCode;
+  int? nightCode = -1;
+
   // if konstantin choose someone to come back,
   // this will be set to that player's name
+
+  // a method for copying GameStatus from a Future<GameStatus>
+
+  GameStatus copy({
+    bool? isDay,
+    int? dayNumber,
+    int? wholeGameTimePassed,
+    List<String>? timeLeft,
+    int? nightCode,
+  }) {
+    return GameStatus()
+      ..id = id
+      ..isDay = isDay ?? this.isDay
+      ..dayNumber = dayNumber ?? this.dayNumber
+      ..wholeGameTimePassed = wholeGameTimePassed ?? this.wholeGameTimePassed
+      ..timeLeft = timeLeft ?? this.timeLeft
+      ..nightCode = nightCode ?? this.nightCode;
+  }
 }
 
 @Collection()
@@ -21,7 +47,7 @@ class Night {
   Id? id;
   int nightNumber = 0;
   List<String>? playersWaitingForDoingTheirNightJob;
-  int timePassed = 16;
+
   //
   String? inComplete;
   int? nightCode;
@@ -48,7 +74,7 @@ class Night {
   Night copy({
     int? nightNumber,
     List<String>? playersWaitingForDoingTheirNightJob,
-    int? timePassed,
+    int? timeLeft,
     String? inComplete,
     int? nightCode,
     bool? isNight,
@@ -68,7 +94,7 @@ class Night {
       ..playersWaitingForDoingTheirNightJob =
           playersWaitingForDoingTheirNightJob ??
               this.playersWaitingForDoingTheirNightJob
-      ..timePassed = timePassed ?? this.timePassed
+      // ..timeLeft = timeLeft ?? this.timeLeft
       ..inComplete = inComplete ?? this.inComplete
       ..nightCode = nightCode ?? this.nightCode
       ..isNight = isNight ?? this.isNight

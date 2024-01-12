@@ -32,9 +32,14 @@ const GameStatusSchema = CollectionSchema(
       name: r'nightCode',
       type: IsarType.long,
     ),
-    r'timePassed': PropertySchema(
+    r'timeLeft': PropertySchema(
       id: 3,
-      name: r'timePassed',
+      name: r'timeLeft',
+      type: IsarType.stringList,
+    ),
+    r'wholeGameTimePassed': PropertySchema(
+      id: 4,
+      name: r'wholeGameTimePassed',
       type: IsarType.long,
     )
   },
@@ -58,6 +63,13 @@ int _gameStatusEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.timeLeft.length * 3;
+  {
+    for (var i = 0; i < object.timeLeft.length; i++) {
+      final value = object.timeLeft[i];
+      bytesCount += value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -70,7 +82,8 @@ void _gameStatusSerialize(
   writer.writeLong(offsets[0], object.dayNumber);
   writer.writeBool(offsets[1], object.isDay);
   writer.writeLong(offsets[2], object.nightCode);
-  writer.writeLong(offsets[3], object.timePassed);
+  writer.writeStringList(offsets[3], object.timeLeft);
+  writer.writeLong(offsets[4], object.wholeGameTimePassed);
 }
 
 GameStatus _gameStatusDeserialize(
@@ -84,7 +97,8 @@ GameStatus _gameStatusDeserialize(
   object.id = id;
   object.isDay = reader.readBool(offsets[1]);
   object.nightCode = reader.readLongOrNull(offsets[2]);
-  object.timePassed = reader.readLong(offsets[3]);
+  object.timeLeft = reader.readStringList(offsets[3]) ?? [];
+  object.wholeGameTimePassed = reader.readLong(offsets[4]);
   return object;
 }
 
@@ -102,6 +116,8 @@ P _gameStatusDeserializeProp<P>(
     case 2:
       return (reader.readLongOrNull(offset)) as P;
     case 3:
+      return (reader.readStringList(offset) ?? []) as P;
+    case 4:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -404,45 +420,271 @@ extension GameStatusQueryFilter
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> timePassedEqualTo(
-      int value) {
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'timePassed',
+        property: r'timeLeft',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'timeLeft',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'timeLeft',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'timeLeft',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'timeLeft',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'timeLeft',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'timeLeft',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'timeLeft',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'timeLeft',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'timeLeft',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'timeLeft',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'timeLeft',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'timeLeft',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'timeLeft',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'timeLeft',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'timeLeft',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      wholeGameTimePassedEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'wholeGameTimePassed',
         value: value,
       ));
     });
   }
 
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      timePassedGreaterThan(
+      wholeGameTimePassedGreaterThan(
     int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'timePassed',
+        property: r'wholeGameTimePassed',
         value: value,
       ));
     });
   }
 
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      timePassedLessThan(
+      wholeGameTimePassedLessThan(
     int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'timePassed',
+        property: r'wholeGameTimePassed',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> timePassedBetween(
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      wholeGameTimePassedBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -450,7 +692,7 @@ extension GameStatusQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'timePassed',
+        property: r'wholeGameTimePassed',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -504,15 +746,17 @@ extension GameStatusQuerySortBy
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByTimePassed() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      sortByWholeGameTimePassed() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timePassed', Sort.asc);
+      return query.addSortBy(r'wholeGameTimePassed', Sort.asc);
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByTimePassedDesc() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      sortByWholeGameTimePassedDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timePassed', Sort.desc);
+      return query.addSortBy(r'wholeGameTimePassed', Sort.desc);
     });
   }
 }
@@ -567,15 +811,17 @@ extension GameStatusQuerySortThenBy
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByTimePassed() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      thenByWholeGameTimePassed() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timePassed', Sort.asc);
+      return query.addSortBy(r'wholeGameTimePassed', Sort.asc);
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByTimePassedDesc() {
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      thenByWholeGameTimePassedDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timePassed', Sort.desc);
+      return query.addSortBy(r'wholeGameTimePassed', Sort.desc);
     });
   }
 }
@@ -600,9 +846,16 @@ extension GameStatusQueryWhereDistinct
     });
   }
 
-  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByTimePassed() {
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByTimeLeft() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'timePassed');
+      return query.addDistinctBy(r'timeLeft');
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QDistinct>
+      distinctByWholeGameTimePassed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'wholeGameTimePassed');
     });
   }
 }
@@ -633,9 +886,16 @@ extension GameStatusQueryProperty
     });
   }
 
-  QueryBuilder<GameStatus, int, QQueryOperations> timePassedProperty() {
+  QueryBuilder<GameStatus, List<String>, QQueryOperations> timeLeftProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'timePassed');
+      return query.addPropertyName(r'timeLeft');
+    });
+  }
+
+  QueryBuilder<GameStatus, int, QQueryOperations>
+      wholeGameTimePassedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'wholeGameTimePassed');
     });
   }
 }
@@ -716,13 +976,8 @@ const NightSchema = CollectionSchema(
       name: r'saulChoice',
       type: IsarType.string,
     ),
-    r'timePassed': PropertySchema(
-      id: 13,
-      name: r'timePassed',
-      type: IsarType.long,
-    ),
     r'watsonChoice': PropertySchema(
-      id: 14,
+      id: 13,
       name: r'watsonChoice',
       type: IsarType.string,
     )
@@ -802,8 +1057,7 @@ void _nightSerialize(
   writer.writeStringList(
       offsets[11], object.playersWaitingForDoingTheirNightJob);
   writer.writeString(offsets[12], object.saulChoice);
-  writer.writeLong(offsets[13], object.timePassed);
-  writer.writeString(offsets[14], object.watsonChoice);
+  writer.writeString(offsets[13], object.watsonChoice);
 }
 
 Night _nightDeserialize(
@@ -828,8 +1082,7 @@ Night _nightDeserialize(
   object.playersWaitingForDoingTheirNightJob =
       reader.readStringList(offsets[11]);
   object.saulChoice = reader.readString(offsets[12]);
-  object.timePassed = reader.readLong(offsets[13]);
-  object.watsonChoice = reader.readString(offsets[14]);
+  object.watsonChoice = reader.readString(offsets[13]);
   return object;
 }
 
@@ -867,8 +1120,6 @@ P _nightDeserializeProp<P>(
     case 12:
       return (reader.readString(offset)) as P;
     case 13:
-      return (reader.readLong(offset)) as P;
-    case 14:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2621,59 +2872,6 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Night, Night, QAfterFilterCondition> timePassedEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'timePassed',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> timePassedGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'timePassed',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> timePassedLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'timePassed',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> timePassedBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'timePassed',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
   QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2955,18 +3153,6 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
     });
   }
 
-  QueryBuilder<Night, Night, QAfterSortBy> sortByTimePassed() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timePassed', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterSortBy> sortByTimePassedDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timePassed', Sort.desc);
-    });
-  }
-
   QueryBuilder<Night, Night, QAfterSortBy> sortByWatsonChoice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'watsonChoice', Sort.asc);
@@ -3138,18 +3324,6 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Night, Night, QAfterSortBy> thenByTimePassed() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timePassed', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterSortBy> thenByTimePassedDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timePassed', Sort.desc);
-    });
-  }
-
   QueryBuilder<Night, Night, QAfterSortBy> thenByWatsonChoice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'watsonChoice', Sort.asc);
@@ -3256,12 +3430,6 @@ extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
     });
   }
 
-  QueryBuilder<Night, Night, QDistinct> distinctByTimePassed() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'timePassed');
-    });
-  }
-
   QueryBuilder<Night, Night, QDistinct> distinctByWatsonChoice(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3354,12 +3522,6 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
   QueryBuilder<Night, String, QQueryOperations> saulChoiceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'saulChoice');
-    });
-  }
-
-  QueryBuilder<Night, int, QQueryOperations> timePassedProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'timePassed');
     });
   }
 

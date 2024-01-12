@@ -28,6 +28,7 @@ class Player {
   bool? isReversible = true;
   bool? isSaved = false;
   bool? disclosured = false;
+  // going to day : set to false -for all players-
   bool? nightDone = false;
   // watson-specific
   bool isSavedOnce = false;
@@ -92,63 +93,83 @@ class Player {
 // use this method for creating a player in isar.services in a loop (that method which has loop in it will take a [*list<Map<String PlayerName, RoleName roleName>>*] and will create them in isar)
 // name and assigned role will be passed to this method from ui and will be saved in isar
   factory Player.initializeBasedOnRole(Map<String, RoleName> map) {
-    switch (map.values.first) {
+    switch (map.values.single) {
       case RoleName.citizen:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.citizen]!["roleName"]
           ..description = allRoles[RoleName.citizen]!["description"]
           ..type = allRoles[RoleName.citizen]!["type"]
           ..heart = allRoles[RoleName.citizen]!["heart"];
       case RoleName.godfather:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.godfather]!['roleName']
           ..description = allRoles[RoleName.godfather]!['description']
           ..type = allRoles[RoleName.godfather]!['type']
           ..heart = allRoles[RoleName.godfather]!['heart'];
       case RoleName.watson:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.watson]!['roleName']
           ..description = allRoles[RoleName.watson]!['description']
           ..type = allRoles[RoleName.watson]!['type']
           ..heart = allRoles[RoleName.watson]!['heart'];
       case RoleName.leon:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.leon]!['roleName']
           ..description = allRoles[RoleName.leon]!['description']
           ..type = allRoles[RoleName.leon]!['type']
           ..heart = allRoles[RoleName.leon]!['heart'];
       case RoleName.kane:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.kane]!['roleName']
           ..description = allRoles[RoleName.kane]!['description']
           ..type = allRoles[RoleName.kane]!['type']
           ..heart = allRoles[RoleName.kane]!['heart'];
       case RoleName.konstantin:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.konstantin]!['roleName']
           ..description = allRoles[RoleName.konstantin]!['description']
           ..type = allRoles[RoleName.konstantin]!['type']
           ..heart = allRoles[RoleName.konstantin]!['heart'];
       case RoleName.nostradamous:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.nostradamous]!['roleName']
           ..description = allRoles[RoleName.nostradamous]!['description']
           ..type = allRoles[RoleName.nostradamous]!['type']
           ..heart = allRoles[RoleName.nostradamous]!['heart'];
       case RoleName.saul:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.saul]!['roleName']
           ..description = allRoles[RoleName.saul]!['description']
           ..type = allRoles[RoleName.saul]!['type']
           ..heart = allRoles[RoleName.saul]!['heart'];
       case RoleName.matador:
         return Player()
+          ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.matador]!['roleName']
           ..description = allRoles[RoleName.matador]!['description']
           ..type = allRoles[RoleName.matador]!['type']
           ..heart = allRoles[RoleName.matador]!['heart'];
     }
   }
+
+  // override toString method for Player
+
+  String playerToString(bool brief) {
+    if (brief) {
+      return "PlayerName: $playerName, RoleName: $roleName, Type: $type, Heart: $heart";
+    }
+    return "playerName: $playerName \nroleName: $roleName \ndescription: $description \ntype: $type \nheart: $heart \ncode: $code \nisBlocked: $isBlocked \nhandCuffed: $handCuffed \nisReversible: $isReversible \nisSaved: $isSaved \ndisclosured: $disclosured \nnightDone: $nightDone \nisSavedOnce: $isSavedOnce \nshotCount: $shotCount \nhasGussed: $hasGussed \nhasReturned: $hasReturned \nwhichSideWillWin: $whichSideWillWin \nhasBuyed: $hasBuyed \nhasBeenSlaughtered: $hasBeenSlaughtered";
+  }
+
+  // a getter for checking if a player is in a give list of players
 
   // a getter for checking alive players (whose hearts are not 0)
   bool get isAlive => heart != 0;

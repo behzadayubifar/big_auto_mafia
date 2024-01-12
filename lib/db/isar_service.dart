@@ -1,10 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:auto_mafia/db/entities/game_status.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'isar_service.g.dart';
@@ -31,7 +32,6 @@ Future<List<Player?>> alivePlayers(AlivePlayersRef ref) async {
 
 class IsarService {
   final Isar isar;
-  static late List<Player> players;
 
   IsarService(this.isar);
 
@@ -55,25 +55,34 @@ class IsarService {
   }
 
   /// initialize players `isar.writeTxnSync(() => isar.players.putAllSync(players));`
-  void initializePlayers(List<Map<String, RoleName>> players) async {
-    isar.writeTxnSync(() => isar.players.putAllSync(
+  Future<void> initializePlayers(List<Map<String, RoleName>> players) async {
+    isar.writeTxn(() => isar.players.putAll(
           players
               .map((player) => Player.initializeBasedOnRole(player))
               .toList(),
         ));
+
+    // ToDo: remove this part
+    // jsut for testing
+    final List<Player?> insertedPlayers = await alivePlayers();
+    if (insertedPlayers.isNotEmpty) {
+      for (var player in insertedPlayers) {
+        log(player!.playerToString(true), name: 'inserted Players');
+      }
+    }
   }
 
-  Future<List<Player>> getAllPlayers() async =>
+  Future<List<Player>> getAllPlayers() =>
       isar.players.where(distinct: true).findAll();
 
-  Future<Player?> getPlayerByName(String playerName) async =>
+  Future<Player?> getPlayerByName(String playerName) =>
       isar.players.filter().playerNameEqualTo(playerName).findFirst();
 
-  Future<Player?> getPlayerByRole(RoleName roleName) async =>
+  Future<Player?> getPlayerByRole(RoleName roleName) =>
       isar.players.filter().roleNameEqualTo(roleNames[roleName]!).findFirst();
 
-  void updatePlayer(Player player) =>
-      isar.writeTxnSync(() => isar.players.putSync(isar.players
+  Future<void> updatePlayer(Player player) =>
+      isar.writeTxnSync(() => isar.players.put(isar.players
           .filter()
           .playerNameEqualTo(player.playerName)
           .findFirstSync()!
@@ -87,28 +96,43 @@ class IsarService {
             isReversible: player.isReversible,
           )));
 
-  void updatePlayers(List<Player> players) =>
+  Future<void> updatePlayers(List<Player> players) async =>
       isar.writeTxnSync(() => isar.players.putAllSync(players));
 
-  Future<void> deletePlayer(Player player) =>
-      isar.writeTxnSync(() => isar.players.delete(player.id!));
+  Future<String?> deletePlayer(String playerName) async {
+    final playerToDelete = await getPlayerByName(playerName);
+    if (playerToDelete != null) {
+      bool isDeleted =
+          await isar.writeTxn(() => isar.players.delete(playerToDelete.id!));
+      // ToDo: remove this part
+      // jsut for testing
+      if (isDeleted) {
+        log('player deleted', name: 'deletePlayer');
+        return playerToDelete.playerName;
+      }
+    } else {
+      log('player not found', name: 'deletePlayer');
+    }
+    return null;
+  }
 
-  Future<void> deletePlayers(List<Player> players) => isar.writeTxnSync(
-      () => isar.players.deleteAll(players.map((e) => e.id!).toList()));
+  Future<void> deletePlayers(List<Player> players) async {
+    final playersToDelete = await isar.writeTxnSync(
+        () => isar.players.deleteAll(players.map((e) => e.id!).toList()));
+  }
 
-  Future<void> deleteAllPlayers() =>
-      isar.writeTxnSync(() => isar.players.deleteAll(
-            players.map((e) => e.id!).toList(),
-          ));
+  Future<void> deleteAllPlayers() async =>
+      isar.writeTxn(() => isar.players.clear());
+  //isar.writeTxnSync(() => isar.players.deleteAll());
 
-  Future<List<Player?>> alivePlayers() =>
+  Future<List<Player?>> alivePlayers() async =>
       isar.players.filter().isAliveEqualTo(true).findAll();
 
   Future<List<Player?>> deadPlayers() =>
       isar.players.filter().isAliveEqualTo(false).findAll();
 
   Future<int> alivePlayersCount() =>
-      isar.players.filter().isAliveEqualTo(true).count();
+      isar.writeTxn(() => isar.players.filter().isAliveEqualTo(true).count());
 
   Future<int> deadPlayersCount() =>
       isar.players.filter().isAliveEqualTo(false).count();
@@ -170,8 +194,11 @@ class IsarService {
       isar.writeTxnSync(() => isar.nights.put(Night()..nightCode = nightCode));
 
   // get night code
-  int? getNightCode() =>
-      isar.nights.where(distinct: true).findAllSync().last.nightCode;
+  Future<int?> getNightCode() async {
+    final code = isar.nights.where(distinct: true).findAllSync().last.nightCode;
+    print(code);
+    return code;
+  }
 
   // update day number
   updateDayNumber(int day) => isar
@@ -189,11 +216,45 @@ class IsarService {
           .findFirstSync()!
           .copy(inComplete: inComplete));
 
+  // update game status
+  updateGameStatus({
+    required int dayNumber,
+    bool? isDay,
+    int? wholeGameTimePassed,
+    List<String>? timeLeft,
+    int? nightCode,
+  }) =>
+      isar.writeTxn(() async {
+        final gameStatus = await isar.gameStatus
+            .filter()
+            .dayNumberEqualTo(dayNumber)
+            .findFirst();
+        if (gameStatus != null) {
+          isar.gameStatus.put(gameStatus.copy(
+            isDay: isDay,
+            wholeGameTimePassed: wholeGameTimePassed,
+            timeLeft: timeLeft,
+            nightCode: nightCode,
+          ));
+        }
+      });
+}
+
   // how to manage which player has done his/her night job
   // and which one has not?
   // and how to differntiate between
-  // 1. handcuff and
-  // 2. block and
+  // | [timeLeft] in Night table |/
+  // timeLeft determines whether the player has done his/her night job or not
+  // (and still were in role panel) here is how it works:
+  //  | if (timeLeft[0] == '') then it must show list of players who has not done their night's jobs yet|
+  //  | if (timeLeft[0] != '') then it must show the role panel of the player who has not done (or mabe done it is determined in next layer) his/her night's job yet|
+  // 1. handcuff and -> in day before next night, make [handCuffed = true]
+  // 2. block and -> not important to determine !!!
   // 3. has done but still were in his/her night panel
+  //  -> [set the nightDone of player to true]
+  //     if (nightDone == true && timeLeft != 0) then the player has done his/her night job
+  //     but stil were in the role panel
   // 4. were in the night panel but has not done his/her night job
-}
+  //  -> if (nightDone == false && timeLeft != 0) then the player has not done his/her night job
+  //     but still were in role panel
+
