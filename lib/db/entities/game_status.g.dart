@@ -63,11 +63,16 @@ int _gameStatusEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.timeLeft.length * 3;
   {
-    for (var i = 0; i < object.timeLeft.length; i++) {
-      final value = object.timeLeft[i];
-      bytesCount += value.length * 3;
+    final list = object.timeLeft;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += value.length * 3;
+        }
+      }
     }
   }
   return bytesCount;
@@ -97,8 +102,8 @@ GameStatus _gameStatusDeserialize(
   object.id = id;
   object.isDay = reader.readBool(offsets[1]);
   object.nightCode = reader.readLongOrNull(offsets[2]);
-  object.timeLeft = reader.readStringList(offsets[3]) ?? [];
-  object.wholeGameTimePassed = reader.readLong(offsets[4]);
+  object.timeLeft = reader.readStringList(offsets[3]);
+  object.wholeGameTimePassed = reader.readLongOrNull(offsets[4]);
   return object;
 }
 
@@ -116,9 +121,9 @@ P _gameStatusDeserializeProp<P>(
     case 2:
       return (reader.readLongOrNull(offset)) as P;
     case 3:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readStringList(offset)) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -420,6 +425,23 @@ extension GameStatusQueryFilter
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> timeLeftIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'timeLeft',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      timeLeftIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'timeLeft',
+      ));
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
       timeLeftElementEqualTo(
     String value, {
@@ -646,7 +668,25 @@ extension GameStatusQueryFilter
   }
 
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      wholeGameTimePassedEqualTo(int value) {
+      wholeGameTimePassedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'wholeGameTimePassed',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      wholeGameTimePassedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'wholeGameTimePassed',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      wholeGameTimePassedEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'wholeGameTimePassed',
@@ -657,7 +697,7 @@ extension GameStatusQueryFilter
 
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
       wholeGameTimePassedGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -671,7 +711,7 @@ extension GameStatusQueryFilter
 
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
       wholeGameTimePassedLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -685,8 +725,8 @@ extension GameStatusQueryFilter
 
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
       wholeGameTimePassedBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -886,13 +926,13 @@ extension GameStatusQueryProperty
     });
   }
 
-  QueryBuilder<GameStatus, List<String>, QQueryOperations> timeLeftProperty() {
+  QueryBuilder<GameStatus, List<String>?, QQueryOperations> timeLeftProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'timeLeft');
     });
   }
 
-  QueryBuilder<GameStatus, int, QQueryOperations>
+  QueryBuilder<GameStatus, int?, QQueryOperations>
       wholeGameTimePassedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'wholeGameTimePassed');
@@ -916,68 +956,63 @@ const NightSchema = CollectionSchema(
       name: r'godfatherChoice',
       type: IsarType.string,
     ),
-    r'inComplete': PropertySchema(
-      id: 1,
-      name: r'inComplete',
-      type: IsarType.string,
-    ),
     r'isNight': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'isNight',
       type: IsarType.bool,
     ),
     r'kaneChoice': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'kaneChoice',
       type: IsarType.string,
     ),
     r'konstantinChoice': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'konstantinChoice',
       type: IsarType.string,
     ),
     r'leonChoice': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'leonChoice',
       type: IsarType.string,
     ),
     r'mafiasShot': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'mafiasShot',
       type: IsarType.string,
     ),
     r'matadorChoice': PropertySchema(
-      id: 7,
+      id: 6,
       name: r'matadorChoice',
       type: IsarType.string,
     ),
     r'nightCode': PropertySchema(
-      id: 8,
+      id: 7,
       name: r'nightCode',
       type: IsarType.long,
     ),
     r'nightNumber': PropertySchema(
-      id: 9,
+      id: 8,
       name: r'nightNumber',
       type: IsarType.long,
     ),
     r'playerNameWhoIsComingBack': PropertySchema(
-      id: 10,
+      id: 9,
       name: r'playerNameWhoIsComingBack',
       type: IsarType.string,
     ),
     r'playersWaitingForDoingTheirNightJob': PropertySchema(
-      id: 11,
+      id: 10,
       name: r'playersWaitingForDoingTheirNightJob',
       type: IsarType.stringList,
     ),
     r'saulChoice': PropertySchema(
-      id: 12,
+      id: 11,
       name: r'saulChoice',
       type: IsarType.string,
     ),
     r'watsonChoice': PropertySchema(
-      id: 13,
+      id: 12,
       name: r'watsonChoice',
       type: IsarType.string,
     )
@@ -1003,12 +1038,6 @@ int _nightEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.godfatherChoice.length * 3;
-  {
-    final value = object.inComplete;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
   bytesCount += 3 + object.kaneChoice.length * 3;
   bytesCount += 3 + object.konstantinChoice.length * 3;
   bytesCount += 3 + object.leonChoice.length * 3;
@@ -1044,20 +1073,19 @@ void _nightSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.godfatherChoice);
-  writer.writeString(offsets[1], object.inComplete);
-  writer.writeBool(offsets[2], object.isNight);
-  writer.writeString(offsets[3], object.kaneChoice);
-  writer.writeString(offsets[4], object.konstantinChoice);
-  writer.writeString(offsets[5], object.leonChoice);
-  writer.writeString(offsets[6], object.mafiasShot);
-  writer.writeString(offsets[7], object.matadorChoice);
-  writer.writeLong(offsets[8], object.nightCode);
-  writer.writeLong(offsets[9], object.nightNumber);
-  writer.writeString(offsets[10], object.playerNameWhoIsComingBack);
+  writer.writeBool(offsets[1], object.isNight);
+  writer.writeString(offsets[2], object.kaneChoice);
+  writer.writeString(offsets[3], object.konstantinChoice);
+  writer.writeString(offsets[4], object.leonChoice);
+  writer.writeString(offsets[5], object.mafiasShot);
+  writer.writeString(offsets[6], object.matadorChoice);
+  writer.writeLong(offsets[7], object.nightCode);
+  writer.writeLong(offsets[8], object.nightNumber);
+  writer.writeString(offsets[9], object.playerNameWhoIsComingBack);
   writer.writeStringList(
-      offsets[11], object.playersWaitingForDoingTheirNightJob);
-  writer.writeString(offsets[12], object.saulChoice);
-  writer.writeString(offsets[13], object.watsonChoice);
+      offsets[10], object.playersWaitingForDoingTheirNightJob);
+  writer.writeString(offsets[11], object.saulChoice);
+  writer.writeString(offsets[12], object.watsonChoice);
 }
 
 Night _nightDeserialize(
@@ -1069,20 +1097,19 @@ Night _nightDeserialize(
   final object = Night();
   object.godfatherChoice = reader.readString(offsets[0]);
   object.id = id;
-  object.inComplete = reader.readStringOrNull(offsets[1]);
-  object.isNight = reader.readBool(offsets[2]);
-  object.kaneChoice = reader.readString(offsets[3]);
-  object.konstantinChoice = reader.readString(offsets[4]);
-  object.leonChoice = reader.readString(offsets[5]);
-  object.mafiasShot = reader.readString(offsets[6]);
-  object.matadorChoice = reader.readString(offsets[7]);
-  object.nightCode = reader.readLongOrNull(offsets[8]);
-  object.nightNumber = reader.readLong(offsets[9]);
-  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[10]);
+  object.isNight = reader.readBool(offsets[1]);
+  object.kaneChoice = reader.readString(offsets[2]);
+  object.konstantinChoice = reader.readString(offsets[3]);
+  object.leonChoice = reader.readString(offsets[4]);
+  object.mafiasShot = reader.readString(offsets[5]);
+  object.matadorChoice = reader.readString(offsets[6]);
+  object.nightCode = reader.readLongOrNull(offsets[7]);
+  object.nightNumber = reader.readLong(offsets[8]);
+  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[9]);
   object.playersWaitingForDoingTheirNightJob =
-      reader.readStringList(offsets[11]);
-  object.saulChoice = reader.readString(offsets[12]);
-  object.watsonChoice = reader.readString(offsets[13]);
+      reader.readStringList(offsets[10]);
+  object.saulChoice = reader.readString(offsets[11]);
+  object.watsonChoice = reader.readString(offsets[12]);
   return object;
 }
 
@@ -1096,9 +1123,9 @@ P _nightDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
-    case 2:
       return (reader.readBool(offset)) as P;
+    case 2:
+      return (reader.readString(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
@@ -1108,18 +1135,16 @@ P _nightDeserializeProp<P>(
     case 6:
       return (reader.readString(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
-    case 8:
       return (reader.readLongOrNull(offset)) as P;
-    case 9:
+    case 8:
       return (reader.readLong(offset)) as P;
-    case 10:
+    case 9:
       return (reader.readStringOrNull(offset)) as P;
-    case 11:
+    case 10:
       return (reader.readStringList(offset)) as P;
-    case 12:
+    case 11:
       return (reader.readString(offset)) as P;
-    case 13:
+    case 12:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1409,152 +1434,6 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'inComplete',
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'inComplete',
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'inComplete',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'inComplete',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'inComplete',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inComplete',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> inCompleteIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'inComplete',
-        value: '',
       ));
     });
   }
@@ -3020,18 +2899,6 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
     });
   }
 
-  QueryBuilder<Night, Night, QAfterSortBy> sortByInComplete() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inComplete', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterSortBy> sortByInCompleteDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inComplete', Sort.desc);
-    });
-  }
-
   QueryBuilder<Night, Night, QAfterSortBy> sortByIsNight() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNight', Sort.asc);
@@ -3191,18 +3058,6 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Night, Night, QAfterSortBy> thenByInComplete() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inComplete', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterSortBy> thenByInCompleteDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inComplete', Sort.desc);
-    });
-  }
-
   QueryBuilder<Night, Night, QAfterSortBy> thenByIsNight() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNight', Sort.asc);
@@ -3346,13 +3201,6 @@ extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
     });
   }
 
-  QueryBuilder<Night, Night, QDistinct> distinctByInComplete(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'inComplete', caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<Night, Night, QDistinct> distinctByIsNight() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isNight');
@@ -3448,12 +3296,6 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
   QueryBuilder<Night, String, QQueryOperations> godfatherChoiceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'godfatherChoice');
-    });
-  }
-
-  QueryBuilder<Night, String?, QQueryOperations> inCompleteProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'inComplete');
     });
   }
 

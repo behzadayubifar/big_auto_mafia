@@ -15,6 +15,7 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final _theme = ref.watch(autoMafiaThemeProvider);
+
     return MaterialApp.router(
       title: 'Auto Mafia',
       routerConfig: router,

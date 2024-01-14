@@ -47,9 +47,9 @@ const PlayerSchema = CollectionSchema(
       name: r'hasBuyed',
       type: IsarType.bool,
     ),
-    r'hasGussed': PropertySchema(
+    r'hasGuessed': PropertySchema(
       id: 6,
-      name: r'hasGussed',
+      name: r'hasGuessed',
       type: IsarType.bool,
     ),
     r'hasReturned': PropertySchema(
@@ -243,7 +243,7 @@ void _playerSerialize(
   writer.writeBool(offsets[3], object.handCuffed);
   writer.writeBool(offsets[4], object.hasBeenSlaughtered);
   writer.writeBool(offsets[5], object.hasBuyed);
-  writer.writeBool(offsets[6], object.hasGussed);
+  writer.writeBool(offsets[6], object.hasGuessed);
   writer.writeBool(offsets[7], object.hasReturned);
   writer.writeLong(offsets[8], object.heart);
   writer.writeBool(offsets[9], object.isAlive);
@@ -286,7 +286,7 @@ Player _playerDeserialize(
   object.handCuffed = reader.readBoolOrNull(offsets[3]);
   object.hasBeenSlaughtered = reader.readBoolOrNull(offsets[4]);
   object.hasBuyed = reader.readBoolOrNull(offsets[5]);
-  object.hasGussed = reader.readBool(offsets[6]);
+  object.hasGuessed = reader.readBool(offsets[6]);
   object.hasReturned = reader.readBool(offsets[7]);
   object.heart = reader.readLongOrNull(offsets[8]);
   object.id = id;
@@ -814,11 +814,11 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterFilterCondition> hasGussedEqualTo(
+  QueryBuilder<Player, Player, QAfterFilterCondition> hasGuessedEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'hasGussed',
+        property: r'hasGuessed',
         value: value,
       ));
     });
@@ -1797,15 +1797,15 @@ extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterSortBy> sortByHasGussed() {
+  QueryBuilder<Player, Player, QAfterSortBy> sortByHasGuessed() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'hasGussed', Sort.asc);
+      return query.addSortBy(r'hasGuessed', Sort.asc);
     });
   }
 
-  QueryBuilder<Player, Player, QAfterSortBy> sortByHasGussedDesc() {
+  QueryBuilder<Player, Player, QAfterSortBy> sortByHasGuessedDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'hasGussed', Sort.desc);
+      return query.addSortBy(r'hasGuessed', Sort.desc);
     });
   }
 
@@ -2207,15 +2207,15 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Player, Player, QAfterSortBy> thenByHasGussed() {
+  QueryBuilder<Player, Player, QAfterSortBy> thenByHasGuessed() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'hasGussed', Sort.asc);
+      return query.addSortBy(r'hasGuessed', Sort.asc);
     });
   }
 
-  QueryBuilder<Player, Player, QAfterSortBy> thenByHasGussedDesc() {
+  QueryBuilder<Player, Player, QAfterSortBy> thenByHasGuessedDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'hasGussed', Sort.desc);
+      return query.addSortBy(r'hasGuessed', Sort.desc);
     });
   }
 
@@ -2594,9 +2594,9 @@ extension PlayerQueryWhereDistinct on QueryBuilder<Player, Player, QDistinct> {
     });
   }
 
-  QueryBuilder<Player, Player, QDistinct> distinctByHasGussed() {
+  QueryBuilder<Player, Player, QDistinct> distinctByHasGuessed() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'hasGussed');
+      return query.addDistinctBy(r'hasGuessed');
     });
   }
 
@@ -2808,9 +2808,9 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Player, bool, QQueryOperations> hasGussedProperty() {
+  QueryBuilder<Player, bool, QQueryOperations> hasGuessedProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'hasGussed');
+      return query.addPropertyName(r'hasGuessed');
     });
   }
 

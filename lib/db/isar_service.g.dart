@@ -48,5 +48,21 @@ final alivePlayersProvider = AutoDisposeFutureProvider<List<Player?>>.internal(
 );
 
 typedef AlivePlayersRef = AutoDisposeFutureProviderRef<List<Player?>>;
+String _$nightJsonHash() => r'def46027e4397de3941f18345602f252ce0c3573';
+
+/// See also [nightJson].
+@ProviderFor(nightJson)
+final nightJsonProvider =
+    AutoDisposeFutureProvider<Either<Map<String, String>, bool>>.internal(
+  nightJson,
+  name: r'nightJsonProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$nightJsonHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef NightJsonRef
+    = AutoDisposeFutureProviderRef<Either<Map<String, String>, bool>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
