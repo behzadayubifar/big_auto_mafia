@@ -173,9 +173,13 @@ _saul(String chosenPlayerName) async {
 //TODO: handle when saul can do his job in ui & night must be restarted (in fact, in at the begining of godToDay or even before it !!!)
 /// godToDay logic
 /// """the core brain of decisions""";
-godToDay(Map<String, String?> json) async {
+godToDay(Map<String, String?> json, {bool toDay = true}) async {
   // requirements
   final isar = await _container.read(isarServiceProvider.future);
+  // ----------------------------------------------------------------------
+  final int dayNumber = await isar.getDayNumber();
+  final int nightNumber = await isar.getNightNumber();
+  // ----------------------------------------------------------------------
   final allPlayers = await isar.getAllPlayers();
   final mafiaShot = json["mafiasShot"];
   final godFatherChoice = await isar.getPlayerByName(json["godfatherChoice"]!);
@@ -187,62 +191,73 @@ godToDay(Map<String, String?> json) async {
   final matadorChoice = await isar.getPlayerByName(json["matadorChoice"]!);
   final saulChoice = await isar.getPlayerByName(json["saulChoice"]!);
   final nightBlocked = await json["matadorChoice"];
-  // print(allPlayers);
-  // print('watson = ${allPlayers[roleNames[RoleName.watson]]}');
-  // print(
-  //     "nightBlocked = $nightBlocked and watson = ${allPlayers[roleNames[RoleName.watson]]}");
-  // final bool a = nightBlocked == allPlayers[roleNames[RoleName.watson]];
-  // print(a);
+  final int? nightCode = (await isar.getPlayerByName(nightBlocked!))!.code;
 
-  //--
-  // final nightSaved = await json["watsonChoice"];
-  // ----------------------------------------------------------------------------------
+  // TODO: handle the `handcuffed` players in ui & show them the specific page
+  // TODO: handle the `slaughter` and `shot` for godfather and mafia in ui to do only one of them at one night
 
-  // matador choice for blocking
-  if (matadorChoice != null) await _matador(matadorChoice.playerName!);
+  if (toDay) {
+    // matador choice for blocking
+    if (matadorChoice != null) await _matador(matadorChoice.playerName!);
 
-  // watson choice for saving
+    // watson choice for saving
 
-  if (watsonChoice != null &&
-      nightBlocked != allPlayers[roleNames[RoleName.watson]])
-    await _watson(watsonChoice.playerName!);
+    if (watsonChoice != null &&
+        nightBlocked != allPlayers[roleNames[RoleName.watson]])
+      await _watson(watsonChoice.playerName!);
 
-  // saul choice for blocking
-  if (saulChoice != null) await _saul(saulChoice.playerName!);
+    // saul choice for blocking
+    if (saulChoice != null) await _saul(saulChoice.playerName!);
 
-  // mafia shot
-  if (mafiaShot != null) {
-    await _mafiaShoot(
-      mafiaShot,
+    // mafia shot
+    if (mafiaShot != null) await _mafiaShoot(mafiaShot);
+
+    // godfather choice for slaughter
+    if (godFatherChoice != null)
+      await _godfatherSlaughter(godFatherChoice.playerName!);
+
+    // leon choice for shooting
+    if (leonChoice != null &&
+        nightBlocked != allPlayers[roleNames[RoleName.leon]])
+      await _leon(leonChoice.playerName!);
+
+    // kane choice for guessing
+    if (kaneChoice != null &&
+        nightBlocked != allPlayers[roleNames[RoleName.kane]])
+      await _kane(kaneChoice.playerName!);
+
+    // konstantin choice for returning
+    if (konstantinChoice != null &&
+        nightBlocked != allPlayers[roleNames[RoleName.konstantin]])
+      await _konstantin(konstantinChoice.playerName!);
+
+    // at the end -> update day number
+    final bool GameStatusInserted = await isar.putGameStatus(
+      dayNumber: dayNumber + 1,
+      isDay: true,
+      nightCode: nightCode,
     );
+    log('GameStatusInserted: $GameStatusInserted');
+  } else {
+    // *going to night* -> update players' nightDone to false
+    for (final player in allPlayers.values) {
+      await isar.updatePlayer(
+        playerName: player.playerName!,
+        nightDone: false,
+      );
+    }
+    // update night number
+    final bool newNightInserted = await isar.putNight(
+      night: (await isar.getNightNumber()) + 1,
+    );
+
+    // insert new game status
+    final bool GameStatusInserted = await isar.putGameStatus(
+      dayNumber: dayNumber + 1,
+      isDay: false,
+    );
+
+    log('newNightInserted: $newNightInserted');
+    //
   }
-
-  // godfather choice for slaughter
-  if (godFatherChoice != null)
-    await _godfatherSlaughter(godFatherChoice.playerName!);
-
-  // leon choice for shooting
-  if (leonChoice != null && nightBlocked != allPlayers['leon'])
-    await _leon(leonChoice.playerName!);
-
-  // kane choice for guessing
-  if (kaneChoice != null) await _kane(kaneChoice.playerName!);
-
-  // konstantin choice for returning
-  if (konstantinChoice != null) await _konstantin(konstantinChoice.playerName!);
-
-  // at the end -> update day number
-  final bool GameStatusInserted =
-      await isar.putGameStatus(dayNumber: await isar.getDayNumber() + 1);
-  log('GameStatusInserted: $GameStatusInserted');
-}
-
-// godToNight logic
-godToNight() async {
-  // requirements
-  final isar = await _container.read(isarServiceProvider.future);
-  // ----------------------------------------------------------------------
-
-  // update night number
-  isar.updateNightNumber(await isar.getNightNumber() + 1);
 }

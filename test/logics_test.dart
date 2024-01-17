@@ -63,7 +63,7 @@ void main() {
       //   print(player.playerToString(true));
       // }
       // assert
-      final playerNumber = await isar.alivePlayersCount();
+      final playerNumber = (await isar.retrievePlayer()).count;
 
       expect(playerNumber, 5);
     },
@@ -104,14 +104,15 @@ void main() {
   test('getting all dead players from db', () async {
     // arrange
     // act
-    final List<Player?> players = await isar.deadPlayers();
+    final List<Player?> players =
+        (await isar.retrievePlayer(isAlive: false)).players;
     if (players.isNotEmpty) {
       for (var player in players) {
         print(player!.playerToString(true));
       }
     }
     // assert
-    expect(await isar.deadPlayersCount(), 0);
+    expect((await isar.retrievePlayer()).count, 0);
   });
 
   // clearing all players from db

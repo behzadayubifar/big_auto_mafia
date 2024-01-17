@@ -65,8 +65,8 @@ void main() {
       await isar.initializePlayers(players);
 
       // assert
-      final alivePlayersCount = await isar.alivePlayersCount();
-      expect(alivePlayersCount, 11);
+      final alivePlayersCount = await isar.retrievePlayer();
+      expect(alivePlayersCount.count, 11);
     },
   );
 
@@ -75,43 +75,62 @@ void main() {
     test('mafia shoots watson', () async {
       // arrange
       final watson = await isar.getPlayerByName('Fateme');
+      final leon = await isar.getPlayerByName('Behzad');
+      final godfather = await isar.getPlayerByName('Morteza');
+
+      late final alivePlayers;
+      late final deadPlayers;
 
       final toNight = await isar.getNightNumber();
       log('toNight: $toNight');
 
-      // act 0 : initialize night
-      final isNightInitialized = await isar.putNightChoices(night: toNight);
-      log('isNightInitialized: $isNightInitialized');
-
       // act 1 : mafia shot watson
-      final isMafiaShotInserted = await isar.putNightChoices(
-          night: toNight, mafiasShot: watson!.playerName);
+      final isMafiaShotInserted =
+          await isar.putNight(night: toNight, mafiasShot: watson!.playerName);
       log('isMafiaShotInserted: $isMafiaShotInserted');
 
       // act 2 : watson saved herself
-      final isWatsonChoiceInserted = await isar.putNightChoices(
-          night: toNight, watsonChoice: watson.playerName);
+      final isWatsonChoiceInserted =
+          await isar.putNight(night: toNight, watsonChoice: watson.playerName);
       log('isWatsonChoiceInserted: $isWatsonChoiceInserted');
       print('watson: ${watson.playerName}');
 
       // act 2 : matador blocked watson
-      await isar.putNightChoices(
-          night: toNight, matadorChoice: watson.playerName);
+      await isar.putNight(night: toNight, matadorChoice: watson.playerName);
 
-      final json = await (isar.getNightChoicesOfNightN(n: toNight))
+      // act 3 : leon shot matador -> matador must be dead
+      await isar.putNight(night: toNight, leonChoice: leon!.playerName);
+
+      // act 4 : kane guessed godfather -> godfather must be disclosured
+      await isar.putNight(night: toNight, kaneChoice: godfather!.playerName);
+
+      // finally => god to day
+      final json = await (isar.retrieveNightN(n: toNight))
           .then((json) => json.match((json) => json, (_) => null));
       log('json: $json');
-
       await godToDay(json!);
 
       // assert
+
       // late final int watsonHeart;
       final int watsonHeart = await isar
           .getPlayerByRole(RoleName.watson)
           .then((watson) => watson!.heart!);
       expect(toNight, 0);
-      // expect(watsonHeart, 1);
+
+      // expect watson's Heart
       expect(watsonHeart, 0);
+
+      // alive Players Count
+      // matador and watson must be dead
+      alivePlayers = await isar.retrievePlayer();
+      print('alivePlayersList: ${alivePlayers.players}');
+      expect(alivePlayers.count, 9);
+
+      // dead Players Count
+      deadPlayers = await isar.retrievePlayer(isAlive: false);
+      print('deadPlayersList: ${deadPlayers.players}');
+      expect(deadPlayers.count, 2);
     });
   });
 }

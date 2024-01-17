@@ -24,9 +24,10 @@ Future<IsarService> isarService(IsarServiceRef ref) async {
 
 // live data for alive players
 @riverpod
-Future<List<Player?>> alivePlayers(AlivePlayersRef ref) async {
+Future<({int count, List<Player> players})> alivePlayers(
+    AlivePlayersRef ref) async {
   final isar = await ref.watch(isarServiceProvider.future);
-  return isar.alivePlayers();
+  return await isar.retrievePlayer();
 }
 
 @riverpod
@@ -34,7 +35,7 @@ Future<Either<Map<String, String>, bool>> nightJson(NightJsonRef ref) async {
   final isar = await ref.watch(isarServiceProvider.future);
   final night = await isar.getNightNumber();
   print('night: $night');
-  return isar.getNightChoicesOfNightN(n: night);
+  return isar.retrieveNightN(n: night);
 }
 
 // get the isar service
@@ -76,7 +77,7 @@ class IsarService {
 
     // ToDo: remove this part
     // jsut for testing
-    final List<Player?> insertedPlayers = await alivePlayers();
+    final List<Player?> insertedPlayers = (await retrievePlayer()).players;
     if (insertedPlayers.isNotEmpty) {
       for (var player in insertedPlayers) {
         log(player!.playerToString(true), name: 'inserted Players');
@@ -126,7 +127,6 @@ class IsarService {
             .findFirst();
         if (playerToUpdate != null) {
           print('playerToUpdate: ${playerToUpdate.playerName}');
-          print('new heart must be $heart');
           playerToUpdate = playerToUpdate.copy(
             isBlocked: isBlocked,
             isSaved: isSaved,
@@ -235,24 +235,27 @@ class IsarService {
 
   Future<void> clearPlayers() async =>
       isar.writeTxn(() => isar.players.clear());
-//isar.writeTxnSync(() => isar.players.deleteAll());
 
-  Future<List<Player?>> alivePlayers() async =>
-      isar.players.filter().isAliveEqualTo(true).findAll();
-
-  Future<List<Player?>> deadPlayers() =>
-      isar.players.filter().isAliveEqualTo(false).findAll();
-
-  Future<int> alivePlayersCount() =>
-      isar.writeTxn(() => isar.players.filter().isAliveEqualTo(true).count());
-
-  Future<int> deadPlayersCount() =>
-      isar.players.filter().isAliveEqualTo(false).count();
+  // Golden method to retrieve desired player(s)
+  Future<({int count, List<Player> players})> retrievePlayer({
+    bool isAlive = true,
+    Player Function(Player player)? criteria,
+  }) async {
+    final List<Player> players = await isar.players
+        .filter()
+        .isAliveEqualTo(isAlive)
+        .findAll()
+        .then((player) =>
+            player.map(criteria ?? (Player player) => player).toList());
+    final int count = players.length;
+    final result = (count: count, players: players);
+    return result;
+  }
 
 // night choices
 
   /// alwasys use this only before
-  Future<bool> putNightChoices({
+  Future<bool> putNight({
     required int night,
     String? mafiasShot,
     String? godfatherChoice,
@@ -269,20 +272,16 @@ class IsarService {
         log('tonightChoices: ${tonightChoices?.toString() ?? 'tonightChoices is null'}',
             name: 'putNightChoices');
         if (tonightChoices != null) {
-          tonightChoices.mafiasShot = mafiasShot ?? tonightChoices.mafiasShot;
-          tonightChoices.watsonChoice =
-              watsonChoice ?? tonightChoices.watsonChoice;
-          tonightChoices.godfatherChoice =
-              godfatherChoice ?? tonightChoices.godfatherChoice;
-          tonightChoices.leonChoice = leonChoice ?? tonightChoices.leonChoice;
-          tonightChoices.kaneChoice = kaneChoice ?? tonightChoices.kaneChoice;
-          tonightChoices.konstantinChoice =
-              konstantinChoice ?? tonightChoices.konstantinChoice;
-          tonightChoices.matadorChoice =
-              matadorChoice ?? tonightChoices.matadorChoice;
-          tonightChoices.saulChoice = saulChoice ?? tonightChoices.saulChoice;
-
-          await isar.nights.put(tonightChoices);
+          await isar.nights.put(tonightChoices.copy(
+            mafiasShot: mafiasShot,
+            godfatherChoice: godfatherChoice,
+            leonChoice: leonChoice,
+            kaneChoice: kaneChoice,
+            konstantinChoice: konstantinChoice,
+            watsonChoice: watsonChoice,
+            matadorChoice: matadorChoice,
+            saulChoice: saulChoice,
+          ));
           log('tonightChoices updated successfully', name: 'putNightChoices');
           return true;
         } else {
@@ -307,20 +306,7 @@ class IsarService {
         return false;
       });
 
-  // isar.nights.put(
-  //   nightChoices.copy(
-  //     mafiasShot: mafiasShot,
-  //     godfatherChoice: godfatherChoice,
-  //     leonChoice: leonChoice,
-  //     kaneChoice: kaneChoice,
-  //     konstantinChoice: konstantinChoice,
-  //     watsonChoice: watsonChoice,
-  //     matadorChoice: matadorChoice,
-  //     saulChoice: saulChoice,
-  //   ),
-  // ),
-
-  Future<Either<Map<String, String>, bool>> getNightChoicesOfNightN({
+  Future<Either<Map<String, String>, bool>> retrieveNightN({
     required int n,
   }) async {
     final Night? nightChoices =
@@ -343,8 +329,8 @@ class IsarService {
   }
 
   /// add new night number to the database
-  updateNightNumber(int night) =>
-      isar.writeTxnSync(() => isar.nights.put(Night()..nightNumber = night));
+  // updateNightNumber(int night) =>
+  //     isar.writeTxnSync(() => isar.nights.put(Night()..nightNumber = night));
 
   /// get night number
   Future<int> getNightNumber() async {
@@ -371,8 +357,9 @@ class IsarService {
 
 //TODO: remove updateNumber method because putGameStatus method is enough
   /// update day number
-  updateDayNumber(int day) =>
-      isar.writeTxn(() => isar.gameStatus.put(GameStatus()..dayNumber = day));
+  // updateDayNumber(int day) async {
+  //   return isar.writeTxn(() => isar.gameStatus.put(GameStatus()..dayNumber = day));
+  // }
 
   /// get day number
   Future<int> getDayNumber() async {
@@ -403,27 +390,22 @@ class IsarService {
         ..wholeGameTimePassed = wholeGameTimePassed
         ..timeLeft = timeLeft
         ..nightCode = nightCode;
-      final int id = await isar.writeTxn(() => isar.gameStatus.put(gameStatus));
-      if (id != 0) {
-        log('game status *inserted* successfully', name: 'insertGameStatus');
-        return true;
-      }
+      isar.writeTxn(() => isar.gameStatus.put(gameStatus));
+      log('game status *inserted* successfully', name: 'insertGameStatus');
+      return true;
     }
     // game status already exists
     else {
-      final int id =
-          await isar.writeTxn(() => isar.gameStatus.put(alreadyExists.copy(
-                isDay: isDay,
-                wholeGameTimePassed: wholeGameTimePassed,
-                timeLeft: timeLeft,
-                nightCode: nightCode,
-              )));
-      if (id != 0) {
-        log('game status *updated* successfully', name: 'insertGameStatus');
-        return true;
-      }
+      isar.writeTxn(() => isar.gameStatus.put(alreadyExists.copy(
+            isDay: isDay,
+            wholeGameTimePassed: wholeGameTimePassed,
+            timeLeft: timeLeft,
+            nightCode: nightCode,
+          )));
+
+      log('game status *updated* successfully', name: 'insertGameStatus');
+      return true;
     }
-    return false;
   }
 
   /// delete all game status
@@ -467,28 +449,6 @@ class IsarService {
       return false;
     }
   }
-
-  /// update game status
-  // Future<bool> updateGameStatus({
-  //   required int dayNumber,
-  //   bool? isDay,
-  //   int? wholeGameTimePassed,
-  //   List<String>? timeLeft,
-  //   int? nightCode,
-  // }) =>
-  //     isar.writeTxn(() async {
-  //       final gameStatus = await isar.gameStatus
-  //           .filter()
-  //           .dayNumberEqualTo(dayNumber)
-  //           .findFirst();
-  //       if (gameStatus != null) {
-  //         isar.gameStatus.put(gameStatus.copy(
-  //           isDay: isDay,
-  //           wholeGameTimePassed: wholeGameTimePassed,
-  //           timeLeft: timeLeft,
-  //           nightCode: nightCode,
-  //         ));
-  //         log('game status updated successfully', name: 'updateGameStatus');
 }
 
 // how to manage which player has done his/her night job

@@ -34,11 +34,12 @@ final isarServiceProvider = AutoDisposeFutureProvider<IsarService>.internal(
 );
 
 typedef IsarServiceRef = AutoDisposeFutureProviderRef<IsarService>;
-String _$alivePlayersHash() => r'47f9688a3e6c90149bb1e57de1a1c93a7ad80e51';
+String _$alivePlayersHash() => r'4a2fdae36cc7673cf1ecd48e6e393788ce4481fd';
 
 /// See also [alivePlayers].
 @ProviderFor(alivePlayers)
-final alivePlayersProvider = AutoDisposeFutureProvider<List<Player?>>.internal(
+final alivePlayersProvider =
+    AutoDisposeFutureProvider<({int count, List<Player> players})>.internal(
   alivePlayers,
   name: r'alivePlayersProvider',
   debugGetCreateSourceHash:
@@ -47,7 +48,8 @@ final alivePlayersProvider = AutoDisposeFutureProvider<List<Player?>>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef AlivePlayersRef = AutoDisposeFutureProviderRef<List<Player?>>;
+typedef AlivePlayersRef
+    = AutoDisposeFutureProviderRef<({int count, List<Player> players})>;
 String _$nightJsonHash() => r'def46027e4397de3941f18345602f252ce0c3573';
 
 /// See also [nightJson].

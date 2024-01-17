@@ -43,13 +43,15 @@ class GameStatus {
     int? nightCode,
   }) {
     final newStatus = GameStatus()
+      ..id = id
       ..isDay = isDay ?? this.isDay
       ..dayNumber = dayNumber ?? this.dayNumber
       ..wholeGameTimePassed = wholeGameTimePassed ?? this.wholeGameTimePassed
       ..timeLeft = timeLeft ?? this.timeLeft
       ..nightCode = nightCode ?? this.nightCode;
     //
-    log('newStatus: ${newStatus.toString()}');
+    log('newStatus: ${newStatus.toString()} with id: ${newStatus.id}',
+        name: 'game_status');
     //
     return newStatus;
   }
@@ -84,42 +86,39 @@ class Night {
   // saul : {person: "behzad"}
   String saulChoice = "";
 
-// TODO: this didn't work correctly
-  // Night copy({
-  //   int? nightNumber,
-  //   List<String>? playersWaitingForDoingTheirNightJob,
-  //   int? timeLeft,
-  //   String? inComplete,
-  //   int? nightCode,
-  //   bool? isNight,
-  //   String? playerNameWhoIsComingBack,
-  //   String? mafiasShot,
-  //   String? godfatherChoice,
-  //   String? leonChoice,
-  //   String? kaneChoice,
-  //   String? konstantinChoice,
-  //   String? watsonChoice,
-  //   String? matadorChoice,
-  //   String? saulChoice,
-  // }) =>
-  //     Night()
-  //       ..id = id
-  //       ..nightNumber = nightNumber ?? this.nightNumber
-  //       ..playersWaitingForDoingTheirNightJob =
-  //           playersWaitingForDoingTheirNightJob ??
-  //               this.playersWaitingForDoingTheirNightJob
-  //       ..nightCode = nightCode ?? this.nightCode
-  //       ..isNight = isNight ?? this.isNight
-  //       ..playerNameWhoIsComingBack =
-  //           playerNameWhoIsComingBack ?? this.playerNameWhoIsComingBack
-  //       ..mafiasShot = mafiasShot ?? this.mafiasShot
-  //       ..godfatherChoice = godfatherChoice ?? this.godfatherChoice
-  //       ..leonChoice = leonChoice ?? this.leonChoice
-  //       ..kaneChoice = kaneChoice ?? this.kaneChoice
-  //       ..konstantinChoice = konstantinChoice ?? this.konstantinChoice
-  //       ..watsonChoice = watsonChoice ?? this.watsonChoice
-  //       ..matadorChoice = matadorChoice ?? this.matadorChoice
-  //       ..saulChoice = saulChoice ?? this.saulChoice;
+  Night copy({
+    int? nightNumber,
+    List<String>? playersWaitingForDoingTheirNightJob,
+    int? nightCode,
+    bool? isNight,
+    String? playerNameWhoIsComingBack,
+    String? mafiasShot,
+    String? godfatherChoice,
+    String? leonChoice,
+    String? kaneChoice,
+    String? konstantinChoice,
+    String? watsonChoice,
+    String? matadorChoice,
+    String? saulChoice,
+  }) =>
+      Night()
+        ..id = id
+        ..nightNumber = nightNumber ?? this.nightNumber
+        ..playersWaitingForDoingTheirNightJob =
+            playersWaitingForDoingTheirNightJob ??
+                this.playersWaitingForDoingTheirNightJob
+        ..nightCode = nightCode ?? this.nightCode
+        ..isNight = isNight ?? this.isNight
+        ..playerNameWhoIsComingBack =
+            playerNameWhoIsComingBack ?? this.playerNameWhoIsComingBack
+        ..mafiasShot = mafiasShot ?? this.mafiasShot
+        ..godfatherChoice = godfatherChoice ?? this.godfatherChoice
+        ..leonChoice = leonChoice ?? this.leonChoice
+        ..kaneChoice = kaneChoice ?? this.kaneChoice
+        ..konstantinChoice = konstantinChoice ?? this.konstantinChoice
+        ..watsonChoice = watsonChoice ?? this.watsonChoice
+        ..matadorChoice = matadorChoice ?? this.matadorChoice
+        ..saulChoice = saulChoice ?? this.saulChoice;
 
   @override
   String toString() => """"New Night is:"

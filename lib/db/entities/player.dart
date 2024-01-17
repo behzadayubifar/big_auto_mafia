@@ -23,7 +23,7 @@ class Player {
   // now protocol for matadar: if a player is chosen by matador, his/her isBlocked will be set to true
   // and if isBlocked is false, it means that the player was chosen by matador last night
   // and if isBlocked is null, it means that the player was not chosen by matador last night and can be chosen again
-  bool? isBlocked = false;
+  bool? isBlocked;
   bool? handCuffed;
   bool? isReversible = true;
   bool? isSaved = false;
