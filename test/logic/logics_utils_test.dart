@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   test('code generation', () {
-    final codeSet = generateUniqueCode(11);
+    final codeSet = _generateUniqueCode(11);
     expect(codeSet.length, 11);
   });
 }

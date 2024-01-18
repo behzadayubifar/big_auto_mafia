@@ -69,10 +69,14 @@ class Night {
   bool isNight = false;
   String? playerNameWhoIsComingBack;
 
+  // black list
+
   // mafia : {shoot: true, person: "behzad"}
   String mafiasShot = "";
   // godfahter : {shootOrSlaughter: "slaughter", person: "ali"}
   String godfatherChoice = "";
+  // godfahter : the role for chosen player by godfather to be slaughtered
+  String theRoleGuessedByGodfather = "";
   // leon : {shoot: true, person: "hadi"}
   String leonChoice = '';
   // kane : {guess: true, person: "behzad"}
@@ -83,6 +87,8 @@ class Night {
   String watsonChoice = "";
   // matador : {person: "behzad"}
   String matadorChoice = "";
+  // night of last blockage
+  String nightOfBlockage = "";
   // saul : {person: "behzad"}
   String saulChoice = "";
 
@@ -94,11 +100,13 @@ class Night {
     String? playerNameWhoIsComingBack,
     String? mafiasShot,
     String? godfatherChoice,
+    String? theRoleGuessedByGodfather,
     String? leonChoice,
     String? kaneChoice,
     String? konstantinChoice,
     String? watsonChoice,
     String? matadorChoice,
+    String? nightOfBlockage,
     String? saulChoice,
   }) =>
       Night()
@@ -113,11 +121,14 @@ class Night {
             playerNameWhoIsComingBack ?? this.playerNameWhoIsComingBack
         ..mafiasShot = mafiasShot ?? this.mafiasShot
         ..godfatherChoice = godfatherChoice ?? this.godfatherChoice
+        ..theRoleGuessedByGodfather =
+            theRoleGuessedByGodfather ?? this.theRoleGuessedByGodfather
         ..leonChoice = leonChoice ?? this.leonChoice
         ..kaneChoice = kaneChoice ?? this.kaneChoice
         ..konstantinChoice = konstantinChoice ?? this.konstantinChoice
         ..watsonChoice = watsonChoice ?? this.watsonChoice
         ..matadorChoice = matadorChoice ?? this.matadorChoice
+        ..nightOfBlockage = nightOfBlockage ?? this.nightOfBlockage
         ..saulChoice = saulChoice ?? this.saulChoice;
 
   @override
@@ -129,10 +140,12 @@ class Night {
             "playerNameWhoIsComingBack: $playerNameWhoIsComingBack"
             "mafiasShot: $mafiasShot"
             "godfatherChoice: $godfatherChoice"
+            "theRoleGuessedByGodfather": "$theRoleGuessedByGodfather"
             "leonChoice: $leonChoice"
             "kaneChoice: $kaneChoice"
             "konstantinChoice: $konstantinChoice"
             "watsonChoice: $watsonChoice"
             "matadorChoice: $matadorChoice"
+            "nightOfBlockage: $nightOfBlockage"
             "saulChoice: $saulChoice""";
 }

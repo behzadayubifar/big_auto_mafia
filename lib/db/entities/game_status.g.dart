@@ -996,23 +996,33 @@ const NightSchema = CollectionSchema(
       name: r'nightNumber',
       type: IsarType.long,
     ),
-    r'playerNameWhoIsComingBack': PropertySchema(
+    r'nightOfBlockage': PropertySchema(
       id: 9,
+      name: r'nightOfBlockage',
+      type: IsarType.string,
+    ),
+    r'playerNameWhoIsComingBack': PropertySchema(
+      id: 10,
       name: r'playerNameWhoIsComingBack',
       type: IsarType.string,
     ),
     r'playersWaitingForDoingTheirNightJob': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'playersWaitingForDoingTheirNightJob',
       type: IsarType.stringList,
     ),
     r'saulChoice': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'saulChoice',
       type: IsarType.string,
     ),
+    r'theRoleGuessedByGodfather': PropertySchema(
+      id: 13,
+      name: r'theRoleGuessedByGodfather',
+      type: IsarType.string,
+    ),
     r'watsonChoice': PropertySchema(
-      id: 12,
+      id: 14,
       name: r'watsonChoice',
       type: IsarType.string,
     )
@@ -1043,6 +1053,7 @@ int _nightEstimateSize(
   bytesCount += 3 + object.leonChoice.length * 3;
   bytesCount += 3 + object.mafiasShot.length * 3;
   bytesCount += 3 + object.matadorChoice.length * 3;
+  bytesCount += 3 + object.nightOfBlockage.length * 3;
   {
     final value = object.playerNameWhoIsComingBack;
     if (value != null) {
@@ -1062,6 +1073,7 @@ int _nightEstimateSize(
     }
   }
   bytesCount += 3 + object.saulChoice.length * 3;
+  bytesCount += 3 + object.theRoleGuessedByGodfather.length * 3;
   bytesCount += 3 + object.watsonChoice.length * 3;
   return bytesCount;
 }
@@ -1081,11 +1093,13 @@ void _nightSerialize(
   writer.writeString(offsets[6], object.matadorChoice);
   writer.writeLong(offsets[7], object.nightCode);
   writer.writeLong(offsets[8], object.nightNumber);
-  writer.writeString(offsets[9], object.playerNameWhoIsComingBack);
+  writer.writeString(offsets[9], object.nightOfBlockage);
+  writer.writeString(offsets[10], object.playerNameWhoIsComingBack);
   writer.writeStringList(
-      offsets[10], object.playersWaitingForDoingTheirNightJob);
-  writer.writeString(offsets[11], object.saulChoice);
-  writer.writeString(offsets[12], object.watsonChoice);
+      offsets[11], object.playersWaitingForDoingTheirNightJob);
+  writer.writeString(offsets[12], object.saulChoice);
+  writer.writeString(offsets[13], object.theRoleGuessedByGodfather);
+  writer.writeString(offsets[14], object.watsonChoice);
 }
 
 Night _nightDeserialize(
@@ -1105,11 +1119,13 @@ Night _nightDeserialize(
   object.matadorChoice = reader.readString(offsets[6]);
   object.nightCode = reader.readLongOrNull(offsets[7]);
   object.nightNumber = reader.readLong(offsets[8]);
-  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[9]);
+  object.nightOfBlockage = reader.readString(offsets[9]);
+  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[10]);
   object.playersWaitingForDoingTheirNightJob =
-      reader.readStringList(offsets[10]);
-  object.saulChoice = reader.readString(offsets[11]);
-  object.watsonChoice = reader.readString(offsets[12]);
+      reader.readStringList(offsets[11]);
+  object.saulChoice = reader.readString(offsets[12]);
+  object.theRoleGuessedByGodfather = reader.readString(offsets[13]);
+  object.watsonChoice = reader.readString(offsets[14]);
   return object;
 }
 
@@ -1139,12 +1155,16 @@ P _nightDeserializeProp<P>(
     case 8:
       return (reader.readLong(offset)) as P;
     case 9:
-      return (reader.readStringOrNull(offset)) as P;
-    case 10:
-      return (reader.readStringList(offset)) as P;
-    case 11:
       return (reader.readString(offset)) as P;
+    case 10:
+      return (reader.readStringOrNull(offset)) as P;
+    case 11:
+      return (reader.readStringList(offset)) as P;
     case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
+      return (reader.readString(offset)) as P;
+    case 14:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2220,6 +2240,137 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nightOfBlockage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nightOfBlockage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nightOfBlockage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nightOfBlockage',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nightOfBlockage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nightOfBlockage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nightOfBlockage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nightOfBlockage',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition> nightOfBlockageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nightOfBlockage',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfBlockageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nightOfBlockage',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterFilterCondition>
       playerNameWhoIsComingBackIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -2751,6 +2902,144 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'theRoleGuessedByGodfather',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'theRoleGuessedByGodfather',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'theRoleGuessedByGodfather',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'theRoleGuessedByGodfather',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'theRoleGuessedByGodfather',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'theRoleGuessedByGodfather',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'theRoleGuessedByGodfather',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'theRoleGuessedByGodfather',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'theRoleGuessedByGodfather',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      theRoleGuessedByGodfatherIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'theRoleGuessedByGodfather',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterFilterCondition> watsonChoiceEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2995,6 +3284,18 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterSortBy> sortByNightOfBlockage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nightOfBlockage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByNightOfBlockageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nightOfBlockage', Sort.desc);
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterSortBy> sortByPlayerNameWhoIsComingBack() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'playerNameWhoIsComingBack', Sort.asc);
@@ -3017,6 +3318,19 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
   QueryBuilder<Night, Night, QAfterSortBy> sortBySaulChoiceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'saulChoice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> sortByTheRoleGuessedByGodfather() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'theRoleGuessedByGodfather', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy>
+      sortByTheRoleGuessedByGodfatherDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'theRoleGuessedByGodfather', Sort.desc);
     });
   }
 
@@ -3154,6 +3468,18 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterSortBy> thenByNightOfBlockage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nightOfBlockage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByNightOfBlockageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nightOfBlockage', Sort.desc);
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterSortBy> thenByPlayerNameWhoIsComingBack() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'playerNameWhoIsComingBack', Sort.asc);
@@ -3176,6 +3502,19 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
   QueryBuilder<Night, Night, QAfterSortBy> thenBySaulChoiceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'saulChoice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy> thenByTheRoleGuessedByGodfather() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'theRoleGuessedByGodfather', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy>
+      thenByTheRoleGuessedByGodfatherDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'theRoleGuessedByGodfather', Sort.desc);
     });
   }
 
@@ -3256,6 +3595,14 @@ extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
     });
   }
 
+  QueryBuilder<Night, Night, QDistinct> distinctByNightOfBlockage(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'nightOfBlockage',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Night, Night, QDistinct> distinctByPlayerNameWhoIsComingBack(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3275,6 +3622,14 @@ extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'saulChoice', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Night, Night, QDistinct> distinctByTheRoleGuessedByGodfather(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'theRoleGuessedByGodfather',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -3347,6 +3702,12 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Night, String, QQueryOperations> nightOfBlockageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'nightOfBlockage');
+    });
+  }
+
   QueryBuilder<Night, String?, QQueryOperations>
       playerNameWhoIsComingBackProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -3364,6 +3725,13 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
   QueryBuilder<Night, String, QQueryOperations> saulChoiceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'saulChoice');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations>
+      theRoleGuessedByGodfatherProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'theRoleGuessedByGodfather');
     });
   }
 

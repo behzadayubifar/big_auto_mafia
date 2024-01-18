@@ -31,6 +31,13 @@ Future<({int count, List<Player> players})> alivePlayers(
 }
 
 @riverpod
+Future<({int count, List<Player> players})> deadPlayers(
+    DeadPlayersRef ref) async {
+  final isar = await ref.watch(isarServiceProvider.future);
+  return await isar.retrievePlayer(isAlive: false);
+}
+
+@riverpod
 Future<Either<Map<String, String>, bool>> nightJson(NightJsonRef ref) async {
   final isar = await ref.watch(isarServiceProvider.future);
   final night = await isar.getNightNumber();
@@ -86,7 +93,7 @@ class IsarService {
   }
 
 // output: {roleName: playerName}
-  Future<Map<String, String>> getAllPlayers() async {
+  Future<Map<String, String>> playersRolesMap() async {
     var result = <String, String>{};
     final players = await isar.players.where(distinct: true).findAll();
     if (players.isNotEmpty) {
@@ -118,6 +125,7 @@ class IsarService {
     bool? hasReturned,
     int? heart,
     int? shotCount,
+    int? code,
     RoleType? side,
   }) =>
       isar.writeTxn(() async {
@@ -141,6 +149,7 @@ class IsarService {
             hasReturned: hasReturned,
             heart: heart,
             shotCount: shotCount,
+            code: code,
             whichSideWillWin: side,
           );
           await isar.players.put(playerToUpdate);
@@ -259,11 +268,13 @@ class IsarService {
     required int night,
     String? mafiasShot,
     String? godfatherChoice,
+    String? theRoleGuessedByGodfather,
     String? leonChoice,
     String? kaneChoice,
     String? konstantinChoice,
     String? watsonChoice,
     String? matadorChoice,
+    String? nightOfBlockage,
     String? saulChoice,
   }) =>
       isar.writeTxn(() async {
@@ -275,11 +286,13 @@ class IsarService {
           await isar.nights.put(tonightChoices.copy(
             mafiasShot: mafiasShot,
             godfatherChoice: godfatherChoice,
+            theRoleGuessedByGodfather: theRoleGuessedByGodfather,
             leonChoice: leonChoice,
             kaneChoice: kaneChoice,
             konstantinChoice: konstantinChoice,
             watsonChoice: watsonChoice,
             matadorChoice: matadorChoice,
+            nightOfBlockage: nightOfBlockage,
             saulChoice: saulChoice,
           ));
           log('tonightChoices updated successfully', name: 'putNightChoices');
@@ -289,11 +302,13 @@ class IsarService {
             ..nightNumber = night
             ..mafiasShot = mafiasShot ?? ''
             ..godfatherChoice = godfatherChoice ?? ''
+            ..theRoleGuessedByGodfather = theRoleGuessedByGodfather ?? ''
             ..leonChoice = leonChoice ?? ''
             ..kaneChoice = kaneChoice ?? ''
             ..konstantinChoice = konstantinChoice ?? ''
             ..watsonChoice = watsonChoice ?? ''
             ..matadorChoice = matadorChoice ?? ''
+            ..nightOfBlockage = nightOfBlockage ?? ''
             ..saulChoice = saulChoice ?? '';
           final int id = await isar.nights.put(nightChoices);
           if (id != 0) {
@@ -324,13 +339,10 @@ class IsarService {
           "konstantinChoice": nightChoices.konstantinChoice,
           "watsonChoice": nightChoices.watsonChoice,
           "matadorChoice": nightChoices.matadorChoice,
+          "nightOfBlockage": nightChoices.nightOfBlockage,
           "saulChoice": nightChoices.saulChoice,
         }));
   }
-
-  /// add new night number to the database
-  // updateNightNumber(int night) =>
-  //     isar.writeTxnSync(() => isar.nights.put(Night()..nightNumber = night));
 
   /// get night number
   Future<int> getNightNumber() async {
@@ -354,12 +366,6 @@ class IsarService {
     log('night code is $code', name: 'getNightCode');
     return code;
   }
-
-//TODO: remove updateNumber method because putGameStatus method is enough
-  /// update day number
-  // updateDayNumber(int day) async {
-  //   return isar.writeTxn(() => isar.gameStatus.put(GameStatus()..dayNumber = day));
-  // }
 
   /// get day number
   Future<int> getDayNumber() async {
@@ -448,6 +454,11 @@ class IsarService {
       log('all data clearing failed', name: 'deleteAll');
       return false;
     }
+  }
+
+  // a method for kicking out a player from the game -> his/her heart must be 0
+  Future<bool> kickOutPlayer(String playerName) {
+    return updatePlayer(playerName: playerName, heart: 0);
   }
 }
 
