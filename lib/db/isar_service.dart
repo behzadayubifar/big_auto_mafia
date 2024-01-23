@@ -93,9 +93,21 @@ class IsarService {
   }
 
 // output: {roleName: playerName}
-  Future<Map<String, String>> playersRolesMap() async {
+  Future<Map<String, String>> playersRolesMap({
+    List<String>? playersNames,
+  }) async {
     var result = <String, String>{};
-    final players = await isar.players.where(distinct: true).findAll();
+    List<Player> players = [];
+    if (playersNames != null) {
+      for (String playerName in playersNames) {
+        final Player? player = await getPlayerByName(playerName);
+        if (player != null) {
+          players.add(player);
+        }
+      }
+    } else {
+      players = await isar.players.where(distinct: true).findAll();
+    }
     if (players.isNotEmpty) {
       for (var player in players) {
         result[player.roleName!] = player.playerName!;
@@ -127,6 +139,7 @@ class IsarService {
     int? shotCount,
     int? code,
     RoleType? side,
+    bool? silenced,
   }) =>
       isar.writeTxn(() async {
         var playerToUpdate = await isar.players
@@ -150,6 +163,7 @@ class IsarService {
             heart: heart,
             shotCount: shotCount,
             code: code,
+            silenced: silenced,
             whichSideWillWin: side,
           );
           await isar.players.put(playerToUpdate);
@@ -161,43 +175,15 @@ class IsarService {
         return false;
       });
 
-  Future<List<bool>> updatePlayers(
-    List<Player> players, {
-    bool? isBlocked,
-    bool? isSaved,
-    bool? isSavedOnce,
-    bool? handCuffed,
-    bool? hasGuessed,
-    bool? hasBeenSlaughtered,
-    bool? hasBuyed,
-    bool? nightDone,
-    bool? disclosured,
-    bool? isReversible,
-    bool? hasReturned,
-    int? heart,
-    int? shotCount,
-    RoleType? side,
-  }) async {
+// I doubt this works
+
+  Future<List<bool>> updatePlayers(List<Player> players) async {
     final Map<String, bool> result = {};
     result.addEntries(
         players.map((player) => MapEntry(player.playerName!, false)));
     for (var player in players) {
       final bool isUpdated = await updatePlayer(
         playerName: player.playerName!,
-        isBlocked: isBlocked,
-        isSaved: isSaved,
-        isSavedOnce: isSavedOnce,
-        handCuffed: handCuffed,
-        hasGuessed: hasGuessed,
-        hasBeenSlaughtered: hasBeenSlaughtered,
-        hasBuyed: hasBuyed,
-        nightDone: nightDone,
-        disclosured: disclosured,
-        isReversible: isReversible,
-        hasReturned: hasReturned,
-        heart: heart,
-        shotCount: shotCount,
-        side: side,
       );
       result.update(player.playerName!, (value) => isUpdated);
     }
@@ -461,7 +447,6 @@ class IsarService {
     return updatePlayer(playerName: playerName, heart: 0);
   }
 }
-
 // how to manage which player has done his/her night job
 // and which one has not?
 // and how to differntiate between

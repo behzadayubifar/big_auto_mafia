@@ -28,6 +28,7 @@ class Player {
   bool? isReversible = true;
   bool? isSaved = false;
   bool? disclosured = false;
+  bool? silenced = false;
   // going to day : set to false -for all players-
   bool? nightDone = false;
   // watson-specific
@@ -67,9 +68,11 @@ class Player {
     RoleType? whichSideWillWin,
     bool? hasBuyed,
     bool? hasBeenSlaughtered,
+    bool? silenced,
   }) {
     // return the same instance of player but with new values
     return this
+      ..id = id
       ..playerName = playerName ?? this.playerName
       ..roleName = roleName ?? this.roleName
       ..description = description ?? this.description
@@ -88,7 +91,8 @@ class Player {
       ..hasReturned = hasReturned ?? this.hasReturned
       ..whichSideWillWin = whichSideWillWin ?? this.whichSideWillWin
       ..hasBuyed = hasBuyed ?? this.hasBuyed
-      ..hasBeenSlaughtered = hasBeenSlaughtered ?? this.hasBeenSlaughtered;
+      ..hasBeenSlaughtered = hasBeenSlaughtered ?? this.hasBeenSlaughtered
+      ..silenced = silenced ?? this.silenced;
   }
 
 // use this method for creating a player in isar.services in a loop (that method which has loop in it will take a [*list<Map<String PlayerName, RoleName roleName>>*] and will create them in isar)
