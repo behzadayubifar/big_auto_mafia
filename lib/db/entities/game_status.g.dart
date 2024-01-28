@@ -22,25 +22,45 @@ const GameStatusSchema = CollectionSchema(
       name: r'dayNumber',
       type: IsarType.long,
     ),
-    r'isDay': PropertySchema(
+    r'hashCode': PropertySchema(
       id: 1,
+      name: r'hashCode',
+      type: IsarType.long,
+    ),
+    r'isChaos': PropertySchema(
+      id: 2,
+      name: r'isChaos',
+      type: IsarType.bool,
+    ),
+    r'isDay': PropertySchema(
+      id: 3,
       name: r'isDay',
       type: IsarType.bool,
     ),
+    r'isFinished': PropertySchema(
+      id: 4,
+      name: r'isFinished',
+      type: IsarType.bool,
+    ),
     r'nightCode': PropertySchema(
-      id: 2,
+      id: 5,
       name: r'nightCode',
       type: IsarType.long,
     ),
     r'timeLeft': PropertySchema(
-      id: 3,
+      id: 6,
       name: r'timeLeft',
       type: IsarType.stringList,
     ),
     r'wholeGameTimePassed': PropertySchema(
-      id: 4,
+      id: 7,
       name: r'wholeGameTimePassed',
       type: IsarType.long,
+    ),
+    r'winner': PropertySchema(
+      id: 8,
+      name: r'winner',
+      type: IsarType.string,
     )
   },
   estimateSize: _gameStatusEstimateSize,
@@ -75,6 +95,12 @@ int _gameStatusEstimateSize(
       }
     }
   }
+  {
+    final value = object.winner;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -85,10 +111,14 @@ void _gameStatusSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.dayNumber);
-  writer.writeBool(offsets[1], object.isDay);
-  writer.writeLong(offsets[2], object.nightCode);
-  writer.writeStringList(offsets[3], object.timeLeft);
-  writer.writeLong(offsets[4], object.wholeGameTimePassed);
+  writer.writeLong(offsets[1], object.hashCode);
+  writer.writeBool(offsets[2], object.isChaos);
+  writer.writeBool(offsets[3], object.isDay);
+  writer.writeBool(offsets[4], object.isFinished);
+  writer.writeLong(offsets[5], object.nightCode);
+  writer.writeStringList(offsets[6], object.timeLeft);
+  writer.writeLong(offsets[7], object.wholeGameTimePassed);
+  writer.writeString(offsets[8], object.winner);
 }
 
 GameStatus _gameStatusDeserialize(
@@ -100,10 +130,13 @@ GameStatus _gameStatusDeserialize(
   final object = GameStatus();
   object.dayNumber = reader.readLong(offsets[0]);
   object.id = id;
-  object.isDay = reader.readBool(offsets[1]);
-  object.nightCode = reader.readLongOrNull(offsets[2]);
-  object.timeLeft = reader.readStringList(offsets[3]);
-  object.wholeGameTimePassed = reader.readLongOrNull(offsets[4]);
+  object.isChaos = reader.readBoolOrNull(offsets[2]);
+  object.isDay = reader.readBool(offsets[3]);
+  object.isFinished = reader.readBoolOrNull(offsets[4]);
+  object.nightCode = reader.readLongOrNull(offsets[5]);
+  object.timeLeft = reader.readStringList(offsets[6]);
+  object.wholeGameTimePassed = reader.readLongOrNull(offsets[7]);
+  object.winner = reader.readStringOrNull(offsets[8]);
   return object;
 }
 
@@ -117,13 +150,21 @@ P _gameStatusDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readBool(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 3:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 5:
       return (reader.readLongOrNull(offset)) as P;
+    case 6:
+      return (reader.readStringList(offset)) as P;
+    case 7:
+      return (reader.readLongOrNull(offset)) as P;
+    case 8:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -274,6 +315,60 @@ extension GameStatusQueryFilter
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> hashCodeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      hashCodeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> hashCodeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> hashCodeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hashCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> idIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -343,11 +438,66 @@ extension GameStatusQueryFilter
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> isChaosIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isChaos',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      isChaosIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isChaos',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> isChaosEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isChaos',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> isDayEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isDay',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      isFinishedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isFinished',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      isFinishedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isFinished',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> isFinishedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isFinished',
         value: value,
       ));
     });
@@ -740,6 +890,154 @@ extension GameStatusQueryFilter
       ));
     });
   }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'winner',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      winnerIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'winner',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'winner',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'winner',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'winner',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'winner',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'winner',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'winner',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'winner',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'winner',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> winnerIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'winner',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      winnerIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'winner',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension GameStatusQueryObject
@@ -762,6 +1060,30 @@ extension GameStatusQuerySortBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsChaos() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isChaos', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsChaosDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isChaos', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsDay() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDay', Sort.asc);
@@ -771,6 +1093,18 @@ extension GameStatusQuerySortBy
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsDayDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDay', Sort.desc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsFinished() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFinished', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByIsFinishedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFinished', Sort.desc);
     });
   }
 
@@ -799,6 +1133,18 @@ extension GameStatusQuerySortBy
       return query.addSortBy(r'wholeGameTimePassed', Sort.desc);
     });
   }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByWinner() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'winner', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByWinnerDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'winner', Sort.desc);
+    });
+  }
 }
 
 extension GameStatusQuerySortThenBy
@@ -815,6 +1161,18 @@ extension GameStatusQuerySortThenBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -827,6 +1185,18 @@ extension GameStatusQuerySortThenBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsChaos() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isChaos', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsChaosDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isChaos', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsDay() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDay', Sort.asc);
@@ -836,6 +1206,18 @@ extension GameStatusQuerySortThenBy
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsDayDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDay', Sort.desc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsFinished() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFinished', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByIsFinishedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFinished', Sort.desc);
     });
   }
 
@@ -864,6 +1246,18 @@ extension GameStatusQuerySortThenBy
       return query.addSortBy(r'wholeGameTimePassed', Sort.desc);
     });
   }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByWinner() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'winner', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByWinnerDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'winner', Sort.desc);
+    });
+  }
 }
 
 extension GameStatusQueryWhereDistinct
@@ -874,9 +1268,27 @@ extension GameStatusQueryWhereDistinct
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hashCode');
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByIsChaos() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isChaos');
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByIsDay() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDay');
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByIsFinished() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isFinished');
     });
   }
 
@@ -898,6 +1310,13 @@ extension GameStatusQueryWhereDistinct
       return query.addDistinctBy(r'wholeGameTimePassed');
     });
   }
+
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByWinner(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'winner', caseSensitive: caseSensitive);
+    });
+  }
 }
 
 extension GameStatusQueryProperty
@@ -914,9 +1333,27 @@ extension GameStatusQueryProperty
     });
   }
 
+  QueryBuilder<GameStatus, int, QQueryOperations> hashCodeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hashCode');
+    });
+  }
+
+  QueryBuilder<GameStatus, bool?, QQueryOperations> isChaosProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isChaos');
+    });
+  }
+
   QueryBuilder<GameStatus, bool, QQueryOperations> isDayProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isDay');
+    });
+  }
+
+  QueryBuilder<GameStatus, bool?, QQueryOperations> isFinishedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isFinished');
     });
   }
 
@@ -936,6 +1373,12 @@ extension GameStatusQueryProperty
       wholeGameTimePassedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'wholeGameTimePassed');
+    });
+  }
+
+  QueryBuilder<GameStatus, String?, QQueryOperations> winnerProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'winner');
     });
   }
 }

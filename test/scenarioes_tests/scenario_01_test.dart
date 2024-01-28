@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics.dart';
+import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -71,8 +72,19 @@ void main() {
   );
 
   // night 1
-  group("night 1", () {
-    test('mafia shoots watson', () async {
+  group("night 0 &&  day 0", () {
+    // day 0
+    test('day 0', () async {
+      // arrange
+      final dayNumber = isar.getDayNumber();
+      final nostradamous = await isar.getPlayerByRole(RoleName.nostradamous);
+      print(nostradamous?.playerName);
+
+      // act
+    });
+    test(
+        'mafia shoots watson + watson saved herself + matador blocked watson + leon shot matador + kane guessed godfather',
+        () async {
       // arrange
       final watson = await isar.getPlayerByName('Fateme');
       final leon = await isar.getPlayerByName('Behzad');
@@ -91,7 +103,8 @@ void main() {
 
       // act 2 : watson saved herself
       final isWatsonChoiceInserted =
-          await isar.putNight(night: toNight, watsonChoice: watson.playerName);
+          // await isar.putNight(night: toNight, watsonChoice: watson.playerName);
+          await putWatsonChoice(night: toNight, name: watson.playerName!);
       log('isWatsonChoiceInserted: $isWatsonChoiceInserted');
       print('watson: ${watson.playerName}');
 
@@ -129,7 +142,8 @@ void main() {
 
       // dead Players Count
       deadPlayers = await isar.retrievePlayer(isAlive: false);
-      print('deadPlayersList: ${deadPlayers.players}');
+      final dead = await deadPlayers.players;
+      print('deadPlayersList: ${dead.map((e) => e!.playerName)}');
       expect(deadPlayers.count, 2);
 
       // godfather must be disclosured
@@ -138,6 +152,4 @@ void main() {
       expect(isGodfatherDisclosured, true);
     });
   });
-
-  // day 1
 }

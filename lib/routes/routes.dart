@@ -1,11 +1,13 @@
 import 'package:auto_mafia/ui/assign_roles_page.dart';
 import 'package:auto_mafia/ui/home/home_page.dart';
+import 'package:auto_mafia/ui/ui_widget/naming/naming_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 final routerProvider = Provider<GoRouter>((_) => _router);
 
 final _router = GoRouter(
+  initialLocation: '/naming',
   routes: <RouteBase>[
     GoRoute(
       name: 'home',
@@ -16,6 +18,11 @@ final _router = GoRouter(
       name: 'assign-roles',
       path: '/assign-roles',
       builder: (context, state) => AssignRolesScreen(),
+    ),
+    GoRoute(
+      name: 'naming',
+      path: '/naming',
+      builder: (context, state) => const NamingPage(),
     ),
   ],
 );

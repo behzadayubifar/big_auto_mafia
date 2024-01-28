@@ -157,18 +157,26 @@ class $AssetsIconsGen {
   /// File path: assets/icons/more.png
   AssetGenImage get more => const AssetGenImage('assets/icons/more.png');
 
+  /// File path: assets/icons/number_holder.svg
+  SvgGenImage get numberHolder =>
+      const SvgGenImage('assets/icons/number_holder.svg');
+
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [backIcon, dayIcon, killingIcon, likeHandTumbUpIcon, more];
+  List<dynamic> get values =>
+      [backIcon, dayIcon, killingIcon, likeHandTumbUpIcon, more, numberHolder];
 }
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  $AssetsImagesBackGroundGen get backGround =>
+      const $AssetsImagesBackGroundGen();
+
   /// File path: assets/images/day_bg.png
   AssetGenImage get dayBg => const AssetGenImage('assets/images/day_bg.png');
 
   $AssetsImagesDaysGen get days => const $AssetsImagesDaysGen();
+  $AssetsImagesFramesGen get frames => const $AssetsImagesFramesGen();
 
   /// File path: assets/images/mysterious-gangster-character.jpg
   AssetGenImage get mysteriousGangsterCharacter =>
@@ -343,6 +351,17 @@ class $AssetsCardsRolesGen {
       ];
 }
 
+class $AssetsImagesBackGroundGen {
+  const $AssetsImagesBackGroundGen();
+
+  /// File path: assets/images/back_ground/title_bg.svg
+  SvgGenImage get titleBg =>
+      const SvgGenImage('assets/images/back_ground/title_bg.svg');
+
+  /// List of all assets
+  List<SvgGenImage> get values => [titleBg];
+}
+
 class $AssetsImagesDaysGen {
   const $AssetsImagesDaysGen();
 
@@ -355,6 +374,17 @@ class $AssetsImagesDaysGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [dayPureBg, sun];
+}
+
+class $AssetsImagesFramesGen {
+  const $AssetsImagesFramesGen();
+
+  /// File path: assets/images/frames/names_frame.svg
+  SvgGenImage get namesFrame =>
+      const SvgGenImage('assets/images/frames/names_frame.svg');
+
+  /// List of all assets
+  List<SvgGenImage> get values => [namesFrame];
 }
 
 class $AssetsImagesNightsGen {

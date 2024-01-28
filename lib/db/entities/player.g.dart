@@ -177,14 +177,19 @@ const PlayerSchema = CollectionSchema(
       name: r'shotCount',
       type: IsarType.long,
     ),
-    r'type': PropertySchema(
+    r'silenced': PropertySchema(
       id: 32,
+      name: r'silenced',
+      type: IsarType.bool,
+    ),
+    r'type': PropertySchema(
+      id: 33,
       name: r'type',
       type: IsarType.int,
       enumMap: _PlayertypeEnumValueMap,
     ),
     r'whichSideWillWin': PropertySchema(
-      id: 33,
+      id: 34,
       name: r'whichSideWillWin',
       type: IsarType.int,
       enumMap: _PlayerwhichSideWillWinEnumValueMap,
@@ -269,8 +274,9 @@ void _playerSerialize(
   writer.writeString(offsets[29], object.playerName);
   writer.writeString(offsets[30], object.roleName);
   writer.writeLong(offsets[31], object.shotCount);
-  writer.writeInt(offsets[32], object.type?.index);
-  writer.writeInt(offsets[33], object.whichSideWillWin?.index);
+  writer.writeBool(offsets[32], object.silenced);
+  writer.writeInt(offsets[33], object.type?.index);
+  writer.writeInt(offsets[34], object.whichSideWillWin?.index);
 }
 
 Player _playerDeserialize(
@@ -298,9 +304,10 @@ Player _playerDeserialize(
   object.playerName = reader.readStringOrNull(offsets[29]);
   object.roleName = reader.readStringOrNull(offsets[30]);
   object.shotCount = reader.readLong(offsets[31]);
-  object.type = _PlayertypeValueEnumMap[reader.readIntOrNull(offsets[32])];
+  object.silenced = reader.readBoolOrNull(offsets[32]);
+  object.type = _PlayertypeValueEnumMap[reader.readIntOrNull(offsets[33])];
   object.whichSideWillWin =
-      _PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offsets[33])];
+      _PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offsets[34])];
   return object;
 }
 
@@ -376,8 +383,10 @@ P _playerDeserializeProp<P>(
     case 31:
       return (reader.readLong(offset)) as P;
     case 32:
-      return (_PlayertypeValueEnumMap[reader.readIntOrNull(offset)]) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 33:
+      return (_PlayertypeValueEnumMap[reader.readIntOrNull(offset)]) as P;
+    case 34:
       return (_PlayerwhichSideWillWinValueEnumMap[reader.readIntOrNull(offset)])
           as P;
     default:
@@ -1579,6 +1588,32 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterFilterCondition> silencedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'silenced',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> silencedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'silenced',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> silencedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'silenced',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterFilterCondition> typeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -2109,6 +2144,18 @@ extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> sortBySilenced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'silenced', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortBySilencedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'silenced', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -2531,6 +2578,18 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> thenBySilenced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'silenced', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenBySilencedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'silenced', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -2752,6 +2811,12 @@ extension PlayerQueryWhereDistinct on QueryBuilder<Player, Player, QDistinct> {
     });
   }
 
+  QueryBuilder<Player, Player, QDistinct> distinctBySilenced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'silenced');
+    });
+  }
+
   QueryBuilder<Player, Player, QDistinct> distinctByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'type');
@@ -2961,6 +3026,12 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
   QueryBuilder<Player, int, QQueryOperations> shotCountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'shotCount');
+    });
+  }
+
+  QueryBuilder<Player, bool?, QQueryOperations> silencedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'silenced');
     });
   }
 

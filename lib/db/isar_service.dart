@@ -234,14 +234,13 @@ class IsarService {
   // Golden method to retrieve desired player(s)
   Future<({int count, List<Player> players})> retrievePlayer({
     bool isAlive = true,
-    Player Function(Player player)? criteria,
+    bool Function(Player player)? criteria,
   }) async {
     final List<Player> players = await isar.players
         .filter()
         .isAliveEqualTo(isAlive)
         .findAll()
-        .then((player) =>
-            player.map(criteria ?? (Player player) => player).toList());
+        .then((player) => player.where(criteria ?? (_) => true).toList());
     final int count = players.length;
     final result = (count: count, players: players);
     return result;
@@ -330,6 +329,21 @@ class IsarService {
         }));
   }
 
+  Future<GameStatus?> retrieveGameStatusN({
+    required int n,
+  }) async {
+    final gameStatus =
+        await isar.gameStatus.filter().dayNumberEqualTo(n).findFirst();
+
+    if (gameStatus != null) {
+      log('game status found : ${gameStatus.toString()}',
+          name: 'retrieveGameStatusN');
+      return gameStatus;
+    }
+    log('game status not found', name: 'retrieveGameStatusN');
+    return null;
+  }
+
   /// get night number
   Future<int> getNightNumber() async {
     final night = await isar.nights.where(distinct: true).findAll();
@@ -355,9 +369,9 @@ class IsarService {
 
   /// get day number
   Future<int> getDayNumber() async {
-    final day = await isar.gameStatus.where(distinct: true).findAll();
-    if (day.isNotEmpty) {
-      final dayNumber = day.last.dayNumber;
+    final day = await isar.gameStatus.where(distinct: true).findFirst();
+    if (day != null) {
+      final dayNumber = day.dayNumber;
       log('day number is $dayNumber', name: 'getDayNumber');
       return dayNumber;
     }
@@ -367,23 +381,34 @@ class IsarService {
 
   Future<bool> putGameStatus({
     required int dayNumber,
-    bool isDay = false,
+    bool? isDay = false,
     int? wholeGameTimePassed,
     List<String>? timeLeft,
     int? nightCode,
+    bool? isFinished,
+    String? winner,
+    bool? isChaos,
   }) async {
     final alreadyExists =
         await isar.gameStatus.filter().dayNumberEqualTo(dayNumber).findFirst();
     log('alreadyExists: ${alreadyExists.toString()}', name: 'insertGameStatus');
+
+    // inserting new status
     if (alreadyExists == null) {
-      final gameStatus = GameStatus()
-        ..dayNumber = dayNumber
-        ..isDay = isDay
-        ..wholeGameTimePassed = wholeGameTimePassed
-        ..timeLeft = timeLeft
-        ..nightCode = nightCode;
-      isar.writeTxn(() => isar.gameStatus.put(gameStatus));
-      log('game status *inserted* successfully', name: 'insertGameStatus');
+      final gameStatus = GameStatus();
+      final newGameStatus = gameStatus.copy(
+        isDay: isDay,
+        dayNumber: dayNumber,
+        wholeGameTimePassed: wholeGameTimePassed,
+        timeLeft: timeLeft,
+        nightCode: nightCode,
+        isFinished: isFinished,
+        winner: winner,
+        isChaos: isChaos,
+      );
+
+      await isar.writeTxn(() => isar.gameStatus.put(newGameStatus));
+      log('new game status *inserted* successfully', name: 'insertGameStatus');
       return true;
     }
     // game status already exists
@@ -393,6 +418,9 @@ class IsarService {
             wholeGameTimePassed: wholeGameTimePassed,
             timeLeft: timeLeft,
             nightCode: nightCode,
+            isFinished: isFinished,
+            winner: winner,
+            isChaos: isChaos,
           )));
 
       log('game status *updated* successfully', name: 'insertGameStatus');

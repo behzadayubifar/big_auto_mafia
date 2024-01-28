@@ -4,6 +4,7 @@ import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final _container = ProviderContainer();
@@ -90,14 +91,13 @@ _mafiaShoot(
   String? chosenPlayerName,
 ) async {
   print("--------------------------------------------------");
-  log('mafiaShoot logic is running', name: 'mafia shoot');
   final isar = await _container.read(isarServiceProvider.future);
   final chosenPlayer = await isar.getPlayerByName(chosenPlayerName!);
   final previousHeart = chosenPlayer!.heart!;
-  log('${chosenPlayerName}\'s heart was: $previousHeart', name: 'mafia shoot');
   final godFather = await isar.getPlayerByRole(RoleName.godfather);
   //
-  if (chosenPlayerName != true && chosenPlayer.isSaved != true) {
+  if (chosenPlayer.roleName != roleNames[RoleName.nostradamous] &&
+      chosenPlayer.isSaved != true) {
     await isar.updatePlayer(
         playerName: chosenPlayerName, heart: (previousHeart - 1));
     final int newHeart = await isar
@@ -110,7 +110,6 @@ _mafiaShoot(
     print("--------------------------------------------------");
     log('godfather\'s shotCount is: ${godFather.shotCount}',
         name: 'mafia shoot');
-    log('mafiaShoot logic is finished', name: 'godToDay');
   }
 }
 
@@ -168,7 +167,9 @@ _saul(String chosenPlayerName) async {
 //TODO: handle when saul can do his job in ui & night must be restarted (in fact, in at the begining of godToDay or even before it !!!)
 /// godToDay logic
 /// """the core brain of decisions""";
-god(Map<String, String?>? json, {bool isGettingDay = true}) async {
+/// --> returns a [Future<Widget>] for showing the results of the night
+Future<Widget> god(Map<String, String?>? json,
+    {bool isGettingDay = true}) async {
   // requirements
   final isar = await _container.read(isarServiceProvider.future);
   // ----------------------------------------------------------------------
@@ -200,18 +201,24 @@ god(Map<String, String?>? json, {bool isGettingDay = true}) async {
     final toNightBlocked = await json["matadorChoice"];
     late final int? nightCode;
     late final bool? isGodfathersGuessRight;
-
-    // -------------------------------requirements for showing night results--------------------------------------------------
-    if (godFatherChoice != null) {
-      isGodfathersGuessRight =
-          theRoleGuessedByGodfather == godFatherChoice.roleName;
-    }
+    late final String? winner;
 
     // we will use these variables for showing the nocturnal results !!!
     late final String? bornPlayer;
     late final List<String?> killedPlayersOftonight;
     late final String? slaughteredPlayerOfTonight;
     late final String? disclosuredPlayerOfTonight;
+
+    // -------------------------------requirements for showing night results--------------------------------------------------
+    if (godFatherChoice != null) {
+      isGodfathersGuessRight =
+          theRoleGuessedByGodfather == godFatherChoice.roleName;
+
+      // checking if anyone was slaughtered
+      if (isGodfathersGuessRight) {
+        slaughteredPlayerOfTonight = godFatherChoice.playerName;
+      }
+    }
 
     // use sth like this in ui to prevent matador blocking repetedly //TODO
     // final List<String?>? lastNightBlocked = [
@@ -285,6 +292,8 @@ god(Map<String, String?>? json, {bool isGettingDay = true}) async {
     );
     log('GameStatusInserted: $GameStatusInserted');
 
+// _______________________________ RESULTS OF THE NIGHT _____________________________________
+
     // it's time to retieve new alive and dead players
     final newDeadPlayers = await isar.retrievePlayer(isAlive: false);
     final newAlivePlayers = await isar.retrievePlayer();
@@ -308,21 +317,20 @@ god(Map<String, String?>? json, {bool isGettingDay = true}) async {
           newAddedDeadPlayers.map((e) => e.playerName).toList(growable: false);
     }
 
-    // checking if anyone was slaughtered
-    if (isGodfathersGuessRight == true) {
-      slaughteredPlayerOfTonight = godFatherChoice!.playerName;
-    }
-
     // checking if anyone was disclosured
     if (kaneChoice != null && kaneChoice.type == RoleType.mafia) {
       disclosuredPlayerOfTonight = kaneChoice.playerName;
     }
 
-    // now we should check if the game is finished or not
+    // TODO: show the results of the night (RESULT WIDGET)
+    return Container();
 
     // TODO: call here the method for showing the night's resukts & use born and killed Player Of tonight & slaughtered player of tonight & also the night code & kane choice if it was right
     // TODO: or even MABEY the VICTORY message
   } else {
+    //-----------------------------------------------------
+    //-------------------------------------------------------------------
+    //--------------------------------------------------------------------------------
     // ______________________----------Day To Night-----------________________________
     // *going to night* -> update players' nightDone to false
 
@@ -353,5 +361,7 @@ god(Map<String, String?>? json, {bool isGettingDay = true}) async {
 
     log('newNightInserted: $newNightInserted');
     //
+    // TODO: show the results of the day (RESULT WIDGET)
+    return Container();
   }
 }
