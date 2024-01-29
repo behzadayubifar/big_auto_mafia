@@ -47,6 +47,7 @@ Map<String, int> assignRandomCode(Iterable<String> playerNames) {
 // a method for assigning random roles to players which firs
 // shuffles the role_names and also shuffles the player_names
 // and then assigns the roles to players
+/// retrun a map of {player_name : role_name}
 Map<String, String> assignRandomRole(
     List<String> playerNames, List<String> roleNames) {
   final shuffledPlayerNames = playerNames..shuffle();

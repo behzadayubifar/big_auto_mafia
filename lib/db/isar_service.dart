@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:auto_mafia/db/entities/game_status.dart';
 import 'package:auto_mafia/db/entities/player.dart';
@@ -56,7 +57,9 @@ class IsarService {
     //ToDo: change the directory to the app directory
     // final dir = await getApplicationDocumentsDirectory();
     // a hardcoded diractory in the root of the device
-    final dir = await Directory('E:/test_directory').create(recursive: true);
+    // final dir = await Directory('E:/test_directory').create(recursive: true);
+
+    final dir = await getApplicationDocumentsDirectory();
     if (Isar.instanceNames.isEmpty) {
       return await Isar.open(
         [
@@ -76,9 +79,15 @@ class IsarService {
 
   /// initialize players `isar.writeTxnSync(() => isar.players.putAllSync(players));`
   Future<void> initializePlayers(List<Map<String, String>> players) async {
-    isar.writeTxn(() => isar.players.putAll(
+    //first of all clear db
+    final isCleared = await clearAll();
+    log('isCleared: $isCleared');
+    // now init with new records
+    await isar.writeTxn(() async => await isar.players.putAll(
           players
-              .map((player) => Player.initializeBasedOnRole(player))
+              .map(
+                (player) => Player.initializeBasedOnRole(player),
+              )
               .toList(),
         ));
 

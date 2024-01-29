@@ -99,63 +99,63 @@ class Player {
 // name and assigned role will be passed to this method from ui and will be saved in isar
   factory Player.initializeBasedOnRole(Map<String, String> map) {
     switch (map.values.single) {
-      case 'citizen':
+      case 'شهروند ساده':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.citizen]!["roleName"]
           ..description = allRoles[RoleName.citizen]!["description"]
           ..type = allRoles[RoleName.citizen]!["type"]
           ..heart = allRoles[RoleName.citizen]!["heart"];
-      case 'godfather':
+      case 'پدرخوانده':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.godfather]!['roleName']
           ..description = allRoles[RoleName.godfather]!['description']
           ..type = allRoles[RoleName.godfather]!['type']
           ..heart = allRoles[RoleName.godfather]!['heart'];
-      case 'watson':
+      case 'دکتر واتسون':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.watson]!['roleName']
           ..description = allRoles[RoleName.watson]!['description']
           ..type = allRoles[RoleName.watson]!['type']
           ..heart = allRoles[RoleName.watson]!['heart'];
-      case 'leon':
+      case 'لئون حرفه‌ای':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.leon]!['roleName']
           ..description = allRoles[RoleName.leon]!['description']
           ..type = allRoles[RoleName.leon]!['type']
           ..heart = allRoles[RoleName.leon]!['heart'];
-      case 'kane':
+      case 'همشهری کین':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.kane]!['roleName']
           ..description = allRoles[RoleName.kane]!['description']
           ..type = allRoles[RoleName.kane]!['type']
           ..heart = allRoles[RoleName.kane]!['heart'];
-      case 'konstantin':
+      case 'کنستانتین':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.konstantin]!['roleName']
           ..description = allRoles[RoleName.konstantin]!['description']
           ..type = allRoles[RoleName.konstantin]!['type']
           ..heart = allRoles[RoleName.konstantin]!['heart'];
-      case 'nostradamous':
+      case 'نوستراداموس':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.nostradamous]!['roleName']
           ..description = allRoles[RoleName.nostradamous]!['description']
           ..type = allRoles[RoleName.nostradamous]!['type']
           ..heart = allRoles[RoleName.nostradamous]!['heart'];
-      case 'saul':
+      case 'سائول گودمن':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.saul]!['roleName']
           ..description = allRoles[RoleName.saul]!['description']
           ..type = allRoles[RoleName.saul]!['type']
           ..heart = allRoles[RoleName.saul]!['heart'];
-      case 'matador':
+      case 'ماتادور':
         return Player()
           ..playerName = map.keys.single
           ..roleName = allRoles[RoleName.matador]!['roleName']

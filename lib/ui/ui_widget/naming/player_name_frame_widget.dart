@@ -4,26 +4,32 @@ import 'dart:developer' as dev;
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/ui_utils/calculate_text_layout_size.dart';
+import 'package:auto_mafia/ui/ui_widget/naming/naming_page.dart';
 import 'package:auto_mafia/ui/ui_widget/naming/number_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // ignore: must_be_immutable
-class PlayerNameFrameWidget extends HookWidget {
+class PlayerNameFrameWidget extends HookConsumerWidget {
   PlayerNameFrameWidget({
     bool hasNumber = false,
     required int number,
+    required TextEditingController controller,
     super.key,
   })  : _hasNumber = hasNumber,
-        _number = number;
+        _number = number,
+        _controller = controller;
 
   final int _number;
-  final bool _hasNumber;
   // use this to change the suffix icon rotation
+  final bool _hasNumber;
+  //
+  final TextEditingController _controller;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final _focusNode = useFocusNode(
       canRequestFocus: true,
       descendantsAreFocusable: true,
@@ -33,9 +39,6 @@ class PlayerNameFrameWidget extends HookWidget {
           color: Colors.white,
           overflow: TextOverflow.fade,
         );
-    final _controller = useTextEditingController.fromValue(
-      const TextEditingValue(text: 'بهزاد ایوبی‌فر'),
-    );
 
     final ValueNotifier<Size> _textSize = useState(Size.zero);
     final _playerName = useState('');
@@ -91,6 +94,9 @@ class PlayerNameFrameWidget extends HookWidget {
                 SizedBox(
                   width: max(_textSize.value.width + 20, 380),
                   child: TextField(
+                    onSubmitted: (String playerName) {
+                      _focusNode.unfocus();
+                    },
                     onTapOutside: (_) {
                       _focusNode.unfocus();
                     },

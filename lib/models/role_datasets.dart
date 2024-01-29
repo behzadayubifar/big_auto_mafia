@@ -24,6 +24,20 @@ Map<RoleName, String> roleNames = {
   RoleName.saul: "سائول گودمن",
 };
 
+List<String> roleNamesList(playersCount) => [
+      roleNames[RoleName.godfather]!,
+      roleNames[RoleName.matador]!,
+      roleNames[RoleName.watson]!,
+      roleNames[RoleName.leon]!,
+      roleNames[RoleName.kane]!,
+      roleNames[RoleName.konstantin]!,
+      roleNames[RoleName.nostradamous]!,
+      if (playersCount >= 8) roleNames[RoleName.citizen]!,
+      if (playersCount >= 9) roleNames[RoleName.citizen]!,
+      if (playersCount >= 10) roleNames[RoleName.saul]!,
+      if (playersCount >= 11) roleNames[RoleName.citizen]!,
+    ];
+
 Map<RoleName, Map<String, dynamic>> allRoles = {
   RoleName.citizen: {
     "roleName": roleNames[RoleName.citizen],
