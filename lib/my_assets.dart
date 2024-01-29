@@ -4,6 +4,8 @@ class MyAssets {
   MyAssets._();
 
   static final String titleBg = Assets.images.backGround.titleBg.path;
+  static final String titleBg2 = Assets.images.backGround.titleBg2.path;
+
   static final String numberHolder = Assets.icons.numberHolder.path;
   static final String playerNameFrame = Assets.images.frames.namesFrame.path;
 }

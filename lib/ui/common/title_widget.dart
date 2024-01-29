@@ -15,7 +15,7 @@ class TiTleTile extends StatelessWidget {
       children: [
         Center(
           child: Opacity(
-            opacity: 0.8,
+            opacity: 0.9,
             child: SvgPicture.asset(
               MyAssets.titleBg,
               height: 100,
@@ -23,19 +23,25 @@ class TiTleTile extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          // constraints: const BoxConstraints.expand(height: Metrics.titleTextHeight),
-          // decoration: BoxDecoration(),
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            textHeightBehavior: const TextHeightBehavior(
-              applyHeightToFirstAscent: false,
-            ),
-            style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  color: AppColors.lightText,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedOpacity(
+              opacity: 1.0,
+              duration: Duration(milliseconds: 500),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                textHeightBehavior: const TextHeightBehavior(
+                  applyHeightToFirstAscent: false,
                 ),
-          ),
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                      color: AppColors.white,
+                    ),
+              ),
+            ),
+            SizedBox(height: 16),
+          ],
         ),
       ],
     );

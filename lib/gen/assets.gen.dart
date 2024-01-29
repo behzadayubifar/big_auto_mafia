@@ -358,8 +358,12 @@ class $AssetsImagesBackGroundGen {
   SvgGenImage get titleBg =>
       const SvgGenImage('assets/images/back_ground/title_bg.svg');
 
+  /// File path: assets/images/back_ground/title_bg_2.svg
+  SvgGenImage get titleBg2 =>
+      const SvgGenImage('assets/images/back_ground/title_bg_2.svg');
+
   /// List of all assets
-  List<SvgGenImage> get values => [titleBg];
+  List<SvgGenImage> get values => [titleBg, titleBg2];
 }
 
 class $AssetsImagesDaysGen {

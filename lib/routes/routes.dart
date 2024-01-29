@@ -14,11 +14,11 @@ final _router = GoRouter(
       path: '/',
       builder: (context, state) => const HomePage(),
     ),
-    GoRoute(
-      name: 'assign-roles',
-      path: '/assign-roles',
-      builder: (context, state) => AssignRolesScreen(),
-    ),
+    // GoRoute(
+    //   name: 'assign-roles',
+    //   path: '/assign-roles',
+    //   builder: (context, state) => AssignRolesScreen(),
+    // ),
     GoRoute(
       name: 'naming',
       path: '/naming',

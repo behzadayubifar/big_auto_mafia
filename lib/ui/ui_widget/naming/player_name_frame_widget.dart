@@ -81,11 +81,13 @@ class PlayerNameFrameWidget extends HookConsumerWidget {
                 AnimatedOpacity(
                   opacity: _isNotSelected.value ? .2 : 1,
                   duration: const Duration(milliseconds: 300),
-                  child: SvgPicture.asset(
-                    MyAssets.playerNameFrame,
-                    // height: 64,
-                    width: max(_textSize.value.width + 30, 200),
-                    alignment: Alignment.center,
+                  child: RotatedBox(
+                    quarterTurns: _number % 2 == 0 ? 2 : 0,
+                    child: SvgPicture.asset(
+                      MyAssets.playerNameFrame,
+                      width: max(_textSize.value.width + 30, 200),
+                      alignment: Alignment.center,
+                    ),
                   ),
                 ),
                 //spacer
