@@ -11,7 +11,7 @@ final routerProvider = Provider<GoRouter>((_) => _router);
 
 final _router = GoRouter(
   debugLogDiagnostics: true,
-  initialLocation: '/x-page',
+  initialLocation: '/night',
   // initialLocation: '/night',
   routes: <RouteBase>[
     GoRoute(

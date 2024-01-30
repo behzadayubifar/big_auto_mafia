@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -87,43 +88,75 @@ part 'x_page.g.dart';
 
 // --------------------------------------------------------------------------------------------------------
 
-@riverpod
-Future<List<String?>> test(TestRef ref) {
-  return Future.value(testList);
-}
+// @riverpod
+// Future<List<String?>> test(TestRef ref) {
+//   return Future.value(testList);
+// }
 
 ProviderContainer container = ProviderContainer();
 
-final testList = <String>[];
-
-addToList() {
-  testList.add('1');
-}
-
 @riverpod
-Stream<int> streamExample(StreamExampleRef ref) async* {
-  // Every 1 second, yield a number from 0 to 41.
-  // This could be replaced with a Stream from Firestore or GraphQL or anything else.
-  for (var i = 0; i < 42; i++) {
-    yield i;
-    await Future<void>.delayed(const Duration(seconds: 1));
-  }
+Stream<List<int>> test2(Test2Ref ref) async* {
+  List<int> list = [];
+  final stream = testList;
+  stream.listen((_) async {
+    list = await testList.first;
+  });
+  yield list;
+
+  // AsyncLoading();
 }
+
+final StreamController<List<int>> _testList =
+    StreamController<List<int>>.broadcast();
+
+Stream<List<int>> get testList => _testList.stream;
+
+void testListAdd() {
+  _testList.sink.add(
+    [1],
+  );
+}
+
+// addToList() {
+//   testList.add('1');
+// }
+
+// @riverpod
+// Stream<int> streamExample(StreamExampleRef ref) async* {
+//   // Every 1 second, yield a number from 0 to 41.
+//   // This could be replaced with a Stream from Firestore or GraphQL or anything else.
+//   for (var i = 0; i < 42; i++) {
+//     yield i;
+//     await Future<void>.delayed(const Duration(seconds: 1));
+//   }
+// }
 
 class ShowTest1 extends ConsumerWidget {
   const ShowTest1({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<int> value = ref.watch(streamExampleProvider);
+    // AsyncValue<int> value = ref.watch(streamExampleProvider);
+    final value = ref.watch(test2Provider);
 
     // We can use the AsyncValue to handle loading/error states and show the data.
-    return Center(
-      child: switch (value) {
-        AsyncValue(:final error?) => Text('Error: $error'),
-        AsyncValue(:final valueOrNull?) => Text('$valueOrNull'),
-        _ => const CircularProgressIndicator(),
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Center(
+          child: switch (value) {
+            AsyncValue(:final error?) => Text('Error: $error'),
+            AsyncValue(:final valueOrNull?) => Text('$valueOrNull'),
+            _ => const CircularProgressIndicator(),
+          },
+        ),
+        ElevatedButton(
+          onPressed: testListAdd,
+          child: Text('press me'),
+        ),
+      ],
     );
     // final x = ref.watch(testProvider);
 

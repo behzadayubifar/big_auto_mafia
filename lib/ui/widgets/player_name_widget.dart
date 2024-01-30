@@ -9,10 +9,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class PlayerNameWidget extends HookConsumerWidget {
   PlayerNameWidget(
       {required this.situation,
-      super.key,
+      Key? key,
       required playerName,
       required this.height})
-      : _playerName = playerName;
+      : _playerName = playerName, // 'بازیکن 1'
+        super(key: key);
 
   final String _playerName;
   final double height;

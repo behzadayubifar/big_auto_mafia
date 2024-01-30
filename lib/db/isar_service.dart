@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:auto_mafia/db/entities/game_status.dart';
@@ -9,7 +8,6 @@ import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:isar/isar.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'isar_service.g.dart';
@@ -64,21 +62,21 @@ Future<({int count, List<Player> players})> alivePlayers(AlivePlayersRef ref) {
 
 // live data for alive players
 
-@riverpod
-class AsyncPlayer extends AsyncNotifier<List<Player>> {
-  AsyncPlayer() : super();
+// @riverpod
+// class AsyncPlayer extends AsyncNotifier<List<Player>> {
+//   AsyncPlayer() : super();
 
-  @override
-  FutureOr<List<Player>> build() {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
+//   @override
+//   FutureOr<List<Player>> build() {
+//     // TODO: implement build
+//     throw UnimplementedError();
+//   }
 
-  // @override
-  // Stream<List<Player>> build() {
-  //   return Stream.value([]);
-  // }
-}
+//   // @override
+//   // Stream<List<Player>> build() {
+//   //   return Stream.value([]);
+//   // }
+// }
 
 @riverpod
 Stream<List<Player>> playersWatcher(PlayersWatcherRef ref) async* {
@@ -88,17 +86,21 @@ Stream<List<Player>> playersWatcher(PlayersWatcherRef ref) async* {
   playersList = await service
       .retrievePlayer(isAlive: true)
       .then((value) => value.players);
+  print('hello from before stream 1');
+
   final Stream<void> stream = instance.players.watchLazy(fireImmediately: true);
   stream.listen((_) async {
+    print('hello from stream 1');
     final newlist = await service
         .retrievePlayer(isAlive: true)
         .then((value) => value.players);
     playersList.clear();
     playersList.addAll(newlist);
+    print(playersList.length);
   });
-  yield* Stream.value(playersList);
+  final result = Stream.value(playersList);
 
-  // return stream;
+  yield* result;
 }
 
 // a provider for players collection
@@ -132,7 +134,43 @@ Future<Either<Map<String, String>, bool>> nightJson(NightJsonRef ref) async {
   return isar.retrieveNightN(n: night);
 }
 
-// get the isar service
+// a provider for showing current players (based on some criterias / situations)
+@riverpod
+class CurrentPlayers extends _$CurrentPlayers {
+  @override
+  FutureOr<List<Player>> build() async {
+    state = const AsyncValue.loading();
+    log('here in build');
+    final isar = await ref.watch(isarServiceProvider.future);
+    final players = await isar.retrievePlayer(isAlive: false);
+    await Future.delayed(Duration(seconds: 2));
+    return players.players;
+  }
+
+  Future<void> action(String situation) async {
+    final isar = await ref.watch(isarServiceProvider.future);
+    // Set the state to loading
+    state = const AsyncValue.loading();
+    await Future.delayed(Duration(seconds: 2));
+    state = await AsyncValue.guard(
+      () async {
+        log('here in action');
+        final players = await isar
+            .retrievePlayer(isAlive: false)
+            .then((value) => value.players);
+        return players;
+        // switch (situation) {
+        //   case MyStrings.nightPage:
+        //     return await isar
+        //         .retrievePlayer(isAlive: false)
+        //         .then((value) => value.players);
+        //   default:
+        //     return await isar.retrievePlayer().then((value) => value.players);
+        // }
+      },
+    );
+  }
+}
 
 class IsarService {
   final Isar isar;

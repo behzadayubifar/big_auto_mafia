@@ -50,7 +50,7 @@ final alivePlayersProvider =
 
 typedef AlivePlayersRef
     = AutoDisposeFutureProviderRef<({int count, List<Player> players})>;
-String _$playersWatcherHash() => r'3a4f9563beabcf57f995fcc1cdaa18e9f57ab8a0';
+String _$playersWatcherHash() => r'e1e0aa09f52957b35e0d5fd25f2d912193a9f86e';
 
 /// See also [playersWatcher].
 @ProviderFor(playersWatcher)
@@ -115,20 +115,21 @@ final nightJsonProvider =
 
 typedef NightJsonRef
     = AutoDisposeFutureProviderRef<Either<Map<String, String>, bool>>;
-String _$asyncPlayerHash() => r'9b4e1912207d851362eb3dee8602de4f686f8799';
+String _$currentPlayersHash() => r'9327596bad5c1cfc2df3e5d81a58bfd818b08c99';
 
-/// See also [AsyncPlayer].
-@ProviderFor(AsyncPlayer)
-final asyncPlayerProvider =
-    AutoDisposeAsyncNotifierProvider<AsyncPlayer, List<Player>>.internal(
-  AsyncPlayer.new,
-  name: r'asyncPlayerProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$asyncPlayerHash,
+/// See also [CurrentPlayers].
+@ProviderFor(CurrentPlayers)
+final currentPlayersProvider =
+    AutoDisposeAsyncNotifierProvider<CurrentPlayers, List<Player>>.internal(
+  CurrentPlayers.new,
+  name: r'currentPlayersProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$currentPlayersHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AsyncPlayer = AutoDisposeAsyncNotifier<List<Player>>;
+typedef _$CurrentPlayers = AutoDisposeAsyncNotifier<List<Player>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

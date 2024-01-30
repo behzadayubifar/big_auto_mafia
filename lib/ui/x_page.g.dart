@@ -6,34 +6,19 @@ part of 'x_page.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$testHash() => r'2e60b60e11d684ca558a59c7fb116e5bcd84b6d0';
+String _$test2Hash() => r'e04019ac65cfe04f6f8eab995f285e630b1c8cab';
 
-/// See also [test].
-@ProviderFor(test)
-final testProvider = AutoDisposeFutureProvider<List<String?>>.internal(
-  test,
-  name: r'testProvider',
+/// See also [test2].
+@ProviderFor(test2)
+final test2Provider = AutoDisposeStreamProvider<List<int>>.internal(
+  test2,
+  name: r'test2Provider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$testHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$test2Hash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef TestRef = AutoDisposeFutureProviderRef<List<String?>>;
-String _$streamExampleHash() => r'ca9993b22f6d587b20c041133cacd28d01933074';
-
-/// See also [streamExample].
-@ProviderFor(streamExample)
-final streamExampleProvider = AutoDisposeStreamProvider<int>.internal(
-  streamExample,
-  name: r'streamExampleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$streamExampleHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef StreamExampleRef = AutoDisposeStreamProviderRef<int>;
+typedef Test2Ref = AutoDisposeStreamProviderRef<List<int>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
