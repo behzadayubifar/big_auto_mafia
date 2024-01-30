@@ -24,6 +24,8 @@ Map<RoleName, String> roleNames = {
   RoleName.saul: "سائول گودمن",
 };
 
+getRoleName(RoleName roleName) => roleNames[roleName]!;
+
 List<String> roleNamesList(playersCount) => [
       roleNames[RoleName.godfather]!,
       roleNames[RoleName.matador]!,

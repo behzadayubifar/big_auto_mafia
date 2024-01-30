@@ -4,7 +4,7 @@ import 'dart:developer' as dev;
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/ui_utils/calculate_text_layout_size.dart';
-import 'package:auto_mafia/ui/ui_widget/naming/naming_page.dart';
+import 'package:auto_mafia/ui/ui_widget/naming/names_list.dart';
 import 'package:auto_mafia/ui/ui_widget/naming/number_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -14,17 +14,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 // ignore: must_be_immutable
 class PlayerNameFrameWidget extends HookConsumerWidget {
   PlayerNameFrameWidget({
-    bool hasNumber = false,
+    bool withNumber = false,
     required int number,
     required TextEditingController controller,
     super.key,
-  })  : _hasNumber = hasNumber,
+  })  : _withNumber = withNumber,
         _number = number,
         _controller = controller;
 
   final int _number;
   // use this to change the suffix icon rotation
-  final bool _hasNumber;
+  final bool _withNumber;
   //
   final TextEditingController _controller;
 
@@ -118,15 +118,8 @@ class PlayerNameFrameWidget extends HookConsumerWidget {
                         maxWidth: 64,
                       ),
                       border: InputBorder.none,
-                      prefixIcon:
-
-                          /* _hasNumber
-                          ? NumberHolder(
-                              number: 1, isNotFocused: _isNotSelected.value)
-                          : null */
-                          NumberHolder(
-                              number: _number,
-                              isNotFocused: _isNotSelected.value),
+                      prefixIcon: NumberHolder(
+                          number: _number, isNotFocused: _isNotSelected.value),
                       contentPadding: EdgeInsets.only(top: 36, left: 64),
                       counterText: '',
                       hintText: _playerName.value,

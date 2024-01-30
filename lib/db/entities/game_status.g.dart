@@ -47,18 +47,28 @@ const GameStatusSchema = CollectionSchema(
       name: r'nightCode',
       type: IsarType.long,
     ),
-    r'timeLeft': PropertySchema(
+    r'playersWhoSawTheirRole': PropertySchema(
       id: 6,
+      name: r'playersWhoSawTheirRole',
+      type: IsarType.stringList,
+    ),
+    r'statusOfGame': PropertySchema(
+      id: 7,
+      name: r'statusOfGame',
+      type: IsarType.string,
+    ),
+    r'timeLeft': PropertySchema(
+      id: 8,
       name: r'timeLeft',
       type: IsarType.stringList,
     ),
     r'wholeGameTimePassed': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'wholeGameTimePassed',
       type: IsarType.long,
     ),
     r'winner': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'winner',
       type: IsarType.string,
     )
@@ -83,6 +93,24 @@ int _gameStatusEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final list = object.playersWhoSawTheirRole;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += value.length * 3;
+        }
+      }
+    }
+  }
+  {
+    final value = object.statusOfGame;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final list = object.timeLeft;
     if (list != null) {
@@ -116,9 +144,11 @@ void _gameStatusSerialize(
   writer.writeBool(offsets[3], object.isDay);
   writer.writeBool(offsets[4], object.isFinished);
   writer.writeLong(offsets[5], object.nightCode);
-  writer.writeStringList(offsets[6], object.timeLeft);
-  writer.writeLong(offsets[7], object.wholeGameTimePassed);
-  writer.writeString(offsets[8], object.winner);
+  writer.writeStringList(offsets[6], object.playersWhoSawTheirRole);
+  writer.writeString(offsets[7], object.statusOfGame);
+  writer.writeStringList(offsets[8], object.timeLeft);
+  writer.writeLong(offsets[9], object.wholeGameTimePassed);
+  writer.writeString(offsets[10], object.winner);
 }
 
 GameStatus _gameStatusDeserialize(
@@ -134,9 +164,11 @@ GameStatus _gameStatusDeserialize(
   object.isDay = reader.readBool(offsets[3]);
   object.isFinished = reader.readBoolOrNull(offsets[4]);
   object.nightCode = reader.readLongOrNull(offsets[5]);
-  object.timeLeft = reader.readStringList(offsets[6]);
-  object.wholeGameTimePassed = reader.readLongOrNull(offsets[7]);
-  object.winner = reader.readStringOrNull(offsets[8]);
+  object.playersWhoSawTheirRole = reader.readStringList(offsets[6]);
+  object.statusOfGame = reader.readStringOrNull(offsets[7]);
+  object.timeLeft = reader.readStringList(offsets[8]);
+  object.wholeGameTimePassed = reader.readLongOrNull(offsets[9]);
+  object.winner = reader.readStringOrNull(offsets[10]);
   return object;
 }
 
@@ -162,8 +194,12 @@ P _gameStatusDeserializeProp<P>(
     case 6:
       return (reader.readStringList(offset)) as P;
     case 7:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
+      return (reader.readStringList(offset)) as P;
+    case 9:
+      return (reader.readLongOrNull(offset)) as P;
+    case 10:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -571,6 +607,405 @@ extension GameStatusQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'playersWhoSawTheirRole',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'playersWhoSawTheirRole',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'playersWhoSawTheirRole',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'playersWhoSawTheirRole',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'playersWhoSawTheirRole',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'playersWhoSawTheirRole',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'playersWhoSawTheirRole',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'playersWhoSawTheirRole',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'playersWhoSawTheirRole',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'playersWhoSawTheirRole',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'playersWhoSawTheirRole',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'playersWhoSawTheirRole',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'playersWhoSawTheirRole',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'playersWhoSawTheirRole',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'playersWhoSawTheirRole',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'playersWhoSawTheirRole',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'playersWhoSawTheirRole',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      playersWhoSawTheirRoleLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'playersWhoSawTheirRole',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'statusOfGame',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'statusOfGame',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'statusOfGame',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'statusOfGame',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'statusOfGame',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'statusOfGame',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'statusOfGame',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'statusOfGame',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'statusOfGame',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'statusOfGame',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'statusOfGame',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      statusOfGameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'statusOfGame',
+        value: '',
       ));
     });
   }
@@ -1120,6 +1555,18 @@ extension GameStatusQuerySortBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByStatusOfGame() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'statusOfGame', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByStatusOfGameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'statusOfGame', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
       sortByWholeGameTimePassed() {
     return QueryBuilder.apply(this, (query) {
@@ -1233,6 +1680,18 @@ extension GameStatusQuerySortThenBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByStatusOfGame() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'statusOfGame', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByStatusOfGameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'statusOfGame', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
       thenByWholeGameTimePassed() {
     return QueryBuilder.apply(this, (query) {
@@ -1298,6 +1757,20 @@ extension GameStatusQueryWhereDistinct
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QDistinct>
+      distinctByPlayersWhoSawTheirRole() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'playersWhoSawTheirRole');
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByStatusOfGame(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'statusOfGame', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByTimeLeft() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'timeLeft');
@@ -1360,6 +1833,19 @@ extension GameStatusQueryProperty
   QueryBuilder<GameStatus, int?, QQueryOperations> nightCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nightCode');
+    });
+  }
+
+  QueryBuilder<GameStatus, List<String>?, QQueryOperations>
+      playersWhoSawTheirRoleProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'playersWhoSawTheirRole');
+    });
+  }
+
+  QueryBuilder<GameStatus, String?, QQueryOperations> statusOfGameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'statusOfGame');
     });
   }
 

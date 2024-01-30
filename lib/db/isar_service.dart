@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:auto_mafia/db/entities/game_status.dart';
@@ -17,18 +19,102 @@ Future<Isar> isarInstance(IsarInstanceRef ref) {
   return IsarService.openDB();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<IsarService> isarService(IsarServiceRef ref) async {
   final isar = await ref.watch(isarInstanceProvider.future);
   return IsarService(isar);
 }
 
+// @riverpod
+// Stream<List<Player>> watchPlayers(WatchPlayersRef ref) async {
+//   final isar = await ref.watch(isarInstanceProvider.future);
+//   final stream = isar.players.watchLazy(fireImmediately: true);
+
+// }
+/* Future<({int count, List<Player> players})> */
+
 // live data for alive players
+// @riverpod
+// /* Future<List<Player>> */ alivePlayers(AlivePlayersRef ref) async {
+//   final List<Player> playersList = [];
+//   final isar = await ref.watch(isarInstanceProvider.future);
+//   // final players = await isar.retrievePlayer();
+//   final playersStream = await isar.players.watchLazy(fireImmediately: true);
+//   playersStream.listen((event) async {
+//     await isar.players.filter().isAliveEqualTo(true).findAll().then((newList) {
+//       playersList.clear();
+//       playersList.addAll(newList);
+//     });
+//   });
+
 @riverpod
-Future<({int count, List<Player> players})> alivePlayers(
-    AlivePlayersRef ref) async {
+Future<({int count, List<Player> players})> alivePlayers(AlivePlayersRef ref) {
+  return ref
+      .watch(isarServiceProvider.future)
+      .then((value) => value.retrievePlayer(isAlive: true));
+}
+
+// return players;
+// .then((player) => player.where(criteria ?? (_) => true)
+// .toList());
+// final int count = players.length;
+// final result = (count: count, players: players);
+// return result;
+// return players.players;
+
+// live data for alive players
+
+@riverpod
+class AsyncPlayer extends AsyncNotifier<List<Player>> {
+  AsyncPlayer() : super();
+
+  @override
+  FutureOr<List<Player>> build() {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+
+  // @override
+  // Stream<List<Player>> build() {
+  //   return Stream.value([]);
+  // }
+}
+
+@riverpod
+Stream<List<Player>> playersWatcher(PlayersWatcherRef ref) async* {
+  late List<Player> playersList;
+  final instance = await ref.watch(isarInstanceProvider.future);
+  final service = await ref.watch(isarServiceProvider.future);
+  playersList = await service
+      .retrievePlayer(isAlive: true)
+      .then((value) => value.players);
+  final Stream<void> stream = instance.players.watchLazy(fireImmediately: true);
+  stream.listen((_) async {
+    final newlist = await service
+        .retrievePlayer(isAlive: true)
+        .then((value) => value.players);
+    playersList.clear();
+    playersList.addAll(newlist);
+  });
+  yield* Stream.value(playersList);
+
+  // return stream;
+}
+
+// a provider for players collection
+@riverpod
+Future<List<Player>> playersWhoHasNotDoneTheirNightJob(
+    PlayersWhoHasNotDoneTheirNightJobRef ref) async {
+  // final playersNotDoneTheirJob = await ref
+  //     .watch(isarServiceProvider.future)
+  //     .then((value) =>
+  //         value.isar.players.filter().nightDoneEqualTo(false).findAll());
+  // return playersNotDoneTheirJob;
   final isar = await ref.watch(isarServiceProvider.future);
-  return await isar.retrievePlayer();
+  final players = await isar.retrievePlayer(
+    criteria: (player) => player.nightDone == false,
+  );
+  return players.players;
 }
 
 @riverpod
@@ -397,6 +483,8 @@ class IsarService {
     bool? isFinished,
     String? winner,
     bool? isChaos,
+    String? statusOfGame,
+    List<String>? playersWhoSawTheirRole,
   }) async {
     final alreadyExists =
         await isar.gameStatus.filter().dayNumberEqualTo(dayNumber).findFirst();
@@ -407,8 +495,10 @@ class IsarService {
       final gameStatus = GameStatus();
       final newGameStatus = gameStatus.copy(
         isDay: isDay,
+        statusOfGame: statusOfGame,
         dayNumber: dayNumber,
         wholeGameTimePassed: wholeGameTimePassed,
+        playersWhoSawTheirRole: playersWhoSawTheirRole,
         timeLeft: timeLeft,
         nightCode: nightCode,
         isFinished: isFinished,

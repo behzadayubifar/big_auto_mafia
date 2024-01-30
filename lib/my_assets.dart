@@ -8,4 +8,9 @@ class MyAssets {
 
   static final String numberHolder = Assets.icons.numberHolder.path;
   static final String playerNameFrame = Assets.images.frames.namesFrame.path;
+
+  // night's
+  static final String nightBg = Assets.images.nights.nightBg.path;
+  static final String moon = Assets.images.nights.moonPng.path;
+  static final String moon_hq = Assets.images.nights.moonHq.path;
 }

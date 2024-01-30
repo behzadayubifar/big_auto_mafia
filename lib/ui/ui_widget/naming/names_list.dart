@@ -10,6 +10,7 @@ import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/my_buttons.dart';
 import 'package:auto_mafia/ui/common/player_count_dropdown.dart';
+import 'package:auto_mafia/ui/ui_widget/naming/names_list_funcs.dart';
 import 'package:auto_mafia/ui/ui_widget/naming/player_name_frame_widget.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 List<String> _listOfPlayersNames = [];
 
-class NamingPage extends HookConsumerWidget {
-  const NamingPage({Key? key}) : super(key: key);
+class NamesList extends HookConsumerWidget {
+  const NamesList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,53 +51,68 @@ class NamingPage extends HookConsumerWidget {
               children: [
                 // Title-Widget
                 TiTleTile(title: _pageInfo.value['title']!), // 'اسامی'
+
                 // some-space
                 if (_pageInfo.value['count'] != null)
                   const SizedBox(height: 16),
+
                 // a widget to choose how-many-players (it's a dropdown button somehow)
                 AnimatedOpacity(
                     opacity: _pageInfo.value['count'] != null ? 1 : 0,
                     duration: const Duration(milliseconds: 400),
                     child: PlayersCountDropdown(playerNumber: _playerNumber)),
+
                 // some-space
                 if (_pageInfo.value['count'] != null)
                   const SizedBox(height: 20),
-                // list-of-players-names
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: SizedBox(
-                    height: MediaQuery.sizeOf(context).height * .56,
-                    child: ListView.separated(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: _playerNumber.value,
-                      itemBuilder: (BuildContext context, int index) {
-                        final _controller = _controllers[index];
-                        return PlayerNameFrameWidget(
-                          number: index + 1,
-                          controller: _controller,
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(height: 16);
-                      },
+
+                // list-of-players-names-with-text-fields
+                if (_pageInfo.value['title'] == MyStrings.titleNaming)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: SizedBox(
+                      height: MediaQuery.sizeOf(context).height * .56,
+                      child: ListView.separated(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: _playerNumber.value,
+                        itemBuilder: (BuildContext context, int index) {
+                          final _controller = _controllers[index];
+                          return PlayerNameFrameWidget(
+                            withNumber:
+                                _pageInfo.value['count'] != null ? true : false,
+                            number: index + 1,
+                            controller: _controller,
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 16);
+                        },
+                      ),
                     ),
                   ),
-                ),
+
                 // some-space
                 const SizedBox(height: 16),
-                // start-button
+
+                // button
                 if (_buttonInfo != null)
                   MyButton(
                     title: _buttonInfo,
                     onLongPress: () async {
                       switch (_buttonInfo) {
                         case MyStrings.startGame:
-                          await _start(_controllers, isar, _pageInfo);
+                          await start(
+                            controllers: _controllers,
+                            isar: isar,
+                            pageInfo: _pageInfo,
+                            listOfPlayersNames: _listOfPlayersNames,
+                          );
                           break;
                         case MyStrings.assignRole:
                           _pageInfo.value = Info.showRoles;
+
                           break;
                         // case MyStrings.next:
                         //   _pageInfo.value = InfoStrings.showRoles;
@@ -115,35 +131,5 @@ class NamingPage extends HookConsumerWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _start(
-    List<TextEditingController> _controllers,
-    Future<IsarService> isar,
-    ValueNotifier<Map<String, String>> _pageInfo,
-  ) async {
-    for (var i = 0; i < _controllers.length; i++) {
-      final _controller = _controllers[i];
-      final _playerName = _controller.text;
-      if (_playerName != '') {
-        _listOfPlayersNames.add(_playerName);
-      }
-    }
-    log('listOfPlayersNames: $_listOfPlayersNames');
-    final List<Map<String, String>> _playerRoleMapList = assignRandomRole(
-      _listOfPlayersNames,
-      roleNamesList(_listOfPlayersNames.length),
-    ).entries.map((e) {
-      return {
-        e.key: e.value,
-      };
-    }).toList();
-    log('playerRoleMapList: $_playerRoleMapList');
-
-    // time to add players to db
-    await (await isar).initializePlayers(_playerRoleMapList);
-
-    // update info
-    _pageInfo.value = Info.updateInfo(topic: InfoOptions.showRoles);
   }
 }

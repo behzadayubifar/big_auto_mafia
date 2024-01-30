@@ -394,16 +394,24 @@ class $AssetsImagesFramesGen {
 class $AssetsImagesNightsGen {
   const $AssetsImagesNightsGen();
 
-  /// File path: assets/images/nights/moon.png
-  AssetGenImage get moon =>
-      const AssetGenImage('assets/images/nights/moon.png');
+  /// File path: assets/images/nights/dashed_line.png
+  AssetGenImage get dashedLine =>
+      const AssetGenImage('assets/images/nights/dashed_line.png');
+
+  /// File path: assets/images/nights/moon_hq.svg
+  SvgGenImage get moonHq =>
+      const SvgGenImage('assets/images/nights/moon_hq.svg');
+
+  /// File path: assets/images/nights/moon_png.png
+  AssetGenImage get moonPng =>
+      const AssetGenImage('assets/images/nights/moon_png.png');
 
   /// File path: assets/images/nights/night-bg.png
   AssetGenImage get nightBg =>
       const AssetGenImage('assets/images/nights/night-bg.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [moon, nightBg];
+  List<dynamic> get values => [dashedLine, moonHq, moonPng, nightBg];
 }
 
 class $AssetsCardsLastMovesPicsGen {

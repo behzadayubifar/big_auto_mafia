@@ -6,6 +6,7 @@ class MyStrings {
   static const String titleNumberOfPlayers = 'تعداد بازیکنان';
   static const String titleNaming = 'اسامی';
   static const String rolesTitiel = 'نقش ها';
+  static const String nightTitle = 'شب';
 
   // buttons-texts
   static const String startGame = 'شروع بازی';
@@ -15,4 +16,10 @@ class MyStrings {
   static const String back = 'قبلی';
   static const String cancel = 'لغو';
   static const String ok = 'تایید';
+  static const String seeNightResults = 'نتایج شب';
+
+  // situation
+  static const String naming = 'naming';
+  static const String showRoles = 'showRoles';
+  static const String nightPage = 'night-page';
 }

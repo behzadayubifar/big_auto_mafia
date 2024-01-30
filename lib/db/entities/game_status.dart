@@ -5,9 +5,24 @@ import 'package:isar/isar.dart';
 
 part 'game_status.g.dart';
 
+// first read this from GameStatus collection
+// then update the initial route based on the status of the game
+List<String> statusOfGameList = [
+  'notStarted',
+  'day',
+  'night',
+  'chaos',
+  'rolePanel',
+  'nightResults',
+  'showRoles',
+  'started',
+  'finished',
+];
+
 @Collection()
 class GameStatus {
   Id? id;
+
   bool isDay = true;
   int dayNumber = 0;
   int? wholeGameTimePassed = 0;
@@ -20,6 +35,12 @@ class GameStatus {
   //    3. when the player has done his/her job, it must be set to ['', '0']
   // structure : [String playerName, String timeLeft]
   List<String>? timeLeft = ['', '0'];
+
+  // who saw their role
+  List<String>? playersWhoSawTheirRole;
+
+  // status of game
+  String? statusOfGame;
 
   // if this is null && isNight == true it means that the list of players must be shown
 
@@ -37,6 +58,8 @@ class GameStatus {
   @override
   String toString() => """"New GameStatus is:"
             "isDay: $isDay"
+            "statusOfGame: $statusOfGame"
+            "playersWhoSawTheirRole: $playersWhoSawTheirRole"
             "dayNumber: $dayNumber"
             "wholeGameTimePassed: $wholeGameTimePassed"
             "timeLeft: $timeLeft"
@@ -55,17 +78,25 @@ class GameStatus {
     bool? isFinished,
     String? winner,
     bool? isChaos,
+    String? statusOfGame,
+    List<String>? playersWhoSawTheirRole,
   }) {
     final newStatus = GameStatus()
       ..id = id
+      ..statusOfGame = statusOfGame ?? this.statusOfGame
       ..isDay = isDay ?? this.isDay
       ..dayNumber = dayNumber ?? this.dayNumber
       ..wholeGameTimePassed = wholeGameTimePassed ?? this.wholeGameTimePassed
+      ..playersWhoSawTheirRole = [
+        ...?(this.playersWhoSawTheirRole),
+        ...?playersWhoSawTheirRole,
+      ]
       ..timeLeft = timeLeft ?? this.timeLeft
       ..nightCode = nightCode ?? this.nightCode
       ..isFinished = isFinished ?? this.isFinished
       ..winner = winner ?? this.winner
       ..isChaos = isChaos ?? this.isChaos;
+
     //
     log('newStatus: ${newStatus.toString()} with id: ${newStatus.id}',
         name: 'game_status');
