@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
@@ -46,21 +48,19 @@ class PlayerNameWidget extends HookConsumerWidget {
     return InkWell(
       autofocus: true,
       onLongPress: () async {
-        final isar = await _isar;
-        // if (_isPlayerSelected.value != true) {
-        //   _isPlayerSelected.value = !_isPlayerSelected.value;
-        //   await (await _isar).putGameStatus(
-        //       dayNumber: -1, playersWhoSawTheirRole: [_playerName]);
-        // }
-        if (situation == MyStrings.showRoles) {
-          if (_isPlayerSelected.value != true) {
-            _isPlayerSelected.value = !_isPlayerSelected.value;
-          }
-          await isar.updatePlayer(
-            playerName: _playerName,
-            // nightDone: true,
-            heart: 0,
-          );
+        final isar = await ref.watch(isarServiceProvider.future);
+        switch (situation) {
+          case MyStrings.showRoles:
+            log('on long press');
+            if (_isPlayerSelected.value != true) {
+              _isPlayerSelected.value = !_isPlayerSelected.value;
+            }
+            await isar.updatePlayer(
+              playerName: _playerName,
+              heart: 1,
+            );
+            await Future.delayed(Duration(milliseconds: 1500));
+            await ref.read(currentPlayersProvider.notifier).action(situation);
         }
       },
       child: AnimatedContainer(

@@ -140,11 +140,87 @@ class CurrentPlayers extends _$CurrentPlayers {
   @override
   FutureOr<List<Player>> build() async {
     state = const AsyncValue.loading();
-    log('here in build');
-    final isar = await ref.watch(isarServiceProvider.future);
-    final players = await isar.retrievePlayer(isAlive: false);
-    await Future.delayed(Duration(seconds: 2));
-    return players.players;
+    log('here in build', name: 'CurrentPlayers');
+    // final isar = await ref.watch(isarServiceProvider.future);
+    // final players = await isar.retrievePlayer(isAlive: true);
+    // await Future.delayed(Duration(seconds: 2));
+    // return players.players;
+    return [];
+  }
+
+  Future<void> init(String situation) {
+    return Future.sync(() async {
+      final isar = await ref.watch(isarServiceProvider.future);
+      // Set the state to loading
+      state = const AsyncValue.loading();
+      await Future.delayed(Duration(seconds: 2));
+      // Retrieve the players baesed on the situation
+      state = await AsyncValue.guard(
+        () async {
+          log('here in init');
+          switch (situation) {
+            // situations that need all the alive players
+            case MyStrings.nightPage:
+            case MyStrings.showRoles:
+            case MyStrings.dayPage:
+              return await isar
+                  .retrievePlayer()
+                  .then((record) => record.players);
+
+            case MyStrings.leonPage:
+              return await isar
+                  .retrievePlayer(
+                    criteria: (player) => player.roleName != MyStrings.leon,
+                  )
+                  .then((record) => record.players);
+
+            case MyStrings.kanePage:
+              return await isar
+                  .retrievePlayer(
+                    criteria: (player) => player.roleName != MyStrings.kane,
+                  )
+                  .then((record) => record.players);
+
+            case MyStrings.godfatherPage:
+            case MyStrings.saulPage:
+              return await isar
+                  .retrievePlayer(
+                    criteria: (player) => player.type != RoleType.mafia,
+                  )
+                  .then((record) => record.players);
+
+            case MyStrings.matadorPage:
+              final lastNight = await isar.getNightNumber();
+              final lastNightOfBlockage =
+                  await isar.retrieveNightN(n: lastNight).then(
+                        (value) => value.match(
+                            (l) => l['nightOfBlockage']!, (r) => 'not found'),
+                      );
+              final matadorChoice =
+                  await isar.retrieveNightN(n: lastNight).then(
+                        (value) => value.match(
+                            (l) => l['matadorChoice']!, (r) => 'not found'),
+                      );
+              return await isar.retrievePlayer(
+                criteria: (player) {
+                  final c1 = player.type != RoleType.mafia;
+                  final c2 = matadorChoice == player.playerName &&
+                      lastNightOfBlockage == lastNight;
+                  return c1 && !c2;
+                },
+              ).then((record) => record.players);
+
+            case MyStrings.konstantinPage:
+              return await isar
+                  .retrievePlayer(isAlive: false)
+                  .then((value) => value.players);
+
+            default:
+              return [Player()..playerName = 'default'];
+          }
+        },
+      );
+    });
   }
 
   Future<void> action(String situation) async {
@@ -155,18 +231,17 @@ class CurrentPlayers extends _$CurrentPlayers {
     state = await AsyncValue.guard(
       () async {
         log('here in action');
-        final players = await isar
-            .retrievePlayer(isAlive: false)
-            .then((value) => value.players);
-        return players;
-        // switch (situation) {
-        //   case MyStrings.nightPage:
-        //     return await isar
-        //         .retrievePlayer(isAlive: false)
-        //         .then((value) => value.players);
-        //   default:
-        //     return await isar.retrievePlayer().then((value) => value.players);
-        // }
+
+        switch (situation) {
+          case MyStrings.nightPage:
+          // final players = await isar
+          //     .retrievePlayer(isAlive: true)
+          //     .then((value) => value.players);
+          // return players;
+          case MyStrings.showRoles:
+          default:
+            return await isar.retrievePlayer().then((value) => value.players);
+        }
       },
     );
   }
