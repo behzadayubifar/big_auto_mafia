@@ -10,13 +10,15 @@ import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/my_buttons.dart';
 import 'package:auto_mafia/ui/common/player_count_dropdown.dart';
-import 'package:auto_mafia/ui/ui_widget/naming/names_list_funcs.dart';
-import 'package:auto_mafia/ui/ui_widget/naming/player_name_frame_widget.dart';
+import 'package:auto_mafia/ui/night/night_page.dart';
+import 'package:auto_mafia/ui/ui_widget/names_list_show/names_list_funcs.dart';
+import 'package:auto_mafia/ui/ui_widget/names_list_show/player_naming_frame_widget.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 List<String> _listOfPlayersNames = [];
 
@@ -30,10 +32,10 @@ class NamesList extends HookConsumerWidget {
     ValueNotifier<int> _playerNumber = useState(11);
     ValueNotifier<Map<String, String>> _pageInfo = useState(Info.naming);
     String? _buttonInfo = _pageInfo.value['button'];
-    print(_buttonInfo);
+    // print(_buttonInfo);
 
     final List<TextEditingController> _controllers = List.generate(
-      11,
+      _playerNumber.value,
       (i) {
         return useTextEditingController(text: 'بازیکن ${i + 1}');
       },
@@ -79,7 +81,7 @@ class NamesList extends HookConsumerWidget {
                         itemCount: _playerNumber.value,
                         itemBuilder: (BuildContext context, int index) {
                           final _controller = _controllers[index];
-                          return PlayerNameFrameWidget(
+                          return PlayerNamingFrameWidget(
                             withNumber:
                                 _pageInfo.value['count'] != null ? true : false,
                             number: index + 1,
@@ -93,7 +95,7 @@ class NamesList extends HookConsumerWidget {
                     ),
                   ),
 
-                // some-space
+                // spacer
                 const SizedBox(height: 16),
 
                 // button
@@ -103,25 +105,18 @@ class NamesList extends HookConsumerWidget {
                     onLongPress: () async {
                       switch (_buttonInfo) {
                         case MyStrings.startGame:
-                          await start(
+                        case MyStrings.assignRole:
+                          // _pageInfo.value = Info.showRoles;
+                          // initialize the list of players names with the names in the text fields
+                          // to db
+                          await startAssignRole(
                             controllers: _controllers,
                             isar: isar,
-                            pageInfo: _pageInfo,
+                            // pageInfo: _pageInfo,
                             listOfPlayersNames: _listOfPlayersNames,
                           );
+                          context.go('/night/${MyStrings.showRoles}');
                           break;
-                        case MyStrings.assignRole:
-                          _pageInfo.value = Info.showRoles;
-
-                          break;
-                        // case MyStrings.next:
-                        //   _pageInfo.value = InfoStrings.showRoles;
-                        //   break;
-                        // case MyStrings.back:
-                        //   _pageInfo.value = InfoStrings.naming;
-                        //   break;
-                        // default:
-                        //   break;
                       }
                     },
                   ),

@@ -52,23 +52,28 @@ const GameStatusSchema = CollectionSchema(
       name: r'playersWhoSawTheirRole',
       type: IsarType.stringList,
     ),
-    r'statusOfGame': PropertySchema(
+    r'situation': PropertySchema(
       id: 7,
+      name: r'situation',
+      type: IsarType.string,
+    ),
+    r'statusOfGame': PropertySchema(
+      id: 8,
       name: r'statusOfGame',
       type: IsarType.string,
     ),
     r'timeLeft': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'timeLeft',
       type: IsarType.stringList,
     ),
     r'wholeGameTimePassed': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'wholeGameTimePassed',
       type: IsarType.long,
     ),
     r'winner': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'winner',
       type: IsarType.string,
     )
@@ -103,6 +108,12 @@ int _gameStatusEstimateSize(
           bytesCount += value.length * 3;
         }
       }
+    }
+  }
+  {
+    final value = object.situation;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
     }
   }
   {
@@ -145,10 +156,11 @@ void _gameStatusSerialize(
   writer.writeBool(offsets[4], object.isFinished);
   writer.writeLong(offsets[5], object.nightCode);
   writer.writeStringList(offsets[6], object.playersWhoSawTheirRole);
-  writer.writeString(offsets[7], object.statusOfGame);
-  writer.writeStringList(offsets[8], object.timeLeft);
-  writer.writeLong(offsets[9], object.wholeGameTimePassed);
-  writer.writeString(offsets[10], object.winner);
+  writer.writeString(offsets[7], object.situation);
+  writer.writeString(offsets[8], object.statusOfGame);
+  writer.writeStringList(offsets[9], object.timeLeft);
+  writer.writeLong(offsets[10], object.wholeGameTimePassed);
+  writer.writeString(offsets[11], object.winner);
 }
 
 GameStatus _gameStatusDeserialize(
@@ -165,10 +177,11 @@ GameStatus _gameStatusDeserialize(
   object.isFinished = reader.readBoolOrNull(offsets[4]);
   object.nightCode = reader.readLongOrNull(offsets[5]);
   object.playersWhoSawTheirRole = reader.readStringList(offsets[6]);
-  object.statusOfGame = reader.readStringOrNull(offsets[7]);
-  object.timeLeft = reader.readStringList(offsets[8]);
-  object.wholeGameTimePassed = reader.readLongOrNull(offsets[9]);
-  object.winner = reader.readStringOrNull(offsets[10]);
+  object.situation = reader.readStringOrNull(offsets[7]);
+  object.statusOfGame = reader.readStringOrNull(offsets[8]);
+  object.timeLeft = reader.readStringList(offsets[9]);
+  object.wholeGameTimePassed = reader.readLongOrNull(offsets[10]);
+  object.winner = reader.readStringOrNull(offsets[11]);
   return object;
 }
 
@@ -196,10 +209,12 @@ P _gameStatusDeserializeProp<P>(
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringList(offset)) as P;
     case 10:
+      return (reader.readLongOrNull(offset)) as P;
+    case 11:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -853,6 +868,158 @@ extension GameStatusQueryFilter
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      situationIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'situation',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      situationIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'situation',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> situationEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'situation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      situationGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'situation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> situationLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'situation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> situationBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'situation',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      situationStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'situation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> situationEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'situation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> situationContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'situation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition> situationMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'situation',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      situationIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'situation',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      situationIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'situation',
+        value: '',
+      ));
     });
   }
 
@@ -1555,6 +1722,18 @@ extension GameStatusQuerySortBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortBySituation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'situation', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortBySituationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'situation', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortByStatusOfGame() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'statusOfGame', Sort.asc);
@@ -1680,6 +1859,18 @@ extension GameStatusQuerySortThenBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenBySituation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'situation', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenBySituationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'situation', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenByStatusOfGame() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'statusOfGame', Sort.asc);
@@ -1764,6 +1955,13 @@ extension GameStatusQueryWhereDistinct
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctBySituation(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'situation', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByStatusOfGame(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1840,6 +2038,12 @@ extension GameStatusQueryProperty
       playersWhoSawTheirRoleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'playersWhoSawTheirRole');
+    });
+  }
+
+  QueryBuilder<GameStatus, String?, QQueryOperations> situationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'situation');
     });
   }
 

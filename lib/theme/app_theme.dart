@@ -1,5 +1,5 @@
 import 'package:auto_mafia/constants/app_colors.dart';
-import 'package:auto_mafia/constants/text_styles.dart';
+import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -22,21 +22,21 @@ class AutoMafiaTheme extends _$AutoMafiaTheme {
       brightness: Brightness.dark,
     ),
     textTheme: TextTheme(
-      displayLarge: TextStyles.displayLarge,
-      displayMedium: TextStyles.displayMedium,
-      displaySmall: TextStyles.displaySmall,
-      headlineLarge: TextStyles.headlineLarge,
-      headlineMedium: TextStyles.headlineMedium,
-      headlineSmall: TextStyles.headlineSmall,
-      titleLarge: TextStyles.titleLarge,
-      titleMedium: TextStyles.titleMedium,
-      titleSmall: TextStyles.titleSmall,
-      bodyLarge: TextStyles.bodyLarge,
-      bodyMedium: TextStyles.bodyMedium,
-      bodySmall: TextStyles.bodySmall,
-      labelLarge: TextStyles.labelLarge,
-      labelMedium: TextStyles.labelMedium,
-      labelSmall: TextStyles.labelSmall,
+      displayLarge: MyTextStyles.displayLarge,
+      displayMedium: MyTextStyles.displayMedium,
+      displaySmall: MyTextStyles.displaySmall,
+      headlineLarge: MyTextStyles.headlineLarge,
+      headlineMedium: MyTextStyles.headlineMedium,
+      headlineSmall: MyTextStyles.headlineSmall,
+      titleLarge: MyTextStyles.titleLarge,
+      titleMedium: MyTextStyles.titleMedium,
+      titleSmall: MyTextStyles.titleSmall,
+      bodyLarge: MyTextStyles.bodyLarge,
+      bodyMedium: MyTextStyles.bodyMedium,
+      bodySmall: MyTextStyles.bodySmall,
+      labelLarge: MyTextStyles.labelLarge,
+      labelMedium: MyTextStyles.labelMedium,
+      labelSmall: MyTextStyles.labelSmall,
     ),
   );
 

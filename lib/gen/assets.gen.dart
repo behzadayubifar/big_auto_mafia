@@ -300,10 +300,6 @@ class $AssetsCardsRolesGen {
   SvgGenImage get citizenCard =>
       const SvgGenImage('assets/cards/roles/citizen-card.svg');
 
-  /// File path: assets/cards/roles/constantin-card.svg
-  SvgGenImage get constantinCard =>
-      const SvgGenImage('assets/cards/roles/constantin-card.svg');
-
   /// File path: assets/cards/roles/godfather-card.svg
   SvgGenImage get godfatherCard =>
       const SvgGenImage('assets/cards/roles/godfather-card.svg');
@@ -312,6 +308,10 @@ class $AssetsCardsRolesGen {
   SvgGenImage get kaneCard =>
       const SvgGenImage('assets/cards/roles/kane-card.svg');
 
+  /// File path: assets/cards/roles/konstantin-card.svg
+  SvgGenImage get konstantinCard =>
+      const SvgGenImage('assets/cards/roles/konstantin-card.svg');
+
   /// File path: assets/cards/roles/leon-card.svg
   SvgGenImage get leonCard =>
       const SvgGenImage('assets/cards/roles/leon-card.svg');
@@ -319,6 +319,10 @@ class $AssetsCardsRolesGen {
   /// File path: assets/cards/roles/matador-card.svg
   SvgGenImage get matadorCard =>
       const SvgGenImage('assets/cards/roles/matador-card.svg');
+
+  /// File path: assets/cards/roles/mysterious-gangster-character.jpg
+  AssetGenImage get mysteriousGangsterCharacter => const AssetGenImage(
+      'assets/cards/roles/mysterious-gangster-character.jpg');
 
   /// File path: assets/cards/roles/nostradamus-card.svg
   SvgGenImage get nostradamusCard =>
@@ -337,13 +341,14 @@ class $AssetsCardsRolesGen {
       const SvgGenImage('assets/cards/roles/which-role.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [
+  List<dynamic> get values => [
         citizenCard,
-        constantinCard,
         godfatherCard,
         kaneCard,
+        konstantinCard,
         leonCard,
         matadorCard,
+        mysteriousGangsterCharacter,
         nostradamusCard,
         saulCard,
         watsonCard,

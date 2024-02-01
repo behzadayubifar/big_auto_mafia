@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class TextStyles {
+class MyTextStyles {
   ///display1
   static TextStyle displayLarge = GoogleFonts.lemonada(
     color: const Color(0xFF070E25),

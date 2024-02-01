@@ -26,6 +26,7 @@ class GameStatus {
   bool isDay = true;
   int dayNumber = 0;
   int? wholeGameTimePassed = 0;
+  String? situation = '';
   // TODO: handle this in UI *******************
   // this must change in two times :
   // (initial_value) = ['playerName', '$initialTime']
@@ -37,16 +38,16 @@ class GameStatus {
   List<String>? timeLeft = ['', '0'];
 
   // who saw their role
-  List<String>? playersWhoSawTheirRole;
+  List<String>? playersWhoSawTheirRole = [];
 
   // status of game
-  String? statusOfGame;
+  String? statusOfGame = '';
 
   // if this is null && isNight == true it means that the list of players must be shown
 
   int? nightCode = -1;
   bool? isFinished = false;
-  String? winner;
+  String? winner = '';
 
   bool? isChaos = false;
 
@@ -66,6 +67,7 @@ class GameStatus {
             "nightCode: $nightCode"
             "isFinished: $isFinished"
             "winner: $winner"
+            "situation: $situation"
             "isChaos: $isChaos"
             """;
 
@@ -79,6 +81,7 @@ class GameStatus {
     String? winner,
     bool? isChaos,
     String? statusOfGame,
+    String? situation,
     List<String>? playersWhoSawTheirRole,
   }) {
     final newStatus = GameStatus()
@@ -95,6 +98,7 @@ class GameStatus {
       ..nightCode = nightCode ?? this.nightCode
       ..isFinished = isFinished ?? this.isFinished
       ..winner = winner ?? this.winner
+      ..situation = situation ?? this.situation
       ..isChaos = isChaos ?? this.isChaos;
 
     //
@@ -116,6 +120,7 @@ class GameStatus {
           nightCode == other.nightCode &&
           isFinished == other.isFinished &&
           winner == other.winner &&
+          situation == other.situation &&
           isChaos == other.isChaos;
 
   @override
@@ -128,6 +133,7 @@ class GameStatus {
         nightCode,
         isFinished,
         winner,
+        situation,
         isChaos,
       );
 }

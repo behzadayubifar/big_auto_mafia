@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/utils/dev_log.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:auto_mafia/db/entities/game_status.dart';
@@ -23,60 +24,12 @@ Future<IsarService> isarService(IsarServiceRef ref) async {
   return IsarService(isar);
 }
 
-// @riverpod
-// Stream<List<Player>> watchPlayers(WatchPlayersRef ref) async {
-//   final isar = await ref.watch(isarInstanceProvider.future);
-//   final stream = isar.players.watchLazy(fireImmediately: true);
-
-// }
-/* Future<({int count, List<Player> players})> */
-
-// live data for alive players
-// @riverpod
-// /* Future<List<Player>> */ alivePlayers(AlivePlayersRef ref) async {
-//   final List<Player> playersList = [];
-//   final isar = await ref.watch(isarInstanceProvider.future);
-//   // final players = await isar.retrievePlayer();
-//   final playersStream = await isar.players.watchLazy(fireImmediately: true);
-//   playersStream.listen((event) async {
-//     await isar.players.filter().isAliveEqualTo(true).findAll().then((newList) {
-//       playersList.clear();
-//       playersList.addAll(newList);
-//     });
-//   });
-
 @riverpod
 Future<({int count, List<Player> players})> alivePlayers(AlivePlayersRef ref) {
   return ref
       .watch(isarServiceProvider.future)
       .then((value) => value.retrievePlayer(isAlive: true));
 }
-
-// return players;
-// .then((player) => player.where(criteria ?? (_) => true)
-// .toList());
-// final int count = players.length;
-// final result = (count: count, players: players);
-// return result;
-// return players.players;
-
-// live data for alive players
-
-// @riverpod
-// class AsyncPlayer extends AsyncNotifier<List<Player>> {
-//   AsyncPlayer() : super();
-
-//   @override
-//   FutureOr<List<Player>> build() {
-//     // TODO: implement build
-//     throw UnimplementedError();
-//   }
-
-//   // @override
-//   // Stream<List<Player>> build() {
-//   //   return Stream.value([]);
-//   // }
-// }
 
 @riverpod
 Stream<List<Player>> playersWatcher(PlayersWatcherRef ref) async* {
@@ -104,20 +57,20 @@ Stream<List<Player>> playersWatcher(PlayersWatcherRef ref) async* {
 }
 
 // a provider for players collection
-@riverpod
-Future<List<Player>> playersWhoHasNotDoneTheirNightJob(
-    PlayersWhoHasNotDoneTheirNightJobRef ref) async {
-  // final playersNotDoneTheirJob = await ref
-  //     .watch(isarServiceProvider.future)
-  //     .then((value) =>
-  //         value.isar.players.filter().nightDoneEqualTo(false).findAll());
-  // return playersNotDoneTheirJob;
-  final isar = await ref.watch(isarServiceProvider.future);
-  final players = await isar.retrievePlayer(
-    criteria: (player) => player.nightDone == false,
-  );
-  return players.players;
-}
+// @riverpod
+// Future<List<Player>> playersWhoHasNotDoneTheirNightJob(
+//     PlayersWhoHasNotDoneTheirNightJobRef ref) async {
+//   // final playersNotDoneTheirJob = await ref
+//   //     .watch(isarServiceProvider.future)
+//   //     .then((value) =>
+//   //         value.isar.players.filter().nightDoneEqualTo(false).findAll());
+//   // return playersNotDoneTheirJob;
+//   final isar = await ref.watch(isarServiceProvider.future);
+//   final players = await isar.retrievePlayer(
+//     criteria: (player) => player.nightDone == false,
+//   );
+//   return players.players;
+// }
 
 @riverpod
 Future<({int count, List<Player> players})> deadPlayers(
@@ -145,19 +98,103 @@ class CurrentPlayers extends _$CurrentPlayers {
     // final players = await isar.retrievePlayer(isAlive: true);
     // await Future.delayed(Duration(seconds: 2));
     // return players.players;
-    return [];
-  }
-
-  Future<void> init(String situation) {
     return Future.sync(() async {
       final isar = await ref.watch(isarServiceProvider.future);
+      final situation = MyStrings
+          .showRoles; /* await isar
+          .retrieveGameStatusN(n: await isar.getDayNumber())
+          .then((status) => status?.situation); */
       // Set the state to loading
       state = const AsyncValue.loading();
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
+      // Retrieve the players baesed on the situation
+      final y = await AsyncValue.guard(
+        () async {
+          log('here in init ' + (situation ?? ' no situation'),
+              name: 'CurrentPlayers');
+          switch (situation) {
+            // situations that need all the alive players
+            case MyStrings.nightPage:
+            case MyStrings.showRoles:
+            case MyStrings.dayPage:
+              'hi'.log();
+              return await isar
+                  .retrievePlayer(isAlive: true)
+                  .then((record) => record.players);
+
+            case MyStrings.leonPage:
+              return await isar
+                  .retrievePlayer(
+                    criteria: (player) => player.roleName != MyStrings.leon,
+                  )
+                  .then((record) => record.players);
+
+            case MyStrings.kanePage:
+              return await isar
+                  .retrievePlayer(
+                    criteria: (player) => player.roleName != MyStrings.kane,
+                  )
+                  .then((record) => record.players);
+
+            case MyStrings.godfatherPage:
+            case MyStrings.saulPage:
+              return await isar
+                  .retrievePlayer(
+                    criteria: (player) => player.type != RoleType.mafia,
+                  )
+                  .then((record) => record.players);
+
+            case MyStrings.matadorPage:
+              final lastNight = await isar.getNightNumber();
+              final lastNightOfBlockage =
+                  await isar.retrieveNightN(n: lastNight).then(
+                        (value) => value.match(
+                            (l) => l['nightOfBlockage']!, (r) => 'not found'),
+                      );
+              final matadorChoice =
+                  await isar.retrieveNightN(n: lastNight).then(
+                        (value) => value.match(
+                            (l) => l['matadorChoice']!, (r) => 'not found'),
+                      );
+              return await isar.retrievePlayer(
+                criteria: (player) {
+                  final c1 = player.type != RoleType.mafia;
+                  final c2 = matadorChoice == player.playerName &&
+                      lastNightOfBlockage == lastNight;
+                  return c1 && !c2;
+                },
+              ).then((record) => record.players);
+
+            case MyStrings.konstantinPage:
+              return await isar
+                  .retrievePlayer(isAlive: false)
+                  .then((value) => value.players);
+
+            default:
+              return [Player()..playerName = 'default'];
+          }
+        },
+      );
+      return y.asData!.value;
+      // return [Player()..playerName = 'default'];
+    });
+  }
+/* 
+  Future<void> init(/* String situation */) {
+    return Future.sync(() async {
+      final isar = await ref.watch(isarServiceProvider.future);
+      final situation = MyStrings
+          .showMyRole; /* await isar
+          .retrieveGameStatusN(n: await isar.getDayNumber())
+          .then((status) => status?.situation); */
+      // Set the state to loading
+      state = const AsyncValue.loading();
+      await Future.delayed(Duration(seconds: 1));
       // Retrieve the players baesed on the situation
       state = await AsyncValue.guard(
         () async {
-          log('here in init');
+          log('here in init' + (situation ?? ' no situation'),
+              name: 'CurrentPlayers');
           switch (situation) {
             // situations that need all the alive players
             case MyStrings.nightPage:
@@ -222,23 +259,42 @@ class CurrentPlayers extends _$CurrentPlayers {
       );
     });
   }
+ */
 
-  Future<void> action(String situation) async {
-    final isar = await ref.watch(isarServiceProvider.future);
-    // Set the state to loading
+  Future<void> action(String situation, [String? playerName]) async {
     state = const AsyncValue.loading();
-    await Future.delayed(Duration(seconds: 2));
+    final isar = await ref.watch(isarServiceProvider.future);
+    final playersWhoSawTheirRole = await isar
+        .retrieveGameStatusN(n: 0)
+        .then((status) => status?.playersWhoSawTheirRole);
+    // Set the state to loading
+    await Future.delayed(Duration(milliseconds: 400));
     state = await AsyncValue.guard(
       () async {
         log('here in action');
 
         switch (situation) {
           case MyStrings.nightPage:
-          // final players = await isar
-          //     .retrievePlayer(isAlive: true)
-          //     .then((value) => value.players);
-          // return players;
+            final players =
+                await isar.retrievePlayer().then((value) => value.players);
+            return players;
           case MyStrings.showRoles:
+            return await isar
+                .retrievePlayer(
+                  criteria: (player) =>
+                      !playersWhoSawTheirRole!.contains(player.playerName),
+                )
+                .then((value) => value.players);
+
+          case MyStrings.showMyRole:
+            return await isar.retrievePlayer().then((value) {
+              final player = value.players.firstWhere(
+                (player) => player.playerName == playerName,
+                orElse: () => Player(),
+              );
+              return [player];
+            });
+
           default:
             return await isar.retrievePlayer().then((value) => value.players);
         }
@@ -280,6 +336,8 @@ class IsarService {
   Future<void> initializePlayers(List<Map<String, String>> players) async {
     //first of all clear db
     final isCleared = await clearAll();
+    await putGameStatus(dayNumber: 0);
+
     log('isCleared: $isCleared');
     // now init with new records
     await isar.writeTxn(() async => await isar.players.putAll(
@@ -324,8 +382,8 @@ class IsarService {
     return result;
   }
 
-  Future<Player?> getPlayerByName(String playerName) =>
-      isar.players.filter().playerNameEqualTo(playerName).findFirst();
+  Future<Player?> getPlayerByName(String playerName) async =>
+      await isar.players.filter().playerNameEqualTo(playerName).findFirst();
 
   Future<Player?> getPlayerByRole(RoleName roleName) =>
       isar.players.filter().roleNameEqualTo(roleNames[roleName]!).findFirst();
@@ -597,6 +655,7 @@ class IsarService {
     String? winner,
     bool? isChaos,
     String? statusOfGame,
+    String? situation,
     List<String>? playersWhoSawTheirRole,
   }) async {
     final alreadyExists =
@@ -617,6 +676,7 @@ class IsarService {
         isFinished: isFinished,
         winner: winner,
         isChaos: isChaos,
+        situation: situation,
       );
 
       await isar.writeTxn(() => isar.gameStatus.put(newGameStatus));
@@ -633,6 +693,9 @@ class IsarService {
             isFinished: isFinished,
             winner: winner,
             isChaos: isChaos,
+            statusOfGame: statusOfGame,
+            situation: situation,
+            playersWhoSawTheirRole: playersWhoSawTheirRole,
           )));
 
       log('game status *updated* successfully', name: 'insertGameStatus');
