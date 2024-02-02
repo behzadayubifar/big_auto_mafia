@@ -1,29 +1,22 @@
-import 'dart:developer';
-
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/metrics.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
-import 'package:auto_mafia/logic/logics_utils.dart';
-import 'package:auto_mafia/models/role_datasets.dart';
-import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/my_buttons.dart';
 import 'package:auto_mafia/ui/common/player_count_dropdown.dart';
-import 'package:auto_mafia/ui/night/night_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/names_list_funcs.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/player_naming_frame_widget.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 List<String> _listOfPlayersNames = [];
 
-class NamesList extends HookConsumerWidget {
-  const NamesList({Key? key}) : super(key: key);
+class NamingPage extends HookConsumerWidget {
+  const NamingPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -115,7 +108,8 @@ class NamesList extends HookConsumerWidget {
                             // pageInfo: _pageInfo,
                             listOfPlayersNames: _listOfPlayersNames,
                           );
-                          context.go('/night/${MyStrings.showRoles}');
+                          context.pushReplacementNamed('night',
+                              extra: Info.showRoles);
                           break;
                       }
                     },

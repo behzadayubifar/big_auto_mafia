@@ -13,6 +13,7 @@ class MyAssets {
   static final String nightBg = Assets.images.nights.nightBg.path;
   static final String moon = Assets.images.nights.moonPng.path;
   static final String moon_hq = Assets.images.nights.moonHq.path;
+  static final String dashedLine = Assets.images.nights.dashedLine.path;
 
   // role's-cards
   static final String citizenCard = Assets.cards.roles.citizenCard.path;

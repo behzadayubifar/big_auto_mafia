@@ -66,13 +66,14 @@ class ShowRolePage extends HookConsumerWidget {
                 await isar.retrievePlayer().then((rec) => rec.count);
             final haveAllSeenTheirRoles =
                 playersWhoSawTheirRole?.length == playersCount;
-            if (haveAllSeenTheirRoles) {
+            if (!haveAllSeenTheirRoles) {
+              print('mio');
               await ref
                   .read(currentPlayersProvider.notifier)
                   .action(MyStrings.nightPage);
               context.pushReplacementNamed(
                 'night',
-                pathParameters: Info.night,
+                extra: Info.night,
               );
             } else {
               await ref

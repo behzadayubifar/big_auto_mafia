@@ -25,6 +25,7 @@ class MyStrings {
   static const String naming = 'naming';
   static const String showRoles = 'showRoles';
   static const String nightPage = 'night-page';
+  static const String rolePanel = 'role-panel';
   static const String dayPage = 'day-page';
 
   // show-role-page situations
@@ -41,6 +42,23 @@ class MyStrings {
   static const String leonPage = 'leon-page';
   static const String kanePage = 'kane-page';
   static const String predictPage = 'nostrodamus-page';
+  static const String citizenPage = 'citizen-page';
+
+  static String pageByRole(String role) {
+    final page = switch (role) {
+      'پدرخوانده' => godfatherPage,
+      'ماتادور' => matadorPage,
+      'سائول گودمن' => saulPage,
+      'کنستانتین' => konstantinPage,
+      'دکتر واتسون' => watsonPage,
+      'لئون حرفه‌ای' => leonPage,
+      'همشهری کین' => kanePage,
+      'نوستراداموس' => predictPage,
+      'شهروند ساده' => citizenPage,
+      _ => '?',
+    };
+    return page;
+  }
 
   // roles
   static const String godfather = 'پدرخوانده';
@@ -50,6 +68,6 @@ class MyStrings {
   static const String watson = 'دکتر واتسون';
   static const String leon = 'لئون حرفه‌ای';
   static const String kane = 'همشهری کین';
-  static const String predict = 'نوستراداموس';
+  static const String nostradamous = 'نوستراداموس';
   static const String citizen = 'شهروند ساده';
 }

@@ -1,3 +1,4 @@
+import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -136,5 +137,9 @@ class MyTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 0.12,
+  );
+
+  static TextStyle rolePanel = MyTextStyles.headlineSmall.copyWith(
+    color: AppColors.secendaries[2],
   );
 }

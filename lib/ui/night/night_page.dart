@@ -21,74 +21,83 @@ class NightPage extends HookConsumerWidget {
 
   final Map<String, String> info;
 
-  Widget build(BuildContext context, WidgetRef ref) {
-    final height = MediaQuery.sizeOf(context).height;
-    final width = MediaQuery.sizeOf(context).width;
+  Widget build(BuildContext nightContext, WidgetRef ref) {
+    final height = MediaQuery.sizeOf(nightContext).height;
+    final width = MediaQuery.sizeOf(nightContext).width;
     //
     final asyncPlayers = ref.watch(currentPlayersProvider);
     // final asyncPlayers = useMemoized(() => asyncPlayersX, [asyncPlayersX]);
     'night-page'.log();
 
     return Scaffold(
-        backgroundColor: AppColors.backGround,
-        body: switch (asyncPlayers) {
-          AsyncData(:final value) => SafeArea(
-              // maintainBottomViewPadding: true,
-              minimum: EdgeInsets.only(top: height / 15),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    TiTleTile(title: info['title']!),
-                    SizedBox(height: height / 24),
-                    Expanded(
-                      child: SizedBox(
-                        width: width / 1.5,
-                        // height: height / 1.5,
-                        child: ListView.separated(
-                          cacheExtent: height / 1.64,
-                          restorationId: 'night-page',
-                          // addAutomaticKeepAlives: true,
-                          // key: _pageStorageKey,
-                          clipBehavior: Clip.antiAlias,
-                          // shrinkWrap: true,
-                          // physics: RangeMaintainingScrollPhysics(),
-                          itemCount: value.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                GestureDetector(
-                                  onDoubleTap: () async {
-                                    log('on double tap');
-                                  },
-                                  child: PlayerNameWidget(
-                                    playerName: value[index].playerName,
-                                    height: height,
-                                    // situation: MyStrings.nightPage,
-                                    // situation: MyStrings.showMyRole,
-                                    situation: info['situation']!,
-                                  ),
+      backgroundColor: AppColors.backGround,
+      body: switch (asyncPlayers) {
+        AsyncData(:final value) => SafeArea(
+            // maintainBottomViewPadding: true,
+            minimum: EdgeInsets.only(top: height / 15),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisSize: MainAxisSize.min,
+                children: [
+                  TiTleTile(title: info['title']!),
+                  SizedBox(height: height / 24),
+                  Expanded(
+                    child: SizedBox(
+                      width: width / 1.5,
+                      // height: height / 1.5,
+                      child: ListView.separated(
+                        cacheExtent: height / 1.64,
+                        restorationId: 'night-page',
+                        // addAutomaticKeepAlives: true,
+                        // key: _pageStorageKey,
+                        clipBehavior: Clip.antiAlias,
+                        // shrinkWrap: true,
+                        // physics: RangeMaintainingScrollPhysics(),
+                        itemCount: value.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              GestureDetector(
+                                onDoubleTap: () async {
+                                  log('on double tap');
+                                },
+                                child: PlayerNameWidget(
+                                  playerName: value[index].playerName,
+                                  height: height,
+                                  // situation: MyStrings.nightPage,
+                                  // situation: MyStrings.showMyRole,
+                                  situation: info['situation']!,
+                                  nightContext: nightContext,
                                 ),
-                                SizedBox(
-                                  height: height / 64,
-                                ),
-                              ],
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return SizedBox(height: height / 48);
-                          },
-                        ),
+                              ),
+                              SizedBox(
+                                height: height / 64,
+                              ),
+                            ],
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return SizedBox(height: height / 48);
+                        },
                       ),
                     ),
-                    SizedBox(height: height / 8),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: height / 24),
+                  if (info['button'] != null)
+                    MyButton(
+                      title: info['button']!,
+                      // TODO: add a function to the button (show night's results)
+                      onLongPress: () {},
+                    ),
+                  SizedBox(height: height / 16),
+                ],
               ),
             ),
-          _ => defaultLoading,
-        });
+          ),
+        _ => defaultLoading,
+      },
+    );
   }
 }

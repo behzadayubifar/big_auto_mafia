@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:auto_mafia/constants/app_colors.dart';
+import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/ui/ui_utils/calculate_text_layout_size.dart';
@@ -10,16 +11,22 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class PlayerNameWidget extends HookConsumerWidget {
-  PlayerNameWidget(
-      {required this.situation, required playerName, required this.height})
-      : _playerName = playerName;
+  PlayerNameWidget({
+    required this.nightContext,
+    required this.situation,
+    required playerName,
+    required this.height,
+  }) : _playerName = playerName;
 
   // final key = UniqueKey();
 
   final String _playerName;
   final double height;
   final String situation;
+  final BuildContext nightContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,9 +51,7 @@ class PlayerNameWidget extends HookConsumerWidget {
           _isPlayerNotSelected.value = false;
         }
         final isar = await ref.read(isarServiceProvider.future);
-        final playersWhoSawTheirRole = (await isar.retrieveGameStatusN(n: 0))!
-            .playersWhoSawTheirRole
-            ?.toList();
+
         final role = await isar
             .getPlayerByName(_playerName)
             .then((player) => player!.roleName!);
@@ -55,12 +60,17 @@ class PlayerNameWidget extends HookConsumerWidget {
 
         switch (situation) {
           case MyStrings.showMyRole:
-            //p
+            // go to
             return await ref
                 .read(currentPlayersProvider.notifier)
                 .action(situation);
 
           case MyStrings.showRoles:
+            // go to show-roles
+            final playersWhoSawTheirRole =
+                (await isar.retrieveGameStatusN(n: 0))!
+                    .playersWhoSawTheirRole
+                    ?.toList();
             playersWhoSawTheirRole!.add(_playerName);
             await isar.putGameStatus(
                 dayNumber: 0, playersWhoSawTheirRole: playersWhoSawTheirRole);
@@ -68,6 +78,29 @@ class PlayerNameWidget extends HookConsumerWidget {
             return await ref
                 .read(currentPlayersProvider.notifier)
                 .action(situation, _playerName);
+
+          case MyStrings.nightPage:
+            print('nightPage is in action now');
+            final relatedRolePage = MyStrings.pageByRole(role);
+            log('$relatedRolePage', name: 'relatedRolePage');
+            // go to panel and customize the elements of
+            // panel-page baesed on role
+            // 1. role-specifics
+            // 2. list-of-players due to current circumstances
+            await ref
+                .read(currentPlayersProvider.notifier)
+                .action(relatedRolePage, _playerName);
+            final info = {
+              'name': _playerName,
+              'role': role,
+            };
+            nightContext.pushReplacementNamed(
+              'night_role_panel',
+              extra: info,
+            );
+
+          case MyStrings.godfatherPage:
+            print('godfatherPage is in action now');
         }
       },
       child: AnimatedContainer(
@@ -111,15 +144,18 @@ class PlayerNameWidget extends HookConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 16),
-              Text(
-                _playerName,
-                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                      color: _isPlayerNotSelected.value
-                          ? Colors.white
-                          : AppColors.backGround.withOpacity(0.9),
-                      overflow: TextOverflow.fade,
-                    ),
-              ),
+
+              // content of the widget
+              if (situation == MyStrings.godfatherPage)
+                Text(
+                  _playerName,
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                        color: _isPlayerNotSelected.value
+                            ? Colors.white
+                            : AppColors.backGround.withOpacity(0.9),
+                        overflow: TextOverflow.fade,
+                      ),
+                ),
             ],
           ),
         ),
