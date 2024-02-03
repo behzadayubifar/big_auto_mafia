@@ -32,47 +32,6 @@ Future<({int count, List<Player> players})> alivePlayers(AlivePlayersRef ref) {
 }
 
 @riverpod
-Stream<List<Player>> playersWatcher(PlayersWatcherRef ref) async* {
-  late List<Player> playersList;
-  final instance = await ref.watch(isarInstanceProvider.future);
-  final service = await ref.watch(isarServiceProvider.future);
-  playersList = await service
-      .retrievePlayer(isAlive: true)
-      .then((value) => value.players);
-  print('hello from before stream 1');
-
-  final Stream<void> stream = instance.players.watchLazy(fireImmediately: true);
-  stream.listen((_) async {
-    print('hello from stream 1');
-    final newlist = await service
-        .retrievePlayer(isAlive: true)
-        .then((value) => value.players);
-    playersList.clear();
-    playersList.addAll(newlist);
-    print(playersList.length);
-  });
-  final result = Stream.value(playersList);
-
-  yield* result;
-}
-
-// a provider for players collection
-// @riverpod
-// Future<List<Player>> playersWhoHasNotDoneTheirNightJob(
-//     PlayersWhoHasNotDoneTheirNightJobRef ref) async {
-//   // final playersNotDoneTheirJob = await ref
-//   //     .watch(isarServiceProvider.future)
-//   //     .then((value) =>
-//   //         value.isar.players.filter().nightDoneEqualTo(false).findAll());
-//   // return playersNotDoneTheirJob;
-//   final isar = await ref.watch(isarServiceProvider.future);
-//   final players = await isar.retrievePlayer(
-//     criteria: (player) => player.nightDone == false,
-//   );
-//   return players.players;
-// }
-
-@riverpod
 Future<({int count, List<Player> players})> deadPlayers(
     DeadPlayersRef ref) async {
   final isar = await ref.watch(isarServiceProvider.future);
@@ -110,14 +69,13 @@ class CurrentPlayers extends _$CurrentPlayers {
       // Retrieve the players baesed on the situation
       final y = await AsyncValue.guard(
         () async {
-          log('here in init ' + (situation ?? ' no situation'),
-              name: 'CurrentPlayers');
+          /* log('here in init ' + (situation ?? ' no situation'),
+              name: 'CurrentPlayers'); */
           switch (situation) {
             // situations that need all the alive players
             case MyStrings.nightPage:
             case MyStrings.showRoles:
             case MyStrings.dayPage:
-              'hi'.log();
               return await isar
                   .retrievePlayer(isAlive: true)
                   .then((record) => record.players);

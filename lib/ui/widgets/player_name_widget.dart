@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:auto_mafia/constants/app_colors.dart';
-import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/ui/ui_utils/calculate_text_layout_size.dart';
@@ -146,16 +145,16 @@ class PlayerNameWidget extends HookConsumerWidget {
               SizedBox(height: 16),
 
               // content of the widget
-              if (situation == MyStrings.godfatherPage)
-                Text(
-                  _playerName,
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                        color: _isPlayerNotSelected.value
-                            ? Colors.white
-                            : AppColors.backGround.withOpacity(0.9),
-                        overflow: TextOverflow.fade,
-                      ),
-                ),
+
+              Text(
+                _playerName,
+                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                      color: _isPlayerNotSelected.value
+                          ? Colors.white
+                          : AppColors.backGround.withOpacity(0.9),
+                      overflow: TextOverflow.fade,
+                    ),
+              ),
             ],
           ),
         ),

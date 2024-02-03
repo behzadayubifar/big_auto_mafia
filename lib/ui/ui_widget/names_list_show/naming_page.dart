@@ -3,7 +3,7 @@ import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/metrics.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
-import 'package:auto_mafia/ui/common/my_buttons.dart';
+import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/player_count_dropdown.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/names_list_funcs.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/player_naming_frame_widget.dart';

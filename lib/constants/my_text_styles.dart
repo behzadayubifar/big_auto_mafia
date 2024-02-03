@@ -140,6 +140,6 @@ class MyTextStyles {
   );
 
   static TextStyle rolePanel = MyTextStyles.headlineSmall.copyWith(
-    color: AppColors.secendaries[2],
+    color: AppColors.secondaries[4],
   );
 }

@@ -26,7 +26,7 @@ class AppColors {
     Color(0xFF05052B),
   ];
 
-  static const secendaries = [
+  static const secondaries = [
     Color(0xFFFFC1C1),
     Color(0xFFFF8F8F),
     Color(0xFFEB430D),
@@ -44,7 +44,7 @@ class AppColors {
 
   static final List<List<Color>> allSwatches = [
     primaries,
-    secendaries,
+    secondaries,
     tintsOfBlack,
   ];
 }

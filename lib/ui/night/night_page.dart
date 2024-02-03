@@ -4,7 +4,7 @@ import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
-import 'package:auto_mafia/ui/common/my_buttons.dart';
+import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
 import 'package:auto_mafia/ui/widgets/player_name_widget.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
@@ -26,8 +26,8 @@ class NightPage extends HookConsumerWidget {
     final width = MediaQuery.sizeOf(nightContext).width;
     //
     final asyncPlayers = ref.watch(currentPlayersProvider);
-    // final asyncPlayers = useMemoized(() => asyncPlayersX, [asyncPlayersX]);
-    'night-page'.log();
+
+    //
 
     return Scaffold(
       backgroundColor: AppColors.backGround,
@@ -66,8 +66,6 @@ class NightPage extends HookConsumerWidget {
                                 child: PlayerNameWidget(
                                   playerName: value[index].playerName,
                                   height: height,
-                                  // situation: MyStrings.nightPage,
-                                  // situation: MyStrings.showMyRole,
                                   situation: info['situation']!,
                                   nightContext: nightContext,
                                 ),
@@ -84,13 +82,21 @@ class NightPage extends HookConsumerWidget {
                       ),
                     ),
                   ),
+
+                  // spacer
                   SizedBox(height: height / 24),
+
+                  // button
                   if (info['button'] != null)
                     MyButton(
+                      state: MyStrings.disabledButton,
                       title: info['button']!,
+                      criteria: value.length == 0,
                       // TODO: add a function to the button (show night's results)
                       onLongPress: () {},
                     ),
+
+                  // spacer
                   SizedBox(height: height / 16),
                 ],
               ),

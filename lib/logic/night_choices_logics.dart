@@ -18,7 +18,7 @@ ProviderContainer _createContainer({
 final _container = _createContainer();
 final Future<IsarService> _isar = _container.read(isarServiceProvider.future);
 
-putMafiaShotChoice({required int night, required String name}) async {
+void putMafiaShotChoice({required int night, required String name}) async {
   final isar = await _isar;
   await isar.putNight(night: night, mafiasShot: name);
 }
@@ -28,32 +28,40 @@ putMatadorChoice({required int night, required String name}) async {
   await isar.putNight(night: night, matadorChoice: name);
 }
 
-putGodfatherChoice({required int night, required String name}) async {
+void putGodfatherChoice({
+  required int night,
+  required String name,
+  required String guessedRole,
+}) async {
   final isar = await _isar;
-  await isar.putNight(night: night, godfatherChoice: name);
+  await isar.putNight(
+    night: night,
+    godfatherChoice: name,
+    theRoleGuessedByGodfather: guessedRole,
+  );
 }
 
-putSaulChoice({required int night, required String name}) async {
+void putSaulChoice({required int night, required String name}) async {
   final isar = await _isar;
   await isar.putNight(night: night, saulChoice: name);
 }
 
-putLeonChoice({required int night, required String name}) async {
+void putLeonChoice({required int night, required String name}) async {
   final isar = await _isar;
   await isar.putNight(night: night, leonChoice: name);
 }
 
-putKaneChoice({required int night, required String name}) async {
+void putKaneChoice({required int night, required String name}) async {
   final isar = await _isar;
   await isar.putNight(night: night, kaneChoice: name);
 }
 
-putWatsonChoice({required int night, required String name}) async {
+void putWatsonChoice({required int night, required String name}) async {
   final isar = await _isar;
   await isar.putNight(night: night, watsonChoice: name);
 }
 
-putKonstantinChoice({required int night, required String name}) async {
+void putKonstantinChoice({required int night, required String name}) async {
   final isar = await _isar;
   await isar.putNight(night: night, konstantinChoice: name);
 }

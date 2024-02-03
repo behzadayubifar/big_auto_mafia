@@ -1,12 +1,16 @@
 import 'dart:developer';
 
 import 'package:auto_mafia/constants/info_strings.dart';
+import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
-import 'package:auto_mafia/ui/widgets/player_name_widget.dart';
+import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
+import 'package:auto_mafia/ui/ui_utils/get_criteria_for_night_role_panel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NightRolePanel extends HookConsumerWidget {
@@ -23,7 +27,13 @@ class NightRolePanel extends HookConsumerWidget {
     //
     final String image = Info.imageByRole(role);
     //
+    final nightFuture = ref
+        .watch(isarServiceProvider.future)
+        .then((isar) => isar.getNightNumber());
+    //
     final asyncPlayers = ref.watch(currentPlayersProvider);
+    //
+    final criteria = ref.watch(buttonCriteriaControllerProvider);
     //
     return WillPopScope(
       onWillPop: () => Future.value(false),
@@ -89,7 +99,7 @@ class NightRolePanel extends HookConsumerWidget {
                         height: _height / 32,
                       ),
 
-                      // role-of-player
+                      // role-of-selectedPlayer
                       Image.asset(
                         image,
                         width: _width / 4.2,
@@ -101,65 +111,111 @@ class NightRolePanel extends HookConsumerWidget {
               ),
               // <--- texts
 
+              // list-of-players
               Positioned(
-                top: _height / 2.4,
-                right: _width / 8,
+                top: _height / 2.8,
+                // right: _width / 32,
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
-                  child:
-                      // list-of-players
-                      SizedBox(
+                  child: SizedBox(
+                    width: _width,
                     height: _height / 1.5,
                     child: asyncPlayers.when(
                       data: (value) => SafeArea(
                         minimum: EdgeInsets.only(top: _height / 15),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  width: _width / 1.5,
-                                  child: ListView.separated(
-                                    cacheExtent: _height / 1.64,
-                                    restorationId: 'night-page',
-                                    clipBehavior: Clip.antiAlias,
-                                    itemCount: value.length,
-                                    itemBuilder: (context, index) {
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          GestureDetector(
-                                            onDoubleTap: () async {
-                                              log('on double tap');
-                                            },
-                                            child: PlayerNameWidget(
-                                              playerName:
-                                                  value[index].playerName,
-                                              height: _height, situation: '',
-                                              nightContext: context,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                width: _width,
+                                child: ListView.separated(
+                                  cacheExtent: _height / 1.64,
+                                  restorationId: 'night-page',
+                                  clipBehavior: Clip.antiAlias,
+                                  itemCount: value.length,
+                                  itemBuilder: (context, index) {
+                                    final selectedPlayer = value[index];
+                                    return GestureDetector(
+                                      onDoubleTap: () async {
+                                        log('on double tap');
+                                      },
+                                      // child: PlayerNameWidget(
+                                      //   playerName:
+                                      //       selectedPlayer.playerName,
+                                      //   height: _height, situation: '',
+                                      //   nightContext: context,
 
-                                              // situation: Info.showMyRole,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: _height / 64,
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (BuildContext context, int index) {
-                                      return SizedBox(height: _height / 48);
-                                    },
-                                  ),
+                                      //   // situation: Info.showMyRole,
+                                      // ),
+                                      child: MyButton(
+                                        title: selectedPlayer.playerName!,
+                                        player: selectedPlayer,
+                                        // criteria: ,
+                                        onDoubleTap: role != MyStrings.godfather
+                                            ? null
+                                            : () async => putGodfatherChoice(
+                                                  night: await nightFuture,
+                                                  name: selectedPlayer
+                                                      .playerName!,
+                                                  guessedRole:
+                                                      selectedPlayer.roleName!,
+                                                ),
+                                        onLongPress: switch (role) {
+                                          MyStrings.godfather => () async =>
+                                              putMafiaShotChoice(
+                                                night: await nightFuture,
+                                                name:
+                                                    selectedPlayer.playerName!,
+                                              ),
+                                          MyStrings.saul => () async =>
+                                              putSaulChoice(
+                                                night: await nightFuture,
+                                                name:
+                                                    selectedPlayer.playerName!,
+                                              ),
+                                          MyStrings.watson => () async =>
+                                              putWatsonChoice(
+                                                night: await nightFuture,
+                                                name:
+                                                    selectedPlayer.playerName!,
+                                              ),
+                                          MyStrings.leon => () async =>
+                                              putLeonChoice(
+                                                night: await nightFuture,
+                                                name:
+                                                    selectedPlayer.playerName!,
+                                              ),
+                                          MyStrings.kane => () async =>
+                                              putKaneChoice(
+                                                night: await nightFuture,
+                                                name:
+                                                    selectedPlayer.playerName!,
+                                              ),
+                                          MyStrings.konstantin => () async =>
+                                              putKonstantinChoice(
+                                                night: await nightFuture,
+                                                name:
+                                                    selectedPlayer.playerName!,
+                                              ),
+
+                                          // should not to be executed
+                                          _ => () => {},
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return SizedBox(height: _height / 56);
+                                  },
                                 ),
                               ),
-                              SizedBox(height: _height / 8),
-                            ],
-                          ),
+                            ),
+                            SizedBox(height: _height / 8),
+                          ],
                         ),
                       ),
                       loading: () => Center(child: defaultLoading),

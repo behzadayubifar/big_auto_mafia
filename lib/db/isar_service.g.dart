@@ -50,21 +50,6 @@ final alivePlayersProvider =
 
 typedef AlivePlayersRef
     = AutoDisposeFutureProviderRef<({int count, List<Player> players})>;
-String _$playersWatcherHash() => r'e1e0aa09f52957b35e0d5fd25f2d912193a9f86e';
-
-/// See also [playersWatcher].
-@ProviderFor(playersWatcher)
-final playersWatcherProvider = AutoDisposeStreamProvider<List<Player>>.internal(
-  playersWatcher,
-  name: r'playersWatcherProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$playersWatcherHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef PlayersWatcherRef = AutoDisposeStreamProviderRef<List<Player>>;
 String _$deadPlayersHash() => r'f6ebce85d4c01bc86394f86b20ddbe00cd286aee';
 
 /// See also [deadPlayers].
@@ -97,7 +82,7 @@ final nightJsonProvider =
 
 typedef NightJsonRef
     = AutoDisposeFutureProviderRef<Either<Map<String, String>, bool>>;
-String _$currentPlayersHash() => r'62abfa0a65c4c0b36f6a53a055981e8026b07051';
+String _$currentPlayersHash() => r'c39b42eb1e27f276b6c83dd0ad13e1cdbe1254ee';
 
 /// See also [CurrentPlayers].
 @ProviderFor(CurrentPlayers)

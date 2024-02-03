@@ -70,4 +70,11 @@ class MyStrings {
   static const String kane = 'همشهری کین';
   static const String nostradamous = 'نوستراداموس';
   static const String citizen = 'شهروند ساده';
+
+  // button-states
+  static const String defaultButton = 'default';
+  static const String longPressedButton = 'longPressedButton';
+  static const String doubleTappedButton = 'doubleTappedButton';
+  static const String nightSpecificButton = 'nightSpecificButton';
+  static const String disabledButton = 'disabledButton';
 }
