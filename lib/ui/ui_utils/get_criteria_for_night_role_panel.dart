@@ -8,4 +8,6 @@ class ButtonCriteriaController extends _$ButtonCriteriaController {
   bool build() {
     return false;
   }
+
+  void change(status) {}
 }

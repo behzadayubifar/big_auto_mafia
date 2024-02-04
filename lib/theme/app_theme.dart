@@ -8,6 +8,13 @@ part 'app_theme.g.dart';
 @riverpod
 class AutoMafiaTheme extends _$AutoMafiaTheme {
   ThemeData _theme = ThemeData(
+    scrollbarTheme: ScrollbarThemeData(
+      thumbColor: MaterialStateProperty.all(AppColors.primary),
+      // interactive: true,
+      trackVisibility: MaterialStateProperty.all(true),
+      thumbVisibility: MaterialStateProperty.all(true),
+      trackColor: MaterialStateProperty.all(AppColors.primaries[1]),
+    ),
     colorScheme: ColorScheme(
       primary: AppColors.primary,
       secondary: AppColors.secondary,

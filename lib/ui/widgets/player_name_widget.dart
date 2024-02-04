@@ -86,6 +86,10 @@ class PlayerNameWidget extends HookConsumerWidget {
             // panel-page baesed on role
             // 1. role-specifics
             // 2. list-of-players due to current circumstances
+            final isar = await ref.read(isarServiceProvider.future);
+            final dayNumber = await isar.getDayNumber();
+            await isar.putGameStatus(
+                dayNumber: dayNumber, situation: relatedRolePage);
             await ref
                 .read(currentPlayersProvider.notifier)
                 .action(relatedRolePage, _playerName);

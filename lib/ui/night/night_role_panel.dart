@@ -27,6 +27,11 @@ class NightRolePanel extends HookConsumerWidget {
     //
     final String image = Info.imageByRole(role);
     //
+    final scrollController = useScrollController(
+      initialScrollOffset: 0,
+      keepScrollOffset: true,
+    );
+    //
     final nightFuture = ref
         .watch(isarServiceProvider.future)
         .then((isar) => isar.getNightNumber());
@@ -112,45 +117,36 @@ class NightRolePanel extends HookConsumerWidget {
               // <--- texts
 
               // list-of-players
-              Positioned(
-                top: _height / 2.8,
-                // right: _width / 32,
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: SizedBox(
-                    width: _width,
-                    height: _height / 1.5,
-                    child: asyncPlayers.when(
-                      data: (value) => SafeArea(
+              asyncPlayers.when(
+                data: (playersList) => Positioned(
+                  top: _height / 2.8,
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: SizedBox(
+                      width: _width / 1.5,
+                      height: _height / 1.5,
+                      child: SafeArea(
                         minimum: EdgeInsets.only(top: _height / 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: SizedBox(
-                                width: _width,
-                                child: ListView.separated(
-                                  cacheExtent: _height / 1.64,
-                                  restorationId: 'night-page',
-                                  clipBehavior: Clip.antiAlias,
-                                  itemCount: value.length,
-                                  itemBuilder: (context, index) {
-                                    final selectedPlayer = value[index];
-                                    return GestureDetector(
-                                      onDoubleTap: () async {
-                                        log('on double tap');
-                                      },
-                                      // child: PlayerNameWidget(
-                                      //   playerName:
-                                      //       selectedPlayer.playerName,
-                                      //   height: _height, situation: '',
-                                      //   nightContext: context,
-
-                                      //   // situation: Info.showMyRole,
-                                      // ),
-                                      child: MyButton(
+                        child: Scrollbar(
+                          controller: scrollController,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  width: _width / 2,
+                                  height: _height / 1.64,
+                                  child: ListView.separated(
+                                    controller: scrollController,
+                                    cacheExtent: _height / 1.64,
+                                    restorationId: 'night-page',
+                                    clipBehavior: Clip.antiAlias,
+                                    itemCount: playersList.length,
+                                    itemBuilder: (context, index) {
+                                      final selectedPlayer = playersList[index];
+                                      return MyButton(
                                         title: selectedPlayer.playerName!,
                                         player: selectedPlayer,
                                         // criteria: ,
@@ -172,6 +168,12 @@ class NightRolePanel extends HookConsumerWidget {
                                               ),
                                           MyStrings.saul => () async =>
                                               putSaulChoice(
+                                                night: await nightFuture,
+                                                name:
+                                                    selectedPlayer.playerName!,
+                                              ),
+                                          MyStrings.matador => () async =>
+                                              putMatadorChoice(
                                                 night: await nightFuture,
                                                 name:
                                                     selectedPlayer.playerName!,
@@ -204,27 +206,27 @@ class NightRolePanel extends HookConsumerWidget {
                                           // should not to be executed
                                           _ => () => {},
                                         },
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
-                                    return SizedBox(height: _height / 56);
-                                  },
+                                      );
+                                    },
+                                    separatorBuilder:
+                                        (BuildContext context, int index) {
+                                      return SizedBox(height: _height / 56);
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: _height / 8),
-                          ],
+                              SizedBox(height: _height / 8),
+                            ],
+                          ),
                         ),
-                      ),
-                      loading: () => Center(child: defaultLoading),
-                      error: (error, stackTrace) => Text(
-                        'Error: $error',
-                        // style: MyTextStyles.error,
                       ),
                     ),
                   ),
+                ),
+                loading: () => Center(child: defaultLoading),
+                error: (error, stackTrace) => Text(
+                  'Error: $error',
+                  // style: MyTextStyles.error,
                 ),
               ),
             ],

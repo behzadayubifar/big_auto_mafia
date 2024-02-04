@@ -54,6 +54,7 @@ dependencies:
   page_flip_builder: ^0.1.4
   animations: ^2.0.8
   animated_text_kit: ^4.2.2
+  circular_countdown_timer: ^0.2.3
 
 dev_dependencies:
   flutter_test:

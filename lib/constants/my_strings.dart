@@ -71,6 +71,10 @@ class MyStrings {
   static const String nostradamous = 'نوستراداموس';
   static const String citizen = 'شهروند ساده';
 
+  // night-role-panel
+  static const String nightDoneJob = 'nightDoneJob';
+  static const String undoJob = 'صرف نظر از انتخاب قبلی';
+
   // button-states
   static const String defaultButton = 'default';
   static const String longPressedButton = 'longPressedButton';

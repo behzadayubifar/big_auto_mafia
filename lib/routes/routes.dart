@@ -1,5 +1,6 @@
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:auto_mafia/ui/home/home_page.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
 import 'package:auto_mafia/ui/night/night_role_panel.dart';
@@ -16,10 +17,17 @@ final _router = GoRouter(
   // initialLocation: '/name_list/show-roles',
   // initialLocation: '/night',
   // initialLocation: '/night/:${MyStrings.showMyRole}',
-  initialLocation: '/name_list',
   // initialLocation: '/night-role-panel',
+  // last was this :
+  // initialLocation: '/name_list',
+  initialLocation: '/night_timer',
 
   routes: <RouteBase>[
+    GoRoute(
+      name: 'night_timer',
+      path: '/night_timer',
+      builder: (context, state) => const NightTimer(),
+    ),
     GoRoute(
       name: 'home',
       path: '/',

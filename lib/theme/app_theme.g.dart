@@ -6,7 +6,7 @@ part of 'app_theme.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$autoMafiaThemeHash() => r'71a5da2dd08fe7d4d2e3346d91eaf6edc8ad288f';
+String _$autoMafiaThemeHash() => r'1ae3668a4780ed102c8d4b91c51318d8d5f3f968';
 
 /// See also [AutoMafiaTheme].
 @ProviderFor(AutoMafiaTheme)

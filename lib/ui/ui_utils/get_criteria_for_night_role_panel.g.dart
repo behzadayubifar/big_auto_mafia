@@ -7,7 +7,7 @@ part of 'get_criteria_for_night_role_panel.dart';
 // **************************************************************************
 
 String _$buttonCriteriaControllerHash() =>
-    r'734e775f1770263c65cf4de5f386eb8efaf36a08';
+    r'6e5f05706f6d0c4b6315072c68d9b57a2b165266';
 
 /// See also [ButtonCriteriaController].
 @ProviderFor(ButtonCriteriaController)
