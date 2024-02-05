@@ -172,6 +172,8 @@ class Night {
   String nightOfBlockage = "";
   // saul : {person: "behzad"}
   String saulChoice = "";
+  // nostradamous : [person1, person2, person3]
+  List<String> nostradamousChoices = [];
 
   Night copy({
     int? nightNumber,
@@ -189,6 +191,7 @@ class Night {
     String? matadorChoice,
     String? nightOfBlockage,
     String? saulChoice,
+    List<String>? nostradamousChoices,
   }) =>
       Night()
         ..id = id
@@ -210,6 +213,7 @@ class Night {
         ..watsonChoice = watsonChoice ?? this.watsonChoice
         ..matadorChoice = matadorChoice ?? this.matadorChoice
         ..nightOfBlockage = nightOfBlockage ?? this.nightOfBlockage
+        ..nostradamousChoices = nostradamousChoices ?? this.nostradamousChoices
         ..saulChoice = saulChoice ?? this.saulChoice;
 
   @override

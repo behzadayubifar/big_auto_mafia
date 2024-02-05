@@ -5,6 +5,7 @@ import 'package:auto_mafia/ui/home/home_page.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
 import 'package:auto_mafia/ui/night/night_role_panel.dart';
 import 'package:auto_mafia/ui/show_roles/show_role_page.dart';
+import 'package:auto_mafia/ui/statements/nights_results.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:go_router/go_router.dart';
@@ -18,15 +19,16 @@ final _router = GoRouter(
   // initialLocation: '/night',
   // initialLocation: '/night/:${MyStrings.showMyRole}',
   // initialLocation: '/night-role-panel',
+  // initialLocation: '/night_timer',
   // last was this :
   // initialLocation: '/name_list',
-  initialLocation: '/night_timer',
+  initialLocation: '/nights_results',
 
   routes: <RouteBase>[
     GoRoute(
-      name: 'night_timer',
-      path: '/night_timer',
-      builder: (context, state) => const NightTimer(),
+      name: 'nights-results',
+      path: '/nights_results',
+      builder: (context, state) => NightsResuls(),
     ),
     GoRoute(
       name: 'home',

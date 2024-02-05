@@ -196,10 +196,6 @@ class $AssetsImagesGen {
 class $AssetsOverlaysGen {
   const $AssetsOverlaysGen();
 
-  /// File path: assets/overlays/Dropdown.png
-  AssetGenImage get dropdown =>
-      const AssetGenImage('assets/overlays/Dropdown.png');
-
   /// File path: assets/overlays/Visible_eye_invisible_seen.png
   AssetGenImage get visibleEyeInvisibleSeen =>
       const AssetGenImage('assets/overlays/Visible_eye_invisible_seen.png');
@@ -211,6 +207,10 @@ class $AssetsOverlaysGen {
   /// File path: assets/overlays/devil_emoji.png
   AssetGenImage get devilEmoji =>
       const AssetGenImage('assets/overlays/devil_emoji.png');
+
+  /// File path: assets/overlays/dropdown.png
+  AssetGenImage get dropdown =>
+      const AssetGenImage('assets/overlays/dropdown.png');
 
   /// File path: assets/overlays/knife.png
   AssetGenImage get knife => const AssetGenImage('assets/overlays/knife.png');
@@ -247,10 +247,10 @@ class $AssetsOverlaysGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
-        dropdown,
         visibleEyeInvisibleSeen,
         decorate,
         devilEmoji,
+        dropdown,
         knife,
         mask,
         night,

@@ -15,18 +15,21 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // --------------------------------------------------------------------------------------------------------------------------
 class MyButton extends HookConsumerWidget {
-  MyButton(
-      {
-      // this.isLoading,
-      this.state = 'default',
-      this.onDoubleTap,
-      super.key,
-      this.onLongPress,
-      required this.title,
-      this.fontSize,
-      this.textStyle,
-      this.criteria,
-      this.player});
+  MyButton({
+    // this.isLoading,
+    this.state = 'default',
+    this.onDoubleTap,
+    super.key,
+    this.onLongPress,
+    required this.title,
+    this.fontSize,
+    this.textStyle,
+    this.criteria,
+    this.player,
+    this.selected,
+    this.place,
+    this.onPressed,
+  });
 
   final void Function()? onLongPress;
   final String title;
@@ -37,6 +40,9 @@ class MyButton extends HookConsumerWidget {
   final bool? criteria;
   final void Function()? onDoubleTap;
   final Player? player;
+  final bool? selected;
+  final String? place;
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -63,7 +69,29 @@ class MyButton extends HookConsumerWidget {
             : null,
         child: ElevatedButton(
           // statesController: stateController,
-          // style:
+          style: (selected ?? false)
+              ? ElevatedButton.styleFrom(
+                  shadowColor: AppColors.lightText,
+                  elevation: 9,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  minimumSize: const Size(48, 48),
+                )
+              : ElevatedButton.styleFrom(
+                  shadowColor: AppColors.lightText,
+                  elevation: 9,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  backgroundColor: AppColors.tintsOfBlack[3],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  minimumSize: const Size(48, 48),
+                ),
 
           // if(buttonState)
           //   //
@@ -125,33 +153,42 @@ class MyButton extends HookConsumerWidget {
                       fontSize: fontSize,
                     ),
           ),
-          onLongPress: onLongPress != null && ((criteria ?? true) == true)
-              ? () async {
-                  if (onLongPress != null) {
-                    'here 1'.log();
-                    final isar = await ref.read(isarServiceProvider.future);
-                    final day = await isar.getDayNumber();
-                    final String? situation = await isar
-                        .retrieveGameStatusN(n: day)
-                        .then((gameStatus) => gameStatus?.situation);
-                    // if (situation == MyStrings.nightDoneJob) {
+          onLongPress: switch (place) {
+            MyStrings.nightPlayer => onLongPress,
+            _ => onLongPress,
+          }
 
-                    // } else {
-                    //   await ref
-                    //       .read(currentPlayersProvider.notifier)
-                    //       .action(MyStrings.nightDoneJob);
-                    // }
-                    // await ref
-                    //     .read(currentPlayersProvider.notifier)
-                    //     .action(MyStrings.nightDoneJob);
+          // onLongPress != null && ((criteria ?? true) == true)
+          // ? () async {
+          //         if (onLongPress != null) {
+          //           'here 1'.log();
+          //           final isar = await ref.read(isarServiceProvider.future);
+          //           final day = await isar.getDayNumber();
+          //           final String? situation = await isar
+          //               .retrieveGameStatusN(n: day)
+          //               .then((gameStatus) => gameStatus?.situation);
 
-                    Timer(Duration(milliseconds: 400), () => onLongPress!());
-                  }
+          //           // --- //
 
-                  // based on role and the passed selected player uses logic's methods
-                }
-              : null,
-          onPressed: () {},
+          //           // ---- //
+          //           // if (situation == MyStrings.nightDoneJob) {
+
+          //           // } else {
+          //           //   await ref
+          //           //       .read(currentPlayersProvider.notifier)
+          //           //       .action(MyStrings.nightDoneJob);
+          //           // }
+          //           // await ref
+          //           //     .read(currentPlayersProvider.notifier)
+          //           //     .action(MyStrings.nightDoneJob);
+
+          //           // Timer(Duration(milliseconds: 400), () => onLongPress!());
+          //         }
+
+          // based on role and the passed selected player uses logic's methods
+
+          ,
+          onPressed: onPressed,
         ),
       ),
     );

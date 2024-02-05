@@ -29,4 +29,20 @@ class MyAssets {
   static final String whichRole = Assets.cards.roles.whichRole.path;
   static final String mysteriousGangsterCharacter =
       Assets.cards.roles.mysteriousGangsterCharacter.path;
+
+  // overlays
+  static final String decorate = Assets.overlays.decorate.path;
+  static final String devilEmoji = Assets.overlays.devilEmoji.path;
+  static final String dropDown = Assets.overlays.dropdown.path;
+  static final String knife = Assets.overlays.knife.path;
+  static final String outPeople = Assets.overlays.outPeople.path;
+  static final String night = Assets.overlays.night.path;
+  static final String pureBg = Assets.overlays.pureBg.path;
+  static final String pureBgOverlay = Assets.overlays.pureBgOverlay.path;
+  static final String returnToLife = Assets.overlays.returnToLife.path;
+  static final String tornPaper = Assets.overlays.tornPaper.path;
+  static final String viewFocusTargetVisibilitySeen =
+      Assets.overlays.viewFocusTargetVisibilitySeen.path;
+  static final String visibleEyeInvisibleSeen =
+      Assets.overlays.visibleEyeInvisibleSeen.path;
 }

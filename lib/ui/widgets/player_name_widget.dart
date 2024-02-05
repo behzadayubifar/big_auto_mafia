@@ -97,7 +97,7 @@ class PlayerNameWidget extends HookConsumerWidget {
               'name': _playerName,
               'role': role,
             };
-            nightContext.pushReplacementNamed(
+            nightContext.pushNamed(
               'night_role_panel',
               extra: info,
             );

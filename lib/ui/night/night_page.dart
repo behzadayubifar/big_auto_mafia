@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
@@ -84,13 +85,29 @@ class NightPage extends HookConsumerWidget {
                   SizedBox(height: height / 24),
 
                   // button
-                  if (info['button'] != null)
+                  if ((info['button'] != null &&
+                          info['button'] == MyStrings.seeNightResults &&
+                          value.length == 0) ||
+                      info['button'] != MyStrings.seeNightResults)
                     MyButton(
                       state: MyStrings.disabledButton,
                       title: info['button']!,
-                      criteria: value.length == 0,
+                      // criteria: value.length == 0,
                       // TODO: add a function to the button (show night's results)
-                      onLongPress: () {},
+                      onLongPress: () async {
+                        final isar = await ref.read(isarServiceProvider.future);
+                        final tonight = await isar.getNightNumber();
+                        final nightResultJson =
+                            await (isar.retrieveNightN(n: tonight)).then(
+                          (json) => json.match(
+                            (json) => json,
+                            (_) => null,
+                          ),
+                        );
+                        log('json: $nightResultJson');
+                        await god(nightResultJson);
+                        // TODO: we must handle the loading
+                      },
                     ),
 
                   // spacer

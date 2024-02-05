@@ -82,7 +82,7 @@ final nightJsonProvider =
 
 typedef NightJsonRef
     = AutoDisposeFutureProviderRef<Either<Map<String, String>, bool>>;
-String _$currentPlayersHash() => r'0b51002d71f1b4f2d18d10a65c637a76dd4c0d29';
+String _$currentPlayersHash() => r'dad9f3b69568d24bb2a7add0c0b3bd528341cb7b';
 
 /// See also [CurrentPlayers].
 @ProviderFor(CurrentPlayers)

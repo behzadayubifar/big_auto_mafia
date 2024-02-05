@@ -8,10 +8,12 @@ import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
+import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:auto_mafia/ui/ui_utils/get_criteria_for_night_role_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class NightRolePanel extends HookConsumerWidget {
   NightRolePanel({required this.role, required this.name, Key? key})
@@ -25,12 +27,16 @@ class NightRolePanel extends HookConsumerWidget {
     final _height = MediaQuery.sizeOf(context).height;
     final _width = MediaQuery.sizeOf(context).width;
     //
+    final choice = useState('');
+    final nostradamousChoices = useState(<String>[]);
+    //
     final String image = Info.imageByRole(role);
     //
     final scrollController = useScrollController(
       initialScrollOffset: 0,
       keepScrollOffset: true,
     );
+    //
     //
     final nightFuture = ref
         .watch(isarServiceProvider.future)
@@ -39,6 +45,44 @@ class NightRolePanel extends HookConsumerWidget {
     final asyncPlayers = ref.watch(currentPlayersProvider);
     //
     final criteria = ref.watch(buttonCriteriaControllerProvider);
+    //
+    final putChoiceLocally = (String newChoice) async {
+      print('hop hoop');
+      final int numberOfPlayers = await ref
+          .read(isarServiceProvider.future)
+          .then((isar) => isar.retrievePlayer().then((record) => record.count));
+      if (role == MyStrings.nostradamous) {
+        final maxOfChoices = numberOfPlayers ~/ 3;
+        if (nostradamousChoices.value.length < maxOfChoices) {
+          nostradamousChoices.value.add(newChoice);
+        } else {
+          nostradamousChoices.value.removeAt(0);
+          nostradamousChoices.value.add(newChoice);
+        }
+      } else {
+        if (choice.value == newChoice) {
+          choice.value = '';
+        } else {
+          choice.value = newChoice;
+        }
+      }
+    };
+    //
+    final finisher = () async {
+      // it works BUT must be a more handle on loding states
+      await buttonLogicExecuter(
+        currentPlayerName: name,
+        currentPlayerRole: role,
+        night: await nightFuture,
+        selectedPlayer: choice.value,
+      );
+      context.pop();
+      print(choice.value);
+      // below must be after the buttonLogicExecuter (certainly!!!)
+      await ref
+          .read(currentPlayersProvider.notifier)
+          .action(MyStrings.nightPage);
+    };
     //
     return WillPopScope(
       onWillPop: () => Future.value(false),
@@ -117,122 +161,145 @@ class NightRolePanel extends HookConsumerWidget {
               // <--- texts
 
               // list-of-players
-              asyncPlayers.when(
-                data: (playersList) => Positioned(
-                  top: _height / 2.8,
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: SizedBox(
-                      width: _width / 1.5,
-                      height: _height / 1.5,
-                      child: SafeArea(
-                        minimum: EdgeInsets.only(top: _height / 15),
-                        child: Scrollbar(
-                          controller: scrollController,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  width: _width / 2,
-                                  height: _height / 1.64,
-                                  child: ListView.separated(
+              Positioned(
+                top: _height / 2.8,
+                // right: _width / 3.2,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // timer && buttons (for finishing earlier than the time was set)
+                    ControlPanel(
+                        width: _width, height: _height, finisher: finisher),
+                    // people
+                    asyncPlayers.when(
+                      data: (playersList) => playersList.isEmpty
+                          ? SizedBox()
+                          : SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              child: SizedBox(
+                                width: _width / 1.5,
+                                height: _height / 1.5,
+                                child: SafeArea(
+                                  minimum: EdgeInsets.only(top: _height / 15),
+                                  child: Scrollbar(
                                     controller: scrollController,
-                                    cacheExtent: _height / 1.64,
-                                    restorationId: 'night-page',
-                                    clipBehavior: Clip.antiAlias,
-                                    itemCount: playersList.length,
-                                    itemBuilder: (context, index) {
-                                      final selectedPlayer = playersList[index];
-                                      return MyButton(
-                                        title: selectedPlayer.playerName!,
-                                        player: selectedPlayer,
-                                        // criteria: ,
-                                        onDoubleTap: role != MyStrings.godfather
-                                            ? null
-                                            : () async => putGodfatherChoice(
-                                                  night: await nightFuture,
-                                                  name: selectedPlayer
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Expanded(
+                                          child: SizedBox(
+                                            width: _width / 2,
+                                            height: _height / 1.64,
+                                            child: ListView.separated(
+                                              controller: scrollController,
+                                              cacheExtent: _height / 1.64,
+                                              restorationId: 'night-page',
+                                              clipBehavior: Clip.antiAlias,
+                                              itemCount: playersList.length,
+                                              itemBuilder: (context, index) {
+                                                final selectedPlayer =
+                                                    playersList[index];
+                                                return MyButton(
+                                                  title: selectedPlayer
                                                       .playerName!,
-                                                  guessedRole:
-                                                      selectedPlayer.roleName!,
-                                                ),
-                                        onLongPress: switch (role) {
-                                          MyStrings.godfather => () async =>
-                                              putMafiaShotChoice(
-                                                night: await nightFuture,
-                                                name:
-                                                    selectedPlayer.playerName!,
-                                              ),
-                                          MyStrings.saul => () async =>
-                                              putSaulChoice(
-                                                night: await nightFuture,
-                                                name:
-                                                    selectedPlayer.playerName!,
-                                              ),
-                                          MyStrings.matador => () async =>
-                                              putMatadorChoice(
-                                                night: await nightFuture,
-                                                name:
-                                                    selectedPlayer.playerName!,
-                                              ),
-                                          MyStrings.watson => () async =>
-                                              putWatsonChoice(
-                                                night: await nightFuture,
-                                                name:
-                                                    selectedPlayer.playerName!,
-                                              ),
-                                          MyStrings.leon => () async =>
-                                              putLeonChoice(
-                                                night: await nightFuture,
-                                                name:
-                                                    selectedPlayer.playerName!,
-                                              ),
-                                          MyStrings.kane => () async =>
-                                              putKaneChoice(
-                                                night: await nightFuture,
-                                                name:
-                                                    selectedPlayer.playerName!,
-                                              ),
-                                          MyStrings.konstantin => () async =>
-                                              putKonstantinChoice(
-                                                night: await nightFuture,
-                                                name:
-                                                    selectedPlayer.playerName!,
-                                              ),
+                                                  player: selectedPlayer,
+                                                  selected: selectedPlayer
+                                                          .playerName ==
+                                                      choice.value,
+                                                  place: MyStrings.nightPlayer,
 
-                                          // should not to be executed
-                                          _ => () => {},
-                                        },
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (BuildContext context, int index) {
-                                      return SizedBox(height: _height / 56);
-                                    },
+                                                  // criteria: ,
+                                                  onDoubleTap: role !=
+                                                          MyStrings.godfather
+                                                      ? null
+                                                      : () async =>
+                                                          putGodfatherChoice(
+                                                            night:
+                                                                await nightFuture,
+                                                            name: selectedPlayer
+                                                                .playerName!,
+                                                            guessedRole:
+                                                                selectedPlayer
+                                                                    .roleName!,
+                                                          ),
+                                                  // onLongPress: putChoiceLocally,
+                                                  onPressed: () =>
+                                                      putChoiceLocally(
+                                                          selectedPlayer
+                                                              .playerName!),
+                                                  /* () => choice.value =
+                                                selectedPlayer.playerName!, */
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return SizedBox(
+                                                    height: _height / 56);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: _height / 8),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                              SizedBox(height: _height / 8),
-                            ],
-                          ),
-                        ),
+                            ),
+                      loading: () => Center(child: defaultLoading),
+                      error: (error, stackTrace) => Text(
+                        'Error: $error',
+                        // style: MyTextStyles.error,
                       ),
                     ),
-                  ),
-                ),
-                loading: () => Center(child: defaultLoading),
-                error: (error, stackTrace) => Text(
-                  'Error: $error',
-                  // style: MyTextStyles.error,
+                  ],
                 ),
               ),
+
+              // timer && buttons (for finishing earlier than the time was set)
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class ControlPanel extends StatelessWidget {
+  const ControlPanel({
+    super.key,
+    required double width,
+    required double height,
+    required this.finisher,
+  })  : _width = width,
+        _height = height;
+
+  final double _width;
+  final double _height;
+  final Future<Null> Function() finisher;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      // mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        NightTimer(
+          width: _width / 4.8,
+          height: _height / 4.8,
+          onComplete: finisher,
+        ),
+        MyButton(
+          title: MyStrings.finish,
+          onLongPress: finisher,
+        ),
+        SizedBox(height: _height / 8),
+      ],
     );
   }
 }

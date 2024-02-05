@@ -16,6 +16,7 @@ class AppColors {
   static final black20 = Color(0xFF000000).withOpacity(0.2);
   static final black50 = Color(0xFF000000).withOpacity(0.5);
   static const Color backGround = Color(0xFF05052B);
+  static const Color green = Color(0xFF07A240);
 
 // 5 shades of each color
   static const primaries = [

@@ -20,6 +20,7 @@ class MyStrings {
   static const String seeNightResults = 'نتایج شب';
   static const String saw = 'دیدم';
   static const String showMyRole = 'ببینم نقشمو';
+  static const String finish = 'تموم';
 
   // situation
   static const String naming = 'naming';
@@ -81,4 +82,7 @@ class MyStrings {
   static const String doubleTappedButton = 'doubleTappedButton';
   static const String nightSpecificButton = 'nightSpecificButton';
   static const String disabledButton = 'disabledButton';
+
+  // button-places
+  static const String nightPlayer = 'nightPlayer';
 }
