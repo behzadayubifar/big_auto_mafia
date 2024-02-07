@@ -17,10 +17,13 @@ class MyStrings {
   static const String back = 'قبلی';
   static const String cancel = 'لغو';
   static const String ok = 'تایید';
-  static const String seeNightResults = 'نتایج شب';
+  static const String nightResults = 'نتایج شب';
   static const String saw = 'دیدم';
   static const String showMyRole = 'ببینم نقشمو';
   static const String finish = 'تموم';
+  static const String understand = 'فهمیدم';
+  static const String resultOfPrediction = 'نتیجۀ پیش بینی';
+  static const String enquiry = 'استعلام';
 
   // situation
   static const String naming = 'naming';
@@ -85,4 +88,13 @@ class MyStrings {
 
   // button-places
   static const String nightPlayer = 'nightPlayer';
+
+  // nights' results
+  static const String deads = 'deads';
+  static const String bornPlayer = 'bornPlayer';
+  static const String disclosured = 'disclosured';
+  static const String slaughtered = 'slaughtered';
+  static const String nightCode = 'کد شب: ';
+  static const String allDeads = 'همۀ رفتگان';
+  static const String nextNight = 'شب بعد';
 }

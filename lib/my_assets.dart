@@ -1,4 +1,6 @@
+import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/gen/assets.gen.dart';
+import 'package:flutter/widgets.dart';
 
 class MyAssets {
   MyAssets._();
@@ -35,6 +37,7 @@ class MyAssets {
   static final String devilEmoji = Assets.overlays.devilEmoji.path;
   static final String dropDown = Assets.overlays.dropdown.path;
   static final String knife = Assets.overlays.knife.path;
+  static final String mask = Assets.overlays.mask.path;
   static final String outPeople = Assets.overlays.outPeople.path;
   static final String night = Assets.overlays.night.path;
   static final String pureBg = Assets.overlays.pureBg.path;
@@ -45,4 +48,36 @@ class MyAssets {
       Assets.overlays.viewFocusTargetVisibilitySeen.path;
   static final String visibleEyeInvisibleSeen =
       Assets.overlays.visibleEyeInvisibleSeen.path;
+
+  // a method to get iamge by topic for nights_results
+  static Map<String, dynamic> getImageAndRelatedColorByTopic(String topic) {
+    switch (topic) {
+      case 'deads':
+        return {
+          'image': outPeople,
+          'color': AppColors.secondaries[2],
+          'scale': 4.8,
+        };
+      case 'bornPlayers':
+        return {
+          'image': returnToLife,
+          'color': AppColors.green,
+          'scale': 15,
+        };
+      case 'disclosured':
+        return {
+          'image': mask,
+          'color': AppColors.secondaries[2],
+          'scale': 4,
+        };
+      case 'slaughtered':
+        return {
+          'image': knife,
+          'color': AppColors.secondaries[2],
+          'scale': 12,
+        };
+      default:
+        return {'image': '?', 'color': AppColors.secondaries[2], 'scale': 1.0};
+    }
+  }
 }

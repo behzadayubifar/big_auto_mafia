@@ -86,9 +86,9 @@ class NightPage extends HookConsumerWidget {
 
                   // button
                   if ((info['button'] != null &&
-                          info['button'] == MyStrings.seeNightResults &&
+                          info['button'] == MyStrings.nightResults &&
                           value.length == 0) ||
-                      info['button'] != MyStrings.seeNightResults)
+                      info['button'] != MyStrings.nightResults)
                     MyButton(
                       state: MyStrings.disabledButton,
                       title: info['button']!,

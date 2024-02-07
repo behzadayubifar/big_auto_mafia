@@ -26,7 +26,7 @@ class Info {
 
   static const Map<String, String> night = {
     'title': MyStrings.nightTitle,
-    'button': MyStrings.seeNightResults,
+    'button': MyStrings.nightResults,
     'situation': MyStrings.nightPage,
   };
 

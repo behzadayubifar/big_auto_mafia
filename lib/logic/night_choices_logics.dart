@@ -1,7 +1,10 @@
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
+import 'package:auto_mafia/ui/statements/statement_overlay_screen.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:auto_mafia/constants/my_strings.dart';
 
@@ -70,7 +73,9 @@ putKonstantinChoice({required int night, required String name}) async {
   await isar.putNight(night: night, konstantinChoice: name);
 }
 
-buttonLogicExecuter({
+// a method for executing the logic of the buttons in the night page
+
+Future<bool?> buttonLogicExecuter({
   required String currentPlayerName,
   required String currentPlayerRole,
   required int night,
@@ -91,10 +96,26 @@ buttonLogicExecuter({
   );
 
   // nostradamous
-  if (currentPlayerRole == MyStrings.nostradamous) {
+  if (currentPlayerRole == MyStrings.nostradamous &&
+      night == 0 &&
+      nostradamousChoices != null) {
     await isar.putNight(
       night: night,
       nostradamousChoices: nostradamousChoices,
+    );
+
+    // show the result of the prediction
+    StatementScreen.instance().show(
+      context: useContext(),
+      callback: () async {
+        StatementScreen.instance().hide();
+        useContext().pop();
+        print(nostradamousChoices);
+        // below must be after the buttonLogicExecuter (certainly!!!)
+        await _container
+            .read(currentPlayersProvider.notifier)
+            .action(MyStrings.nightPage);
+      },
     );
   }
 
@@ -103,8 +124,6 @@ buttonLogicExecuter({
     switch (currentPlayerRole) {
       case MyStrings.godfather:
         () {
-          'here in godfather choice ***************************************************************'
-              .log();
           putMafiaShotChoice(
             night: night,
             name: selectedPlayer,
@@ -113,8 +132,6 @@ buttonLogicExecuter({
         break;
 
       case MyStrings.saul:
-        'here in saul choice ***************************************************************'
-            .log();
         putSaulChoice(
           night: night,
           name: selectedPlayer,
@@ -129,9 +146,6 @@ buttonLogicExecuter({
         break;
 
       case MyStrings.watson:
-        'here in watson choice ***************************************************************'
-            .log();
-
         putWatsonChoice(
           night: night,
           name: selectedPlayer,

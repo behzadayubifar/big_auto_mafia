@@ -13,7 +13,7 @@ class NostradamouResult extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Image.asset(MyAssets.pureBgOverlay, scale: 6.4, fit: BoxFit.cover),
+        // Image.asset(MyAssets.pureBgOverlay, scale: 6.4, fit: BoxFit.cover),
         Positioned(
           // top: MediaQuery.sizeOf(context).height /
           // height: MediaQuery.sizeOf(context).height / 3.6,

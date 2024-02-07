@@ -28,7 +28,22 @@ final _router = GoRouter(
     GoRoute(
       name: 'nights-results',
       path: '/nights_results',
-      builder: (context, state) => NightsResuls(),
+      builder: (context, state) {
+        final Map<String, dynamic> info = {
+          'tonight': 'شب اول',
+          'bornPlayer': 'بازیکن 7',
+          'disclosured': 'کنستانتین',
+          'slaughtered': 'ماتادور',
+          'tonightDeads': ['بازیکن 1', 'بازیکن 2', 'بازیکن 3', 'بازیکن 4'],
+          'nightCode': 1,
+          'allDeadPlayers': ['بازیکن 1', 'بازیکن 2', 'بازیکن 3', 'بازیکن 4'],
+        };
+        return NightsResuls(
+          tonight: info['tonight']!,
+          bornPlayer: info['bornPlayer'],
+          disclosured: info['disclosured'],
+        );
+      },
     ),
     GoRoute(
       name: 'home',

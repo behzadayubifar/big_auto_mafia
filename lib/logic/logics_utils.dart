@@ -112,3 +112,28 @@ Future<String?> determineWinner({required int dayNumber}) async {
 
   return null;
 }
+
+// a method to determine the number of mafia & citizen players
+// from a given list of players
+Future<(int mafia, int citizen)> determineMafiaAndCitizenCountFromList(
+  List<String> playerNames,
+) async {
+  final isar = await _isar;
+  //
+  final mafiaPlayersCount = (await isar.retrievePlayer(
+    criteria: (player) => player.type == RoleType.mafia,
+  ))
+      .count;
+  //
+  final citizenPlayersCount = (await isar.retrievePlayer(
+    criteria: (player) => player.type == RoleType.citizen,
+  ))
+      .count;
+  //
+  log('mafiaPlayersCount: $mafiaPlayersCount',
+      name: 'determineMafiaAndCitizenCountFromList');
+  log('citizenPlayersCount: $citizenPlayersCount',
+      name: 'determineMafiaAndCitizenCountFromList');
+  //
+  return (mafiaPlayersCount, citizenPlayersCount);
+}

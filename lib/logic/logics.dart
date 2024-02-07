@@ -198,7 +198,11 @@ Future<Widget> god(Map<String, String?>? json,
     final watsonChoice = await isar.getPlayerByName(json["watsonChoice"]!);
     final matadorChoice = await isar.getPlayerByName(json["matadorChoice"]!);
     final saulChoice = await isar.getPlayerByName(json["saulChoice"]!);
-    final toNightBlocked = await json["matadorChoice"];
+    final matadaorChoice = await json["matadorChoice"];
+    final nightOfBlockage = json["nightOfBlockage"];
+    final isSomeoneBlockedTonight = nightOfBlockage == nightNumber.toString();
+
+    String? toNightBlocked() => isSomeoneBlockedTonight ? matadaorChoice : null;
     late final int? nightCode;
     late final bool? isGodfathersGuessRight;
     late final String? winner;
@@ -237,14 +241,14 @@ Future<Widget> god(Map<String, String?>? json,
       );
     }
     // matador choice for blocking
-    if (matadorChoice != null) {
-      await _matador(matadorChoice.playerName!, nightNumber);
+    if (isSomeoneBlockedTonight) {
+      await _matador(matadorChoice!.playerName!, nightNumber);
       nightCode = assignedCodes[matadorChoice.playerName!];
     }
 
     // watson choice for saving
     if (watsonChoice != null &&
-        toNightBlocked != allPlayers[roleNames[RoleName.watson]])
+        toNightBlocked() != allPlayers[roleNames[RoleName.watson]])
       await _watson(watsonChoice.playerName!);
 
     // saul choice for blocking
@@ -259,17 +263,17 @@ Future<Widget> god(Map<String, String?>? json,
 
     // leon choice for shooting
     if (leonChoice != null &&
-        toNightBlocked != allPlayers[roleNames[RoleName.leon]])
+        toNightBlocked() != allPlayers[roleNames[RoleName.leon]])
       await _leon(leonChoice.playerName!);
 
     // kane choice for guessing
     if (kaneChoice != null &&
-        toNightBlocked != allPlayers[roleNames[RoleName.kane]])
+        toNightBlocked() != allPlayers[roleNames[RoleName.kane]])
       await _kane(kaneChoice.playerName!);
 
     // konstantin choice for returning
     if (konstantinChoice != null &&
-        toNightBlocked != allPlayers[roleNames[RoleName.konstantin]])
+        toNightBlocked() != allPlayers[roleNames[RoleName.konstantin]])
       await _konstantin(konstantinChoice.playerName!);
 
     // update players to be ready for new day
@@ -342,20 +346,20 @@ Future<Widget> god(Map<String, String?>? json,
     }
     // update night number and reset all night choices
     final bool newNightInserted = await isar.putNight(
-      night: (await isar.getNightNumber()) + 1,
+      night: nightNumber + 1,
       godfatherChoice: null,
       leonChoice: null,
       kaneChoice: null,
       konstantinChoice: null,
       watsonChoice: null,
-      matadorChoice: null,
+      theRoleGuessedByGodfather: null,
       saulChoice: null,
       mafiasShot: null,
     );
 
     // insert new game status
     /* final bool GameStatusInserted = */ await isar.putGameStatus(
-      dayNumber: dayNumber + 1,
+      dayNumber: dayNumber,
       isDay: false,
     );
 

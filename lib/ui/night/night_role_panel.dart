@@ -9,6 +9,7 @@ import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
+import 'package:auto_mafia/ui/statements/nostradamous_overlay.dart';
 import 'package:auto_mafia/ui/ui_utils/get_criteria_for_night_role_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -76,12 +77,14 @@ class NightRolePanel extends HookConsumerWidget {
         night: await nightFuture,
         selectedPlayer: choice.value,
       );
-      context.pop();
-      print(choice.value);
-      // below must be after the buttonLogicExecuter (certainly!!!)
-      await ref
-          .read(currentPlayersProvider.notifier)
-          .action(MyStrings.nightPage);
+      if (await nightFuture != 0 || role != MyStrings.nostradamous) {
+        context.pop();
+        print(choice.value);
+        // below must be after the buttonLogicExecuter (certainly!!!)
+        await ref
+            .read(currentPlayersProvider.notifier)
+            .action(MyStrings.nightPage);
+      }
     };
     //
     return WillPopScope(
