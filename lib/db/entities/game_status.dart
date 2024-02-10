@@ -51,6 +51,12 @@ class GameStatus {
 
   bool? isChaos = false;
 
+// mafia shoot
+  int? remainedMafiasBullets = 1;
+
+  // last moves
+  List<String?>? usedLastMoves = [];
+
   // if konstantin choose someone to come back,
   // this will be set to that player's name
 
@@ -83,6 +89,8 @@ class GameStatus {
     String? statusOfGame,
     String? situation,
     List<String>? playersWhoSawTheirRole,
+    int? remainedMafiasBullets,
+    List<String?>? usedLastMoves,
   }) {
     final newStatus = GameStatus()
       ..id = id
@@ -91,7 +99,6 @@ class GameStatus {
       ..dayNumber = dayNumber ?? this.dayNumber
       ..wholeGameTimePassed = wholeGameTimePassed ?? this.wholeGameTimePassed
       ..playersWhoSawTheirRole = [
-        ...?(this.playersWhoSawTheirRole),
         ...?playersWhoSawTheirRole,
       ]
       ..timeLeft = timeLeft ?? this.timeLeft
@@ -99,6 +106,9 @@ class GameStatus {
       ..isFinished = isFinished ?? this.isFinished
       ..winner = winner ?? this.winner
       ..situation = situation ?? this.situation
+      ..remainedMafiasBullets =
+          remainedMafiasBullets ?? this.remainedMafiasBullets
+      ..usedLastMoves = usedLastMoves ?? this.usedLastMoves
       ..isChaos = isChaos ?? this.isChaos;
 
     //
@@ -121,6 +131,8 @@ class GameStatus {
           isFinished == other.isFinished &&
           winner == other.winner &&
           situation == other.situation &&
+          remainedMafiasBullets == other.remainedMafiasBullets &&
+          listEquals(usedLastMoves, other.usedLastMoves) &&
           isChaos == other.isChaos;
 
   @override
@@ -135,6 +147,8 @@ class GameStatus {
         winner,
         situation,
         isChaos,
+        remainedMafiasBullets,
+        usedLastMoves,
       );
 }
 

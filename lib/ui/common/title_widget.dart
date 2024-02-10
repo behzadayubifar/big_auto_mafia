@@ -4,9 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class TiTleTile extends StatelessWidget {
-  TiTleTile({required this.title});
+  TiTleTile({
+    required this.title,
+    this.width,
+    this.textStyle,
+  });
 
   final String title;
+  final double? width;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +24,8 @@ class TiTleTile extends StatelessWidget {
             opacity: 0.9,
             child: SvgPicture.asset(
               MyAssets.titleBg,
-              height: 100,
+              height: width != null ? null : 100,
+              width: width,
               alignment: Alignment.center,
             ),
           ),
@@ -35,9 +42,10 @@ class TiTleTile extends StatelessWidget {
                 textHeightBehavior: const TextHeightBehavior(
                   applyHeightToFirstAscent: false,
                 ),
-                style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      color: AppColors.white,
-                    ),
+                style: textStyle ??
+                    Theme.of(context).textTheme.displaySmall!.copyWith(
+                          color: AppColors.white,
+                        ),
               ),
             ),
             SizedBox(height: 16),

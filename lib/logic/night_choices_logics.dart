@@ -1,4 +1,5 @@
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/ui/statements/statement_overlay_screen.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
@@ -81,6 +82,9 @@ Future<bool?> buttonLogicExecuter({
   required int night,
   String? selectedPlayer,
   List<String>? nostradamousChoices,
+  String? shootOrSlaughter,
+  String? guessedRole,
+  String? mafiaShotInabsenceOfGodfather,
 }) async {
   final isar = await _container.read(isarServiceProvider.future);
   final roleEnum = roleNames.keys.firstWhere(
@@ -90,6 +94,7 @@ Future<bool?> buttonLogicExecuter({
   // doesn't work when palyer is Citizen becausee it always retruns first Citizen player
   // so we need to change the logic and get the player by its name
   final playerWhoHasDoneHisJob = await isar.getPlayerByName(currentPlayerName);
+  // here in
   await isar.updatePlayer(
     playerName: playerWhoHasDoneHisJob!.playerName!,
     nightDone: true,
@@ -104,11 +109,16 @@ Future<bool?> buttonLogicExecuter({
       nostradamousChoices: nostradamousChoices,
     );
 
+    final resultOfPrediction =
+        await determineMafiaAndCitizenCountFromList(nostradamousChoices);
+
+    final statementInstance = StatementScreen.instance();
+
     // show the result of the prediction
-    StatementScreen.instance().show(
+    statementInstance.show(
       context: useContext(),
       callback: () async {
-        StatementScreen.instance().hide();
+        statementInstance.hide();
         useContext().pop();
         print(nostradamousChoices);
         // below must be after the buttonLogicExecuter (certainly!!!)
@@ -116,19 +126,36 @@ Future<bool?> buttonLogicExecuter({
             .read(currentPlayersProvider.notifier)
             .action(MyStrings.nightPage);
       },
+      mafia: resultOfPrediction.mafiaPlayersCount,
+      citizen: resultOfPrediction.citizen,
     );
   }
 
   // others
+  if (mafiaShotInabsenceOfGodfather != null &&
+      mafiaShotInabsenceOfGodfather != '') {
+    putMafiaShotChoice(
+      night: night,
+      name: mafiaShotInabsenceOfGodfather,
+    );
+  }
+
   if (selectedPlayer != null && selectedPlayer != '')
     switch (currentPlayerRole) {
       case MyStrings.godfather:
-        () {
-          putMafiaShotChoice(
-            night: night,
-            name: selectedPlayer,
-          );
-        };
+        {
+          shootOrSlaughter == 'shoot'
+              ? putMafiaShotChoice(
+                  night: night,
+                  name: selectedPlayer,
+                )
+              : putGodfatherChoice(
+                  night: night,
+                  name: selectedPlayer,
+                  guessedRole: guessedRole!,
+                );
+        }
+        ;
         break;
 
       case MyStrings.saul:
@@ -142,6 +169,10 @@ Future<bool?> buttonLogicExecuter({
         putMatadorChoice(
           night: night,
           name: selectedPlayer,
+        );
+        isar.putNight(
+          night: night,
+          nightOfBlockage: "$night",
         );
         break;
 

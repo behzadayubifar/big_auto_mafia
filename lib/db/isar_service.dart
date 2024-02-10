@@ -139,7 +139,9 @@ class CurrentPlayers extends _$CurrentPlayers {
     });
   }
 
-  Future<void> action(String situation, [String? playerName]) async {
+  //
+
+  Future<List<Player>?> action(String situation, [String? playerName]) async {
     state = const AsyncValue.loading();
     final isar = await ref.watch(isarServiceProvider.future);
     final tonight = await isar.getNightNumber();
@@ -148,16 +150,18 @@ class CurrentPlayers extends _$CurrentPlayers {
         .then((status) => status?.playersWhoSawTheirRole);
     // Set the state to loading
     await Future.delayed(Duration(milliseconds: 400));
+    List<Player>? extraList = [];
     state = await AsyncValue.guard(
       () async {
         log('here in action');
 
-        if (tonight != 0) {
+        if (situation != MyStrings.predictPage) {
           switch (situation) {
             case MyStrings.nightPage:
               final players = await isar
                   .retrievePlayer(
-                    criteria: (player) => player.nightDone == false,
+                    criteria: (player) =>
+                        tonight == 0 ? player.nightDone == false : true,
                   )
                   .then((value) => value.players);
               return players;
@@ -182,72 +186,99 @@ class CurrentPlayers extends _$CurrentPlayers {
 // --- role-panels
 
             case MyStrings.leonPage:
-              return await isar
-                  .retrievePlayer(
-                    criteria: (player) => player.roleName != MyStrings.leon,
-                  )
-                  .then((record) => record.players);
+              if (tonight != 0)
+                return await isar
+                    .retrievePlayer(
+                      criteria: (player) => player.roleName != MyStrings.leon,
+                    )
+                    .then((record) => record.players);
+              return [];
 
             case MyStrings.kanePage:
-              return await isar
-                  .retrievePlayer(
-                    criteria: (player) => player.roleName != MyStrings.kane,
-                  )
-                  .then((record) => record.players);
+              if (tonight != 0)
+                return await isar
+                    .retrievePlayer(
+                      criteria: (player) => player.roleName != MyStrings.kane,
+                    )
+                    .then((record) => record.players);
+              return [];
 
             case MyStrings.godfatherPage:
+            case MyStrings.mafiaPage:
             case MyStrings.saulPage:
-              return await isar
-                  .retrievePlayer(
-                    criteria: (player) => player.type != RoleType.mafia,
-                  )
-                  .then((record) => record.players);
+              if (tonight != 0) {
+                extraList = await isar
+                    .retrievePlayer(
+                      criteria: (player) => player.type != RoleType.mafia,
+                    )
+                    .then((record) => record.players);
+
+                return Future.value(extraList);
+              }
+              return [];
 
             case MyStrings.matadorPage:
-              final lastNight = await isar.getNightNumber();
-              final lastNightOfBlockage =
-                  await isar.retrieveNightN(n: lastNight).then(
-                        (value) => value.match(
-                            (l) => l['nightOfBlockage']!, (r) => 'not found'),
-                      );
-              final matadorChoice =
-                  await isar.retrieveNightN(n: lastNight).then(
-                        (value) => value.match(
-                            (l) => l['matadorChoice']!, (r) => 'not found'),
-                      );
-              return await isar.retrievePlayer(
-                criteria: (player) {
-                  final c1 = player.type != RoleType.mafia;
-                  final c2 = player.playerName == matadorChoice &&
-                      lastNightOfBlockage == lastNight;
-                  return c1 && !c2;
-                },
-              ).then((record) => record.players);
+              if (tonight != 0) {
+                final lastNight = await isar.getNightNumber();
+
+                extraList = await isar
+                    .retrievePlayer(
+                      criteria: (player) => player.type != RoleType.mafia,
+                    )
+                    .then((record) => record.players);
+
+                final lastNightOfBlockage =
+                    await isar.retrieveNightN(n: lastNight).then(
+                          (value) => value.match(
+                              (l) => l['nightOfBlockage']!, (r) => 'not found'),
+                        );
+                final matadorChoice =
+                    await isar.retrieveNightN(n: lastNight).then(
+                          (value) => value.match(
+                              (l) => l['matadorChoice']!, (r) => 'not found'),
+                        );
+                return await isar.retrievePlayer(
+                  criteria: (player) {
+                    final c1 = player.type != RoleType.mafia;
+                    final c2 = player.playerName == matadorChoice &&
+                        lastNightOfBlockage == lastNight;
+                    return c1 && !c2;
+                  },
+                ).then((record) => record.players);
+              }
+              return [];
 
             case MyStrings.konstantinPage:
-              return await isar
-                  .retrievePlayer(isAlive: false)
-                  .then((value) => value.players);
+              if (tonight != 0)
+                return await isar
+                    .retrievePlayer(isAlive: false)
+                    .then((value) => value.players);
+              return [];
 
             case MyStrings.watsonPage:
-              return await isar.retrievePlayer(
-                criteria: (player) {
-                  // watson
-                  if (player.roleName == MyStrings.watson) {
-                    final isNotSavedOnce = !player.isSavedOnce;
-                    final c1 = isNotSavedOnce;
-                    return c1;
-                  }
-                  // other players
-                  return true;
-                },
-              ).then((value) => value.players);
+              if (tonight != 0)
+                return await isar.retrievePlayer(
+                  criteria: (player) {
+                    // watson
+                    if (player.roleName == MyStrings.watson) {
+                      final isNotSavedOnce = !player.isSavedOnce;
+                      final c1 = isNotSavedOnce;
+                      return c1;
+                    }
+                    // other players
+                    return true;
+                  },
+                ).then((value) => value.players);
+              return [];
 
             case MyStrings.citizenPage:
               return [];
 
             case MyStrings.nightDoneJob:
               return [];
+
+            case MyStrings.dayPage:
+              return await isar.retrievePlayer().then((value) => value.players);
 
             default:
               return [];
@@ -268,6 +299,7 @@ class CurrentPlayers extends _$CurrentPlayers {
         }
       },
     );
+    if (extraList != null) return extraList;
   }
 }
 
@@ -590,7 +622,7 @@ class IsarService {
       return nightNumber;
     }
     log('night number is 0', name: 'getNightNumber for the first time');
-    return 0;
+    return -1;
   }
 
   /// update night code
@@ -628,6 +660,8 @@ class IsarService {
     String? statusOfGame,
     String? situation,
     List<String>? playersWhoSawTheirRole,
+    int? remainedMafiasBullets,
+    List<String?>? usedLastMoves,
   }) async {
     final alreadyExists =
         await isar.gameStatus.filter().dayNumberEqualTo(dayNumber).findFirst();
@@ -648,10 +682,11 @@ class IsarService {
         winner: winner,
         isChaos: isChaos,
         situation: situation,
+        remainedMafiasBullets: remainedMafiasBullets,
+        usedLastMoves: usedLastMoves,
       );
 
       await isar.writeTxn(() => isar.gameStatus.put(newGameStatus));
-      log('new game status *inserted* successfully', name: 'insertGameStatus');
       return true;
     }
     // game status already exists
@@ -667,6 +702,8 @@ class IsarService {
             statusOfGame: statusOfGame,
             situation: situation,
             playersWhoSawTheirRole: playersWhoSawTheirRole,
+            remainedMafiasBullets: remainedMafiasBullets,
+            usedLastMoves: usedLastMoves,
           )));
 
       log('game status *updated* successfully', name: 'insertGameStatus');
@@ -719,6 +756,16 @@ class IsarService {
   // a method for kicking out a player from the game -> his/her heart must be 0
   Future<bool> kickOutPlayer(String playerName) {
     return updatePlayer(playerName: playerName, heart: 0);
+  }
+
+// {name : code}
+  Future<Map<String, int>> retrieveAssignedCodes() async {
+    final players = await isar.players.where(distinct: true).findAll();
+    final Map<String, int> result = {};
+    for (var player in players) {
+      result[player.playerName!] = player.code!;
+    }
+    return result;
   }
 }
 // how to manage which player has done his/her night job

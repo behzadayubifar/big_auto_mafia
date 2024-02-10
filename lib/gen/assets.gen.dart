@@ -77,6 +77,10 @@ class $AssetsCharactersSpecificGen {
   AssetGenImage get konstantin =>
       const AssetGenImage('assets/characters-specific/konstantin.png');
 
+  /// File path: assets/characters-specific/mafia.png
+  AssetGenImage get mafia =>
+      const AssetGenImage('assets/characters-specific/mafia.png');
+
   /// File path: assets/characters-specific/matador.png
   AssetGenImage get matador =>
       const AssetGenImage('assets/characters-specific/matador.png');
@@ -125,6 +129,7 @@ class $AssetsCharactersSpecificGen {
         handcuffs,
         heart,
         konstantin,
+        mafia,
         matador,
         predict,
         questionHelpIcon,
@@ -378,11 +383,20 @@ class $AssetsImagesDaysGen {
   AssetGenImage get dayPureBg =>
       const AssetGenImage('assets/images/days/day_pure_bg.png');
 
+  /// File path: assets/images/days/exclude_for_moon_in_day.png
+  AssetGenImage get excludeForMoonInDay =>
+      const AssetGenImage('assets/images/days/exclude_for_moon_in_day.png');
+
+  /// File path: assets/images/days/moon_in_day.png
+  AssetGenImage get moonInDay =>
+      const AssetGenImage('assets/images/days/moon_in_day.png');
+
   /// File path: assets/images/days/sun.png
   AssetGenImage get sun => const AssetGenImage('assets/images/days/sun.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [dayPureBg, sun];
+  List<AssetGenImage> get values =>
+      [dayPureBg, excludeForMoonInDay, moonInDay, sun];
 }
 
 class $AssetsImagesFramesGen {

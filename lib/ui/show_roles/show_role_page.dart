@@ -25,7 +25,6 @@ class ShowRolePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print(role);
     final _height = MediaQuery.sizeOf(context).height;
     final _width = MediaQuery.sizeOf(context).width;
     final situation = useState(MyStrings.beforeShowingRole);
@@ -35,7 +34,6 @@ class ShowRolePage extends HookConsumerWidget {
 
     final frontBuilder = (_) => GestureDetector(
           onTap: () {
-            print('on tap');
             situation.value = MyStrings.roleIsShowing;
             pageFlipKey.currentState!.flip();
           },
@@ -55,7 +53,6 @@ class ShowRolePage extends HookConsumerWidget {
           // show button only if
           isComplete: isComplete.value,
           onLongPress: () async {
-            print('on long press me');
             final isar = await ref.read(isarServiceProvider.future);
             final playersWhoSawTheirRole =
                 (await isar.retrieveGameStatusN(n: 0))!
@@ -66,20 +63,22 @@ class ShowRolePage extends HookConsumerWidget {
                 await isar.retrievePlayer().then((rec) => rec.count);
             final haveAllSeenTheirRoles =
                 playersWhoSawTheirRole?.length == playersCount;
-            if (!haveAllSeenTheirRoles) {
+            if (haveAllSeenTheirRoles) {
               print('mio');
               await ref
                   .read(currentPlayersProvider.notifier)
                   .action(MyStrings.nightPage);
               context.pushReplacementNamed(
-                'night',
-                extra: Info.night,
+                'day',
               );
             } else {
               await ref
                   .read(currentPlayersProvider.notifier)
                   .action(MyStrings.showRoles);
-              context.pop();
+              context.goNamed(
+                'night',
+                extra: Info.showRoles,
+              );
             }
           },
         );

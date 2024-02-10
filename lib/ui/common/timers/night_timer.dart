@@ -26,9 +26,9 @@ class NightTimer extends HookWidget {
         width: width,
         height: height,
         // later must read this from db (the user can change it)
-        duration: 24,
+        duration: 6000,
         onChange: (remained) {
-          print(double.tryParse(remained));
+          // print(double.tryParse(remained));
           // print(remained);
           if (double.tryParse(remained)! < 10)
             fillCollor.value = AppColors.secondaries[3];

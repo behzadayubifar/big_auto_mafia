@@ -1,7 +1,9 @@
 import 'dart:developer' show log;
 import 'dart:math' show Random;
 
+import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/models/last_moves_dataset.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -34,7 +36,7 @@ Set<int> _generateUniqueCode(int max) {
 }
 
 // a method for assigning random codes to players
-Map<String, int> assignRandomCode(Iterable<String> playerNames) {
+Map<String, int> assignRandomCode(List<String> playerNames) {
   final codeSet = _generateUniqueCode(playerNames.length);
   final Map<String, int> codeMap = {};
   for (int i = 0; i < playerNames.length; i++) {
@@ -115,7 +117,8 @@ Future<String?> determineWinner({required int dayNumber}) async {
 
 // a method to determine the number of mafia & citizen players
 // from a given list of players
-Future<(int mafia, int citizen)> determineMafiaAndCitizenCountFromList(
+Future<({int citizen, int independent, int mafiaPlayersCount})>
+    determineMafiaAndCitizenCountFromList(
   List<String> playerNames,
 ) async {
   final isar = await _isar;
@@ -130,10 +133,54 @@ Future<(int mafia, int citizen)> determineMafiaAndCitizenCountFromList(
   ))
       .count;
   //
+
+  final independentPlayersCount = (await isar.retrievePlayer(
+    criteria: (player) => player.type == RoleType.independent,
+  ))
+      .count;
+  //
+  log('mafiaPlayersCount: $mafiaPlayersCount',
+      name: 'determineMafiaAndCitizenCountFromList');
   log('mafiaPlayersCount: $mafiaPlayersCount',
       name: 'determineMafiaAndCitizenCountFromList');
   log('citizenPlayersCount: $citizenPlayersCount',
       name: 'determineMafiaAndCitizenCountFromList');
   //
-  return (mafiaPlayersCount, citizenPlayersCount);
+  final result = (
+    mafiaPlayersCount: mafiaPlayersCount,
+    citizen: citizenPlayersCount,
+    independent: independentPlayersCount
+  );
+  return result;
+}
+
+// a method to assign a last move (which is not in usedLastMoves in collection of gameStatus) to a player
+Future<String> getARandomLastMove() async {
+  final isar = await _isar;
+  final toNight = await isar.getNightNumber();
+  final usedLastMoves = (await isar.retrieveGameStatusN(n: toNight))!
+      .usedLastMoves!
+      .where((element) => element != null)
+      .toList();
+  final shuffledRemainedLastMoves = allLastMoves.keys
+      .where((element) => !usedLastMoves.contains(element))
+      .toList()
+    ..shuffle();
+  final randomLastMove = shuffledRemainedLastMoves.first;
+  log('randomLastMove: $randomLastMove', name: 'getARandomLastMove');
+  return randomLastMove;
+}
+
+// a method which gets a list of players and returns randomly one of them
+String getARandomPlayer(List<String> playerNames) {
+  final shuffledPlayerNames = playerNames..shuffle();
+  final randomPlayer = shuffledPlayerNames.first;
+  log('randomPlayer: $randomPlayer', name: 'getARandomPlayer');
+  return randomPlayer;
+}
+
+extension PlayersListConversion on List<Player> {
+  List<String> mapToNames() => map(
+        (Player player) => player.playerName!,
+      ).toList();
 }

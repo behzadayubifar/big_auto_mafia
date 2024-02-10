@@ -52,28 +52,33 @@ const GameStatusSchema = CollectionSchema(
       name: r'playersWhoSawTheirRole',
       type: IsarType.stringList,
     ),
-    r'situation': PropertySchema(
+    r'remainedMafiasBullets': PropertySchema(
       id: 7,
+      name: r'remainedMafiasBullets',
+      type: IsarType.long,
+    ),
+    r'situation': PropertySchema(
+      id: 8,
       name: r'situation',
       type: IsarType.string,
     ),
     r'statusOfGame': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'statusOfGame',
       type: IsarType.string,
     ),
     r'timeLeft': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'timeLeft',
       type: IsarType.stringList,
     ),
     r'wholeGameTimePassed': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'wholeGameTimePassed',
       type: IsarType.long,
     ),
     r'winner': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'winner',
       type: IsarType.string,
     )
@@ -156,11 +161,12 @@ void _gameStatusSerialize(
   writer.writeBool(offsets[4], object.isFinished);
   writer.writeLong(offsets[5], object.nightCode);
   writer.writeStringList(offsets[6], object.playersWhoSawTheirRole);
-  writer.writeString(offsets[7], object.situation);
-  writer.writeString(offsets[8], object.statusOfGame);
-  writer.writeStringList(offsets[9], object.timeLeft);
-  writer.writeLong(offsets[10], object.wholeGameTimePassed);
-  writer.writeString(offsets[11], object.winner);
+  writer.writeLong(offsets[7], object.remainedMafiasBullets);
+  writer.writeString(offsets[8], object.situation);
+  writer.writeString(offsets[9], object.statusOfGame);
+  writer.writeStringList(offsets[10], object.timeLeft);
+  writer.writeLong(offsets[11], object.wholeGameTimePassed);
+  writer.writeString(offsets[12], object.winner);
 }
 
 GameStatus _gameStatusDeserialize(
@@ -177,11 +183,12 @@ GameStatus _gameStatusDeserialize(
   object.isFinished = reader.readBoolOrNull(offsets[4]);
   object.nightCode = reader.readLongOrNull(offsets[5]);
   object.playersWhoSawTheirRole = reader.readStringList(offsets[6]);
-  object.situation = reader.readStringOrNull(offsets[7]);
-  object.statusOfGame = reader.readStringOrNull(offsets[8]);
-  object.timeLeft = reader.readStringList(offsets[9]);
-  object.wholeGameTimePassed = reader.readLongOrNull(offsets[10]);
-  object.winner = reader.readStringOrNull(offsets[11]);
+  object.remainedMafiasBullets = reader.readLongOrNull(offsets[7]);
+  object.situation = reader.readStringOrNull(offsets[8]);
+  object.statusOfGame = reader.readStringOrNull(offsets[9]);
+  object.timeLeft = reader.readStringList(offsets[10]);
+  object.wholeGameTimePassed = reader.readLongOrNull(offsets[11]);
+  object.winner = reader.readStringOrNull(offsets[12]);
   return object;
 }
 
@@ -207,14 +214,16 @@ P _gameStatusDeserializeProp<P>(
     case 6:
       return (reader.readStringList(offset)) as P;
     case 7:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 8:
       return (reader.readStringOrNull(offset)) as P;
     case 9:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringList(offset)) as P;
     case 11:
+      return (reader.readLongOrNull(offset)) as P;
+    case 12:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -868,6 +877,80 @@ extension GameStatusQueryFilter
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedMafiasBulletsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'remainedMafiasBullets',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedMafiasBulletsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'remainedMafiasBullets',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedMafiasBulletsEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'remainedMafiasBullets',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedMafiasBulletsGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'remainedMafiasBullets',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedMafiasBulletsLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'remainedMafiasBullets',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedMafiasBulletsBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'remainedMafiasBullets',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
@@ -1722,6 +1805,20 @@ extension GameStatusQuerySortBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      sortByRemainedMafiasBullets() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remainedMafiasBullets', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      sortByRemainedMafiasBulletsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remainedMafiasBullets', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> sortBySituation() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'situation', Sort.asc);
@@ -1859,6 +1956,20 @@ extension GameStatusQuerySortThenBy
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      thenByRemainedMafiasBullets() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remainedMafiasBullets', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      thenByRemainedMafiasBulletsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remainedMafiasBullets', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy> thenBySituation() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'situation', Sort.asc);
@@ -1955,6 +2066,13 @@ extension GameStatusQueryWhereDistinct
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QDistinct>
+      distinctByRemainedMafiasBullets() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'remainedMafiasBullets');
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QDistinct> distinctBySituation(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2038,6 +2156,13 @@ extension GameStatusQueryProperty
       playersWhoSawTheirRoleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'playersWhoSawTheirRole');
+    });
+  }
+
+  QueryBuilder<GameStatus, int?, QQueryOperations>
+      remainedMafiasBulletsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'remainedMafiasBullets');
     });
   }
 

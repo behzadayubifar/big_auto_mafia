@@ -62,6 +62,8 @@ class Info {
         return Assets.charactersSpecific.stethoscope.path;
       case "شهروند ساده":
         return Assets.charactersSpecific.citizen.path;
+      case "مافیا ساده":
+        return Assets.charactersSpecific.mafia.path;
 
       // never must be shown
       default:

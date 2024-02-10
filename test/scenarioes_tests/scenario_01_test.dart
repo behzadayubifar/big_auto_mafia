@@ -122,7 +122,7 @@ void main() {
       final json = await (isar.retrieveNightN(n: toNight))
           .then((json) => json.match((json) => json, (_) => null));
       log('json: $json');
-      await god(json);
+      await god(json: json);
 
       // assert -----------------__________________--------------------------------
 

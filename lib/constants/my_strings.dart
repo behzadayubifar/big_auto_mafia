@@ -7,6 +7,7 @@ class MyStrings {
   static const String titleNaming = 'اسامی';
   static const String rolesTitle = 'نقش ها';
   static const String nightTitle = 'شب';
+  static const String resultOfPrediction = 'نتیجۀ پیش بینی';
 
   // buttons-texts
   static const String startGame = 'شروع بازی';
@@ -22,7 +23,6 @@ class MyStrings {
   static const String showMyRole = 'ببینم نقشمو';
   static const String finish = 'تموم';
   static const String understand = 'فهمیدم';
-  static const String resultOfPrediction = 'نتیجۀ پیش بینی';
   static const String enquiry = 'استعلام';
 
   // situation
@@ -47,6 +47,7 @@ class MyStrings {
   static const String kanePage = 'kane-page';
   static const String predictPage = 'nostrodamus-page';
   static const String citizenPage = 'citizen-page';
+  static const String mafiaPage = 'mafia-page';
 
   static String pageByRole(String role) {
     final page = switch (role) {
@@ -74,6 +75,7 @@ class MyStrings {
   static const String kane = 'همشهری کین';
   static const String nostradamous = 'نوستراداموس';
   static const String citizen = 'شهروند ساده';
+  static const String mafia = 'مافیا ساده';
 
   // night-role-panel
   static const String nightDoneJob = 'nightDoneJob';
@@ -94,7 +96,26 @@ class MyStrings {
   static const String bornPlayer = 'bornPlayer';
   static const String disclosured = 'disclosured';
   static const String slaughtered = 'slaughtered';
-  static const String nightCode = 'کد شب: ';
+  static const String nightCode = ' کد شب :  ';
   static const String allDeads = 'همۀ رفتگان';
   static const String nextNight = 'شب بعد';
+  static const String returnedToGame = 'به بازی برگشت';
+  static const String isMafia = 'مافیاست';
+  static const String isSlaughtered = 'سلاخی شد';
+  static const String resultOfEnquiry = 'نتیجۀ استعلام';
+
+  // common
+  static const String tonight = 'tonight';
+
+  // overlays
+  static const String nostradamousResultsOfPredict =
+      'nostradamousResultsOfPredict';
+
+  // last move names
+  static const String lastMove = 'lastMove';
+  static const String beautifulMind = 'beautifulMind';
+  static const String faceOff = 'faceOff';
+  static const String handCuff = 'handCuff';
+  static const String silenceOfSheep = 'silenceOfSheep';
+  static const String roleReveal = 'roleReveal';
 }

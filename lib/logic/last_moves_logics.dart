@@ -6,8 +6,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final _container = ProviderContainer();
 
-Future<List<bool>> faceOff(
-    String playerWithCardName, String otherPlayerName) async {
+Future<List<bool>> faceOff({
+  required String playerWithCardName,
+  required String otherPlayerName,
+}) async {
   final isar = await _container.read(isarServiceProvider.future);
   final Player playerWithCard =
       (await isar.getPlayerByName(playerWithCardName))!;
@@ -27,20 +29,20 @@ Future<List<bool>> faceOff(
 }
 
 // handcuff
-handCuff(String playerName) async {
+handCuff({required String playerName}) async {
   final isar = await _container.read(isarServiceProvider.future);
   return isar.updatePlayer(playerName: playerName, handCuffed: true);
 }
 
 // silence of sheep
-silenceOfSheep(String playerName) async {
+silenceOfSheep({required String playerName}) async {
   final isar = await _container.read(isarServiceProvider.future);
   return isar.updatePlayer(playerName: playerName, silenced: true);
 }
 
 // beautiful mind
 // TODO: use this function in the game where you want to kick a player in day by card (vote) **********
-Future<bool> beautifulMind(String guessedToBeNostradamous) async {
+Future<bool> beautifulMind({required String guessedToBeNostradamous}) async {
   final isar = await _container.read(isarServiceProvider.future);
   final realRoleOfGuessed =
       (await isar.getPlayerByName(guessedToBeNostradamous))?.roleName;
@@ -51,7 +53,7 @@ Future<bool> beautifulMind(String guessedToBeNostradamous) async {
 
 // identity reveal
 /// return role name of the player
-Future<String> identityReveal(String playerName) async {
+Future<String> identityReveal({required String playerName}) async {
   final isar = await _container.read(isarServiceProvider.future);
   final player = await isar.getPlayerByName(playerName);
   return player!.roleName!;

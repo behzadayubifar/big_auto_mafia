@@ -1,15 +1,17 @@
-import 'dart:developer';
-
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
+import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
-import 'package:auto_mafia/ui/common/timers/night_timer.dart';
-import 'package:auto_mafia/ui/statements/nostradamous_overlay.dart';
+
+import 'package:auto_mafia/ui/night/control_panel.dart';
+import 'package:auto_mafia/ui/night/list_of_night_players_widget.dart';
+import 'package:auto_mafia/ui/night/roles_names_list_widget.dart';
+
 import 'package:auto_mafia/ui/ui_utils/get_criteria_for_night_role_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,11 +19,22 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class NightRolePanel extends HookConsumerWidget {
-  NightRolePanel({required this.role, required this.name, Key? key})
-      : super(key: key);
+  NightRolePanel({
+    required this.role,
+    required this.name,
+    required this.code,
+    this.isGodfatherAlive,
+    this.extraForMatador,
+    this.mafiaHasBullet,
+    Key? key,
+  }) : super(key: key);
 
   final String role;
   final String name;
+  final String code;
+  final bool? isGodfatherAlive;
+  final List<Player>? extraForMatador;
+  final bool? mafiaHasBullet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,10 +43,22 @@ class NightRolePanel extends HookConsumerWidget {
     //
     final choice = useState('');
     final nostradamousChoices = useState(<String>[]);
+    final shootOrSlaughter = useState('');
+    final guessedRole = useState('');
+
+    final mafiaShotInabsenceOfGodfather = useState('');
     //
     final String image = Info.imageByRole(role);
     //
-    final scrollController = useScrollController(
+    final scrollControllerForListOfPlayers = useScrollController(
+      initialScrollOffset: 0,
+      keepScrollOffset: true,
+    );
+    final scrollControllerForShootInPlaceOfGodfather = useScrollController(
+      initialScrollOffset: 0,
+      keepScrollOffset: true,
+    );
+    final scrollControllerForSlaughter = useScrollController(
       initialScrollOffset: 0,
       keepScrollOffset: true,
     );
@@ -47,11 +72,11 @@ class NightRolePanel extends HookConsumerWidget {
     //
     final criteria = ref.watch(buttonCriteriaControllerProvider);
     //
-    final putChoiceLocally = (String newChoice) async {
-      print('hop hoop');
+    Future<void> putChoiceLocally({required String newChoice}) async {
       final int numberOfPlayers = await ref
           .read(isarServiceProvider.future)
           .then((isar) => isar.retrievePlayer().then((record) => record.count));
+      //
       if (role == MyStrings.nostradamous) {
         final maxOfChoices = numberOfPlayers ~/ 3;
         if (nostradamousChoices.value.length < maxOfChoices) {
@@ -67,24 +92,39 @@ class NightRolePanel extends HookConsumerWidget {
           choice.value = newChoice;
         }
       }
-    };
+    }
+
+    //
+    void putShootInPlaceOfGodfatherLocally({required String newChoice}) {
+      if (mafiaShotInabsenceOfGodfather.value == newChoice) {
+        mafiaShotInabsenceOfGodfather.value = '';
+      } else {
+        mafiaShotInabsenceOfGodfather.value = newChoice;
+      }
+    }
+
     //
     final finisher = () async {
+      print('finisher');
       // it works BUT must be a more handle on loding states
       await buttonLogicExecuter(
         currentPlayerName: name,
         currentPlayerRole: role,
         night: await nightFuture,
         selectedPlayer: choice.value,
+        nostradamousChoices: nostradamousChoices.value,
+        shootOrSlaughter: shootOrSlaughter.value,
+        guessedRole: guessedRole.value,
+        mafiaShotInabsenceOfGodfather: mafiaShotInabsenceOfGodfather.value,
       );
       if (await nightFuture != 0 || role != MyStrings.nostradamous) {
-        context.pop();
         print(choice.value);
         // below must be after the buttonLogicExecuter (certainly!!!)
         await ref
             .read(currentPlayersProvider.notifier)
             .action(MyStrings.nightPage);
       }
+      context.pop();
     };
     //
     return WillPopScope(
@@ -129,7 +169,7 @@ class NightRolePanel extends HookConsumerWidget {
                       ),
 
                       SizedBox(
-                        height: _height / 24,
+                        height: _height / 32,
                       ),
 
                       Image.asset(
@@ -139,7 +179,17 @@ class NightRolePanel extends HookConsumerWidget {
                       ),
 
                       SizedBox(
-                        height: _height / 16,
+                        height: _height / 32,
+                      ),
+
+//code
+                      Text(
+                        'کد  ' + code,
+                        style: MyTextStyles.rolePanel,
+                      ),
+
+                      SizedBox(
+                        height: _height / 20,
                       ),
 
                       Text(
@@ -163,146 +213,103 @@ class NightRolePanel extends HookConsumerWidget {
               ),
               // <--- texts
 
-              // list-of-players
+              // control panel
               Positioned(
                 top: _height / 2.8,
                 // right: _width / 3.2,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // timer && buttons (for finishing earlier than the time was set)
-                    ControlPanel(
-                        width: _width, height: _height, finisher: finisher),
-                    // people
-                    asyncPlayers.when(
-                      data: (playersList) => playersList.isEmpty
-                          ? SizedBox()
-                          : SingleChildScrollView(
-                              physics: BouncingScrollPhysics(),
-                              child: SizedBox(
-                                width: _width / 1.5,
-                                height: _height / 1.5,
-                                child: SafeArea(
-                                  minimum: EdgeInsets.only(top: _height / 15),
-                                  child: Scrollbar(
-                                    controller: scrollController,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Expanded(
-                                          child: SizedBox(
-                                            width: _width / 2,
-                                            height: _height / 1.64,
-                                            child: ListView.separated(
-                                              controller: scrollController,
-                                              cacheExtent: _height / 1.64,
-                                              restorationId: 'night-page',
-                                              clipBehavior: Clip.antiAlias,
-                                              itemCount: playersList.length,
-                                              itemBuilder: (context, index) {
-                                                final selectedPlayer =
-                                                    playersList[index];
-                                                return MyButton(
-                                                  title: selectedPlayer
-                                                      .playerName!,
-                                                  player: selectedPlayer,
-                                                  selected: selectedPlayer
-                                                          .playerName ==
-                                                      choice.value,
-                                                  place: MyStrings.nightPlayer,
-
-                                                  // criteria: ,
-                                                  onDoubleTap: role !=
-                                                          MyStrings.godfather
-                                                      ? null
-                                                      : () async =>
-                                                          putGodfatherChoice(
-                                                            night:
-                                                                await nightFuture,
-                                                            name: selectedPlayer
-                                                                .playerName!,
-                                                            guessedRole:
-                                                                selectedPlayer
-                                                                    .roleName!,
-                                                          ),
-                                                  // onLongPress: putChoiceLocally,
-                                                  onPressed: () =>
-                                                      putChoiceLocally(
-                                                          selectedPlayer
-                                                              .playerName!),
-                                                  /* () => choice.value =
-                                                selectedPlayer.playerName!, */
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return SizedBox(
-                                                    height: _height / 56);
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: _height / 8),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                      loading: () => Center(child: defaultLoading),
-                      error: (error, stackTrace) => Text(
-                        'Error: $error',
-                        // style: MyTextStyles.error,
-                      ),
-                    ),
-                  ],
+                child: ControlPanel(
+                  width: _width,
+                  height: _height,
+                  finisher: finisher,
                 ),
               ),
 
-              // timer && buttons (for finishing earlier than the time was set)
+              // shoot or slaughter
+              if (role == MyStrings.godfather && shootOrSlaughter.value == '')
+                Positioned(
+                  bottom: _height / 4.8,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      MyButton(
+                        title: 'شلیک',
+                        onPressed: () => shootOrSlaughter.value = 'shoot',
+                      ),
+                      MyButton(
+                        title: 'سلاخی',
+                        onPressed: () => shootOrSlaughter.value = 'slaughter',
+                      ),
+                    ],
+                  ),
+                ),
+
+              Positioned(
+                top: shootOrSlaughter.value == '' ? _height / 2 : _height / 2.1,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    if (role != MyStrings.godfather ||
+                        shootOrSlaughter.value != '')
+                      asyncPlayers.when(
+                        data: (playersList) => playersList.isEmpty
+                            ? SizedBox()
+                            : ListOfNightPlayersWidget(
+                                height: _height,
+                                scrollController:
+                                    scrollControllerForListOfPlayers,
+                                width: _width,
+                                choice: choice,
+                                role: role,
+                                nightFuture: nightFuture,
+                                putChoiceLocally: putChoiceLocally,
+                                playersList: playersList,
+                              ),
+                        loading: () => Center(child: defaultLoading),
+                        error: (error, stackTrace) => Text(
+                          'Error: $error',
+                          // style: MyTextStyles.error,
+                        ),
+                      ),
+                    // show names for other mafias when godfather is dead and must check mafiaShot is empty
+
+                    if (isGodfatherAlive == false &&
+                        (role == MyStrings.matador ||
+                            role == MyStrings.saul ||
+                            role == MyStrings.mafia) &&
+                        mafiaHasBullet == true)
+                      Column(
+                        children: [
+                          Text('انتخاب شلیک', style: MyTextStyles.bodyMedium),
+                          SizedBox(height: _height / 24),
+                          ListOfNightPlayersWidget(
+                            height: _height / 1.2,
+                            scrollController:
+                                scrollControllerForShootInPlaceOfGodfather,
+                            width: _width,
+                            choice: choice,
+                            role: role,
+                            nightFuture: nightFuture,
+                            putChoiceLocally: putShootInPlaceOfGodfatherLocally,
+                            playersList: extraForMatador!,
+                          ),
+                        ],
+                      ),
+                    // show role names
+                    if (shootOrSlaughter.value == 'slaughter')
+                      RoleNamesList(
+                        width: _width,
+                        height: _height,
+                        scrollController: scrollControllerForSlaughter,
+                        guessedRole: guessedRole,
+                      ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class ControlPanel extends StatelessWidget {
-  const ControlPanel({
-    super.key,
-    required double width,
-    required double height,
-    required this.finisher,
-  })  : _width = width,
-        _height = height;
-
-  final double _width;
-  final double _height;
-  final Future<Null> Function() finisher;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      // mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        NightTimer(
-          width: _width / 4.8,
-          height: _height / 4.8,
-          onComplete: finisher,
-        ),
-        MyButton(
-          title: MyStrings.finish,
-          onLongPress: finisher,
-        ),
-        SizedBox(height: _height / 8),
-      ],
     );
   }
 }

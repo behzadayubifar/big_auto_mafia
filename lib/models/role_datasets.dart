@@ -10,6 +10,7 @@ enum RoleName {
   godfather,
   matador,
   saul,
+  mafia,
 }
 
 Map<RoleName, String> roleNames = {
@@ -22,6 +23,7 @@ Map<RoleName, String> roleNames = {
   RoleName.godfather: "پدرخوانده",
   RoleName.matador: "ماتادور",
   RoleName.saul: "سائول گودمن",
+  RoleName.mafia: "مافیا ساده",
 };
 
 getRoleName(RoleName roleName) => roleNames[roleName]!;
@@ -104,6 +106,13 @@ Map<RoleName, Map<String, dynamic>> allRoles = {
     "roleName": roleNames[RoleName.saul],
     "description":
         'شب ها با تیم مافیا بیدار می شود و هر شب از توانایی خود استفاده می کند.در شب هر بازیکنی را نشان دهد توانایی شب او را آن شب از وی خواهد گرفت و فرد نشان شده اگر بیدار شود با ضربدر گرداننده مواجه می شود اما فردا مجدد می تواند از توانایی اش استفاده کند.سائول دو شب متوالی نمی تواند یک بازیکن را  کند.',
+    "type": RoleType.mafia,
+    "heart": 1,
+  },
+  RoleName.mafia: {
+    "roleName": roleNames[RoleName.mafia],
+    "description":
+        'مافیا ها شب ها با یکدیگر بیدار می شوند و هر شب از توانایی خود استفاده می کنند.در شب هر بازیکنی را نشان دهند توانایی شب او را آن شب از وی خواهند گرفت و فرد نشان شده اگر بیدار شود با ضربدر گرداننده مواجه می شود اما فردا مجدد می تواند از توانایی اش استفاده کند.مافیا ها باید با همکاری یکدیگر شهروندان را از بازی خارج کنند.',
     "type": RoleType.mafia,
     "heart": 1,
   },

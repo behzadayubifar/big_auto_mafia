@@ -1,11 +1,15 @@
 import 'dart:developer';
 
+import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:go_router/go_router.dart';
 
 final _container = ProviderContainer();
 // night logics
@@ -95,6 +99,7 @@ _mafiaShoot(
   final chosenPlayer = await isar.getPlayerByName(chosenPlayerName!);
   final previousHeart = chosenPlayer!.heart!;
   final godFather = await isar.getPlayerByRole(RoleName.godfather);
+  final day = await isar.getDayNumber();
   //
   if (chosenPlayer.roleName != roleNames[RoleName.nostradamous] &&
       chosenPlayer.isSaved != true) {
@@ -106,7 +111,8 @@ _mafiaShoot(
     log('${chosenPlayerName}\'s new heart is: ${newHeart}',
         name: 'mafia shoot');
 
-    await isar.updatePlayer(playerName: godFather!.playerName!, shotCount: 1);
+    isar.updatePlayer(playerName: godFather!.playerName!, shotCount: 1);
+    isar.putGameStatus(dayNumber: day, remainedMafiasBullets: 0);
     print("--------------------------------------------------");
     log('godfather\'s shotCount is: ${godFather.shotCount}',
         name: 'mafia shoot');
@@ -117,6 +123,7 @@ _mafiaShoot(
 _godfatherSlaughter(String chosenPlayerName) async {
   final isar = await _container.read(isarServiceProvider.future);
   final godFather = await isar.getPlayerByRole(RoleName.godfather);
+  final day = await isar.getDayNumber();
   //
   isar.updatePlayer(
     playerName: chosenPlayerName,
@@ -128,6 +135,8 @@ _godfatherSlaughter(String chosenPlayerName) async {
     playerName: godFather!.playerName!,
     shotCount: 1,
   );
+  //
+  isar.putGameStatus(dayNumber: day, remainedMafiasBullets: 0);
 }
 
 // matador logic
@@ -139,10 +148,10 @@ _matador(String chosenPlayerName, int toNight) async {
     isBlocked: true,
   );
 
-  isar.putNight(
-    night: toNight,
-    nightOfBlockage: "$toNight",
-  );
+  // isar.putNight(
+  //   night: toNight,
+  //   nightOfBlockage: "$toNight",
+  // );
   //
 }
 
@@ -168,8 +177,8 @@ _saul(String chosenPlayerName) async {
 /// godToDay logic
 /// """the core brain of decisions""";
 /// --> returns a [Future<Widget>] for showing the results of the night
-Future<Widget> god(Map<String, String?>? json,
-    {bool isGettingDay = true}) async {
+Future<Map<String, dynamic>?> god(
+    {Map<String, String?>? json, bool isGettingDay = true}) async {
   // requirements
   final isar = await _container.read(isarServiceProvider.future);
   // ----------------------------------------------------------------------
@@ -203,15 +212,15 @@ Future<Widget> god(Map<String, String?>? json,
     final isSomeoneBlockedTonight = nightOfBlockage == nightNumber.toString();
 
     String? toNightBlocked() => isSomeoneBlockedTonight ? matadaorChoice : null;
-    late final int? nightCode;
-    late final bool? isGodfathersGuessRight;
-    late final String? winner;
+    int? nightCode = 503;
+    bool? isGodfathersGuessRight = false;
+    String? winner = '';
 
     // we will use these variables for showing the nocturnal results !!!
-    late final String? bornPlayer;
-    late final List<String?> killedPlayersOftonight;
-    late final String? slaughteredPlayerOfTonight;
-    late final String? disclosuredPlayerOfTonight;
+    String? bornPlayer = '';
+    List<String?> killedPlayersOftonight = [];
+    String? slaughteredPlayerOfTonight = '';
+    String? disclosuredPlayerOfTonight = '';
 
     // -------------------------------requirements for showing night results--------------------------------------------------
     if (godFatherChoice != null) {
@@ -230,20 +239,18 @@ Future<Widget> god(Map<String, String?>? json,
     //   json["matadorChoice"],
     // ];
 
-    // assign new random codes to players
-    final Map<String, int> assignedCodes = assignRandomCode(allPlayers.values);
+// retrieving previous assigned codes
+    final Map<String, int> assignedCodes = await isar.retrieveAssignedCodes();
 
-    // now put the generated code in db and handle the exposinf the night code in ui
-    for (String player in allPlayers.values) {
-      await isar.updatePlayer(
-        playerName: player,
-        code: assignedCodes[player],
-      );
-    }
     // matador choice for blocking
     if (isSomeoneBlockedTonight) {
       await _matador(matadorChoice!.playerName!, nightNumber);
       nightCode = assignedCodes[matadorChoice.playerName!];
+    } else {
+      // get a random int number between 1 & 20 which is not in the assigned codes
+      do {
+        nightCode = randomInt(1, 20).run();
+      } while (assignedCodes.containsValue(nightCode));
     }
 
     // watson choice for saving
@@ -273,8 +280,10 @@ Future<Widget> god(Map<String, String?>? json,
 
     // konstantin choice for returning
     if (konstantinChoice != null &&
-        toNightBlocked() != allPlayers[roleNames[RoleName.konstantin]])
+        toNightBlocked() != allPlayers[roleNames[RoleName.konstantin]]) {
       await _konstantin(konstantinChoice.playerName!);
+      bornPlayer = konstantinChoice.playerName;
+    }
 
     // update players to be ready for new day
     for (String player in allPlayers.values) {
@@ -300,16 +309,16 @@ Future<Widget> god(Map<String, String?>? json,
 
     // it's time to retieve new alive and dead players
     final newDeadPlayers = await isar.retrievePlayer(isAlive: false);
-    final newAlivePlayers = await isar.retrievePlayer();
+    // final newAlivePlayers = await isar.retrievePlayer();
 
-    // checking if anyone came back to life
-    if (newAlivePlayers.count > oldAlivePlayers.count) {
-      // find new added alive player
-      final Player newAddedAlivePlayer = newAlivePlayers.players
-          .where((element) => !oldAlivePlayers.players.contains(element))
-          .first;
-      bornPlayer = newAddedAlivePlayer.playerName;
-    }
+    // // checking if anyone came back to life
+    // if (newAlivePlayers.count > oldAlivePlayers.count) {
+    //   // find new added alive player
+    //   final Player newAddedAlivePlayer = newAlivePlayers.players
+    //       .where((element) => !oldAlivePlayers.players.contains(element))
+    //       .first;
+    //   bornPlayer = newAddedAlivePlayer.playerName;
+    // }
 
     // checking if anyone died
     if (newDeadPlayers.count > oldDeadPlayers.count) {
@@ -326,8 +335,27 @@ Future<Widget> god(Map<String, String?>? json,
       disclosuredPlayerOfTonight = kaneChoice.playerName;
     }
 
+    final List<String> allDeadPlayers =
+        (newDeadPlayers.players + oldDeadPlayers.players)
+            .toSet()
+            .toList()
+            .mapToNames();
+
     // TODO: show the results of the night (RESULT WIDGET)
-    return Container();
+    final info = {
+      'tonight': nightNumber,
+      'bornPlayer': bornPlayer,
+      'disclosured': disclosuredPlayerOfTonight,
+      'slaughtered': slaughteredPlayerOfTonight,
+      'tonightDeads': newDeadPlayers.players.mapToNames(),
+      'nightCode': nightCode,
+      'allDeadPlayers': allDeadPlayers,
+    };
+    // await _container
+    //     .read(currentPlayersProvider.notifier)
+    //     .action(MyStrings.dayPage);
+    return info;
+    // context.goNamed('nights-results', extra: info);
 
     // TODO: call here the method for showing the night's resukts & use born and killed Player Of tonight & slaughtered player of tonight & also the night code & kane choice if it was right
     // TODO: or even MABEY the VICTORY message
@@ -338,12 +366,18 @@ Future<Widget> god(Map<String, String?>? json,
     // ______________________----------Day To Night-----------________________________
     // *going to night* -> update players' nightDone to false
 
-    for (String player in allPlayers.values) {
-      await isar.updatePlayer(
-        playerName: player,
-        nightDone: false,
-      );
-    }
+    // // assign new random codes to players
+    // final Map<String, int> newAssignedCodes =
+    //     assignRandomCode(allPlayers.values);
+
+    // // now put the generated code in db and handle the exposinf the night code in ui
+    // for (String player in allPlayers.values) {
+    //   await isar.updatePlayer(
+    //     playerName: player,
+    //     nightDone: false,
+    //     code: newAssignedCodes[player],
+    //   );
+    // }
     // update night number and reset all night choices
     final bool newNightInserted = await isar.putNight(
       night: nightNumber + 1,
@@ -361,11 +395,11 @@ Future<Widget> god(Map<String, String?>? json,
     /* final bool GameStatusInserted = */ await isar.putGameStatus(
       dayNumber: dayNumber,
       isDay: false,
+      remainedMafiasBullets: 1,
     );
 
     log('newNightInserted: $newNightInserted');
     //
     // TODO: show the results of the day (RESULT WIDGET)
-    return Container();
   }
 }

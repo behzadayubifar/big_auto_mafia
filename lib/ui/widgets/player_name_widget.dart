@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/logics_utils.dart';
+import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/ui/ui_utils/calculate_text_layout_size.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +18,13 @@ class PlayerNameWidget extends HookConsumerWidget {
   PlayerNameWidget({
     required this.nightContext,
     required this.situation,
-    required playerName,
+    required this.playerName,
     required this.height,
-  }) : _playerName = playerName;
+  });
 
   // final key = UniqueKey();
 
-  final String _playerName;
+  final String playerName;
   final double height;
   final String situation;
   final BuildContext nightContext;
@@ -32,7 +34,7 @@ class PlayerNameWidget extends HookConsumerWidget {
     final _isPlayerNotSelected = useState(true);
 
     final _textSize = calculateTextSize(
-      text: _playerName,
+      text: playerName,
       style: Theme.of(context).textTheme.headlineSmall!.copyWith(
             color: Colors.white,
             overflow: TextOverflow.fade,
@@ -52,7 +54,7 @@ class PlayerNameWidget extends HookConsumerWidget {
         final isar = await ref.read(isarServiceProvider.future);
 
         final role = await isar
-            .getPlayerByName(_playerName)
+            .getPlayerByName(playerName)
             .then((player) => player!.roleName!);
 
         await Future.delayed(Duration(milliseconds: 700));
@@ -60,9 +62,7 @@ class PlayerNameWidget extends HookConsumerWidget {
         switch (situation) {
           case MyStrings.showMyRole:
             // go to
-            return await ref
-                .read(currentPlayersProvider.notifier)
-                .action(situation);
+            await ref.read(currentPlayersProvider.notifier).action(situation);
 
           case MyStrings.showRoles:
             // go to show-roles
@@ -70,15 +70,29 @@ class PlayerNameWidget extends HookConsumerWidget {
                 (await isar.retrieveGameStatusN(n: 0))!
                     .playersWhoSawTheirRole
                     ?.toList();
-            playersWhoSawTheirRole!.add(_playerName);
+
+            print(playersWhoSawTheirRole);
+
+            playersWhoSawTheirRole!.add(playerName);
+
+            print(playersWhoSawTheirRole);
+
             await isar.putGameStatus(
-                dayNumber: 0, playersWhoSawTheirRole: playersWhoSawTheirRole);
-            context.pushNamed('show-roles', pathParameters: {'role': role});
-            return await ref
+              dayNumber: 0,
+              playersWhoSawTheirRole: playersWhoSawTheirRole,
+            );
+
+            context.pushReplacementNamed(
+              'show-roles',
+              pathParameters: {'role': role},
+            );
+
+            await ref
                 .read(currentPlayersProvider.notifier)
-                .action(situation, _playerName);
+                .action(situation, playerName);
 
           case MyStrings.nightPage:
+            late final bool mafiaHasBullet;
             print('nightPage is in action now');
             final relatedRolePage = MyStrings.pageByRole(role);
             log('$relatedRolePage', name: 'relatedRolePage');
@@ -88,15 +102,40 @@ class PlayerNameWidget extends HookConsumerWidget {
             // 2. list-of-players due to current circumstances
             final isar = await ref.read(isarServiceProvider.future);
             final dayNumber = await isar.getDayNumber();
+            final int tonight = await isar.getNightNumber();
+
             await isar.putGameStatus(
                 dayNumber: dayNumber, situation: relatedRolePage);
+
             await ref
                 .read(currentPlayersProvider.notifier)
-                .action(relatedRolePage, _playerName);
+                .action(relatedRolePage, playerName);
+
+            final bool isGodfatherIsAlive = await isar
+                .retrievePlayer(
+                  criteria: (player) =>
+                      player.roleName == roleNames[RoleName.godfather],
+                )
+                .then((record) => record.players.first.isAlive);
+
+            print("tonight is $tonight");
+
+            mafiaHasBullet = await isar
+                .retrieveGameStatusN(n: tonight)
+                .then((gameStatus) => gameStatus!.remainedMafiasBullets! > 0);
+
+            final int code = await isar.retrieveAssignedCodes().then(
+                  (mapOfCodes) => mapOfCodes[playerName]!,
+                );
+
             final info = {
-              'name': _playerName,
+              'name': playerName,
               'role': role,
+              'code': code.toString(),
+              'isGodfatherIsAlive': isGodfatherIsAlive,
+              'mafiaHasBullet': tonight != 0 ? null : mafiaHasBullet,
             };
+
             nightContext.pushNamed(
               'night_role_panel',
               extra: info,
@@ -151,7 +190,7 @@ class PlayerNameWidget extends HookConsumerWidget {
               // content of the widget
 
               Text(
-                _playerName,
+                playerName,
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                       color: _isPlayerNotSelected.value
                           ? Colors.white

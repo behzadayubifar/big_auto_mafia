@@ -1,6 +1,5 @@
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/gen/assets.gen.dart';
-import 'package:flutter/widgets.dart';
 
 class MyAssets {
   MyAssets._();
@@ -49,35 +48,68 @@ class MyAssets {
   static final String visibleEyeInvisibleSeen =
       Assets.overlays.visibleEyeInvisibleSeen.path;
 
+  // day's
+  static final String dayBg = Assets.images.days.dayPureBg.path;
+  static final String sun = Assets.images.days.sun.path;
+  static final String moonInDay = Assets.images.days.moonInDay.path;
+  static final String excludeForMoonInDay =
+      Assets.images.days.excludeForMoonInDay.path;
+
+  // last moves
+  static final String beautifulMind = Assets.cards.lastMoves.beautifulMind.path;
+  static final String faceOff = Assets.cards.lastMoves.faceOff.path;
+  static final String handCuff = Assets.cards.lastMoves.handcuff.path;
+  static final String roleReveal = Assets.cards.lastMoves.roleReveal.path;
+  static final String silenceOfSheep =
+      Assets.cards.lastMoves.silenceOfSheep.path;
+
   // a method to get iamge by topic for nights_results
   static Map<String, dynamic> getImageAndRelatedColorByTopic(String topic) {
     switch (topic) {
       case 'deads':
         return {
           'image': outPeople,
-          'color': AppColors.secondaries[2],
+          'color': AppColors.tintsOfBlack[1],
           'scale': 4.8,
         };
-      case 'bornPlayers':
+      case 'bornPlayer':
         return {
           'image': returnToLife,
           'color': AppColors.green,
-          'scale': 15,
+          'scale': 15.0,
         };
       case 'disclosured':
         return {
           'image': mask,
-          'color': AppColors.secondaries[2],
-          'scale': 4,
+          'color': AppColors.secondaries[1],
+          'scale': 4.0,
         };
       case 'slaughtered':
         return {
           'image': knife,
           'color': AppColors.secondaries[2],
-          'scale': 12,
+          'scale': 12.0,
         };
       default:
         return {'image': '?', 'color': AppColors.secondaries[2], 'scale': 1.0};
+    }
+  }
+
+  // a method to get card of lastMove by name of lastMove
+  static String getCardByLastMoveName(String lastMoveName) {
+    switch (lastMoveName) {
+      case 'beautifulMind':
+        return beautifulMind;
+      case 'faceOff':
+        return faceOff;
+      case 'handCuff':
+        return handCuff;
+      case 'roleReveal':
+        return roleReveal;
+      case 'silenceOfSheep':
+        return silenceOfSheep;
+      default:
+        return '?';
     }
   }
 }

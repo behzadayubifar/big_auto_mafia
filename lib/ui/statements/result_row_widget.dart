@@ -22,14 +22,17 @@ class ResultRow extends StatelessWidget {
         MyAssets.getImageAndRelatedColorByTopic(topic);
     final image = imageAndColorAndScale['image'];
     final color = imageAndColorAndScale['color'];
-    final scale = (imageAndColorAndScale['scale'] as int).toDouble();
+    final scale = imageAndColorAndScale['scale'];
 
     return Row(
       children: [
         // symbol
-        Image.asset(
-          image,
-          scale: scale,
+        SizedBox.square(
+          dimension: width / 5,
+          child: Image.asset(
+            image,
+            scale: scale,
+          ),
         ),
 
         // space

@@ -1,6 +1,8 @@
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
+import 'package:auto_mafia/ui/day/day.dart';
+import 'package:auto_mafia/ui/day/show_last_move.dart';
 import 'package:auto_mafia/ui/home/home_page.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
 import 'package:auto_mafia/ui/night/night_role_panel.dart';
@@ -21,27 +23,42 @@ final _router = GoRouter(
   // initialLocation: '/night-role-panel',
   // initialLocation: '/night_timer',
   // last was this :
-  // initialLocation: '/name_list',
-  initialLocation: '/nights_results',
+  initialLocation: '/name_list',
+  // initialLocation: '/nights_results',
+  // initialLocation: '/day',
 
   routes: <RouteBase>[
     GoRoute(
       name: 'nights-results',
       path: '/nights_results',
       builder: (context, state) {
-        final Map<String, dynamic> info = {
-          'tonight': 'شب اول',
-          'bornPlayer': 'بازیکن 7',
-          'disclosured': 'کنستانتین',
-          'slaughtered': 'ماتادور',
-          'tonightDeads': ['بازیکن 1', 'بازیکن 2', 'بازیکن 3', 'بازیکن 4'],
-          'nightCode': 1,
-          'allDeadPlayers': ['بازیکن 1', 'بازیکن 2', 'بازیکن 3', 'بازیکن 4'],
-        };
+        // final Map<String, dynamic> info = {
+        //   'tonight': '1',
+        //   'bornPlayer': 'بازیکن 7',
+        //   'disclosured': 'علی موسوی',
+        //   'slaughtered': 'ماتادور',
+        //   'tonightDeads': ['بازیکن 3', 'بازیکن 4'],
+        //   'nightCode': 1,
+        //   'allDeadPlayers': [
+        //     'بازیکن 1',
+        //     'بازیکن 2',
+        //     'بازیکن 3',
+        //     'بازیکن 4',
+        //     'بازیکن 5',
+        //     'بازیکن 6',
+        //     'بازیکن 7'
+        //   ],};
+
+        final info = state.extra as Map<String, dynamic>;
+
         return NightsResuls(
-          tonight: info['tonight']!,
+          tonight: info['tonight']!.toString(),
           bornPlayer: info['bornPlayer'],
           disclosured: info['disclosured'],
+          slaughtered: info['slaughtered'],
+          tonightDeads: info['tonightDeads'],
+          nightCode: info['nightCode'],
+          allDeadPlayers: info['allDeadPlayers'],
         );
       },
     ),
@@ -79,16 +96,49 @@ final _router = GoRouter(
       // builder: (context, state) => XPage(),
     ),
     GoRoute(
-        name: 'night_role_panel',
-        path: '/night-role-panel',
-        builder: (context, state) {
-          final Map<String, String> info = state.extra as Map<String, String>;
-          final String name = info['name']!;
-          final String role = info['role']!;
-          // final String name = 'بازیکن 7';
-          // final String role = 'کنستانتین';
+      name: 'night_role_panel',
+      path: '/night-role-panel',
+      builder: (context, state) {
+        final info = state.extra as Map<String, dynamic>;
+        final String name = info['name']!;
+        final String role = info['role']!;
+        final String code = info['code']!;
+        final bool isGodfatherIsAlive = info['isGodfatherIsAlive']!;
+        final bool? mafiaHasBullet = info['mafiaHasBullet'];
+        // final String name = 'بازیکن 7';
+        // final String role = 'کنستانتین';
 
-          return NightRolePanel(name: name, role: role);
-        }),
+        return NightRolePanel(
+          name: name,
+          role: role,
+          code: code,
+          isGodfatherAlive: isGodfatherIsAlive,
+          mafiaHasBullet: mafiaHasBullet,
+        );
+      },
+    ),
+    GoRoute(
+      name: 'day',
+      path: '/day',
+      builder: (context, state) {
+        return Day();
+      },
+    ),
+    GoRoute(
+      name: 'last-move',
+      path: '/last_move/:lastMove/:playerWithCardName/:playerWithCardRoleName',
+      builder: (context, state) {
+        final String lastMove = state.pathParameters['lastMove']!;
+        final String playerWithCardName =
+            state.pathParameters['playerWithCardName']!;
+        final String playerWithCardRoleName =
+            state.pathParameters['playerWithCardRoleName']!;
+        return ShowLastMove(
+          lastMoveName: lastMove,
+          playerWithCardName: playerWithCardName,
+          playerWithCardRoleName: playerWithCardRoleName,
+        );
+      },
+    ),
   ],
 );

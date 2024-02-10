@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
-import 'package:auto_mafia/ui/statements/nostradamous_result.dart';
+import 'package:auto_mafia/ui/statements/enquiry_results_widget.dart';
 import 'package:auto_mafia/ui/statements/statements_overlay_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -14,10 +14,19 @@ class StatementScreen {
   StatementScreenController? controller;
 
   void show({
+    int? mafia,
+    int? citizen,
+    int? independent,
     required BuildContext context,
     required VoidCallback callback,
   }) {
-    controller = showOverlay(context: context, callback: callback);
+    controller = showOverlay(
+      context: context,
+      callback: callback,
+      mafia: mafia,
+      citizen: citizen,
+      independent: independent,
+    );
   }
 
   void hide() {
@@ -26,6 +35,9 @@ class StatementScreen {
   }
 
   StatementScreenController? showOverlay({
+    int? mafia,
+    int? citizen,
+    int? independent,
     required BuildContext context,
     required VoidCallback callback,
   }) {
@@ -36,64 +48,12 @@ class StatementScreen {
     if (state == null) {
       return null;
     }
-    // final renderBox = context.findRenderObject() as RenderBox;
-    // final size = renderBox.size;
-    // final overlay = OverlayEntry(
-    //   builder: (context) {
-    //     return Material(
-    //       color: Colors.black.withAlpha(150),
-    //       child: Center(
-    //         child: Container(
-    //           constraints: BoxConstraints(
-    //             maxWidth: size.width * 0.8,
-    //             maxHeight: size.height * 0.8,
-    //             minWidth: size.width * 0.5,
-    //           ),
-    //           decoration: BoxDecoration(
-    //             color: Colors.white,
-    //             borderRadius: BorderRadius.circular(10.0),
-    //           ),
-    //           child: Padding(
-    //             padding: const EdgeInsets.all(16.0),
-    //             child: SingleChildScrollView(
-    //               child: Column(
-    //                 mainAxisSize: MainAxisSize.min,
-    //                 mainAxisAlignment: MainAxisAlignment.center,
-    //                 children: [
-    //                   const SizedBox(height: 10),
-    //                   const CircularProgressIndicator(),
-    //                   const SizedBox(height: 20),
-    //                   StreamBuilder(
-    //                     stream: textController.stream,
-    //                     builder: (context, snapshot) {
-    //                       if (snapshot.hasData) {
-    //                         return Text(
-    //                           snapshot.data as String,
-    //                           textAlign: TextAlign.center,
-    //                           style: Theme.of(context)
-    //                               .textTheme
-    //                               .bodyMedium
-    //                               ?.copyWith(color: Colors.black),
-    //                         );
-    //                       } else {
-    //                         return Container();
-    //                       }
-    //                     },
-    //                   ),
-    //                 ],
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
 
     OverlayEntry nostradamousResultOfPredictOverlay = OverlayEntry(
       builder: (context) {
         return Material(
-          elevation: 4.0,
+          color: Colors.transparent,
+          elevation: 8.0,
           shadowColor: Colors.black.withOpacity(0.5),
           child: Container(
             color: Colors.black.withOpacity(0.5),
@@ -114,7 +74,11 @@ class StatementScreen {
 
                   SizedBox(height: 20),
 
-                  NostradamouResult(),
+                  EnquiryResultsWidget(
+                    mafia: mafia,
+                    citizen: citizen,
+                    independent: independent,
+                  ),
 
                   SizedBox(height: 20),
 
