@@ -121,7 +121,7 @@ class PlayerNameWidget extends HookConsumerWidget {
             print("tonight is $tonight");
 
             mafiaHasBullet = await isar
-                .retrieveGameStatusN(n: tonight)
+                .retrieveGameStatusN(n: dayNumber)
                 .then((gameStatus) => gameStatus!.remainedMafiasBullets! > 0);
 
             final int code = await isar.retrieveAssignedCodes().then(
@@ -133,7 +133,8 @@ class PlayerNameWidget extends HookConsumerWidget {
               'role': role,
               'code': code.toString(),
               'isGodfatherIsAlive': isGodfatherIsAlive,
-              'mafiaHasBullet': tonight != 0 ? null : mafiaHasBullet,
+              'mafiaHasBullet': mafiaHasBullet,
+              'night': tonight,
             };
 
             nightContext.pushNamed(

@@ -160,8 +160,7 @@ class CurrentPlayers extends _$CurrentPlayers {
             case MyStrings.nightPage:
               final players = await isar
                   .retrievePlayer(
-                    criteria: (player) =>
-                        tonight == 0 ? player.nightDone == false : true,
+                    criteria: (player) => player.nightDone == false,
                   )
                   .then((value) => value.players);
               return players;
@@ -278,7 +277,9 @@ class CurrentPlayers extends _$CurrentPlayers {
               return [];
 
             case MyStrings.dayPage:
-              return await isar.retrievePlayer().then((value) => value.players);
+              return await isar.retrievePlayer().then(
+                    (value) => value.players,
+                  );
 
             default:
               return [];
@@ -358,7 +359,7 @@ class IsarService {
     }
   }
 
-// output: {roleName: playerName}
+  /// output: {roleName: playerName}
   Future<Map<String, String>> playersRolesMap({
     List<String>? playersNames,
   }) async {
@@ -526,6 +527,7 @@ class IsarService {
     String? watsonChoice,
     String? matadorChoice,
     String? nightOfBlockage,
+    String? nightOfRightChoiceOfKane,
     List<String>? nostradamousChoices,
     String? saulChoice,
   }) =>
@@ -546,6 +548,7 @@ class IsarService {
             matadorChoice: matadorChoice,
             nightOfBlockage: nightOfBlockage,
             nostradamousChoices: nostradamousChoices,
+            nightOfRightChoiceOfKane: nightOfRightChoiceOfKane,
             saulChoice: saulChoice,
           ));
           log('tonightChoices updated successfully', name: 'putNightChoices');
@@ -558,6 +561,7 @@ class IsarService {
             ..theRoleGuessedByGodfather = theRoleGuessedByGodfather ?? ''
             ..leonChoice = leonChoice ?? ''
             ..kaneChoice = kaneChoice ?? ''
+            ..nightOfRightChoiceOfKane = nightOfRightChoiceOfKane ?? ''
             ..konstantinChoice = konstantinChoice ?? ''
             ..watsonChoice = watsonChoice ?? ''
             ..matadorChoice = matadorChoice ?? ''
@@ -615,9 +619,9 @@ class IsarService {
 
   /// get night number
   Future<int> getNightNumber() async {
-    final night = await isar.nights.where(distinct: true).findAll();
-    if (night.isNotEmpty) {
-      final nightNumber = night.last.nightNumber;
+    final nightLists = await isar.nights.where(distinct: true).findAll();
+    if (nightLists.isNotEmpty) {
+      final nightNumber = nightLists.last.nightNumber;
       log('night number is $nightNumber', name: 'getNightNumber');
       return nightNumber;
     }

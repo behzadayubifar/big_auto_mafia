@@ -33,15 +33,15 @@ class EnquiryResultsWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (mafia != 0)
+              if (mafia != null && mafia != 0)
                 TornPaperStatement(
                     text: '$mafia مافیا', backColor: AppColors.secondaries[2]),
-              if (citizen != 0)
+              if (citizen != null && citizen != 0)
                 TornPaperStatement(
                   text: '$citizen شهر',
                   backColor: AppColors.green,
                 ),
-              if (independent != 0)
+              if (independent != null && independent != 0)
                 TornPaperStatement(
                   text: '$independent مستقل',
                   backColor: AppColors.secondaries[3],

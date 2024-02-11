@@ -3,6 +3,7 @@ import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/ui/statements/statement_overlay_screen.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -85,6 +86,7 @@ Future<bool?> buttonLogicExecuter({
   String? shootOrSlaughter,
   String? guessedRole,
   String? mafiaShotInabsenceOfGodfather,
+  BuildContext? context,
 }) async {
   final isar = await _container.read(isarServiceProvider.future);
   final roleEnum = roleNames.keys.firstWhere(
@@ -103,23 +105,26 @@ Future<bool?> buttonLogicExecuter({
   // nostradamous
   if (currentPlayerRole == MyStrings.nostradamous &&
       night == 0 &&
-      nostradamousChoices != null) {
+      nostradamousChoices != null &&
+      nostradamousChoices.isNotEmpty) {
     await isar.putNight(
       night: night,
       nostradamousChoices: nostradamousChoices,
     );
 
-    final resultOfPrediction =
-        await determineMafiaAndCitizenCountFromList(nostradamousChoices);
+    final resultOfPrediction = await determineMafiaAndCitizenCountFromList(
+      playerNames: nostradamousChoices,
+      isGodfatherCountedForMafia: false,
+    );
 
     final statementInstance = StatementScreen.instance();
 
     // show the result of the prediction
     statementInstance.show(
-      context: useContext(),
+      context: context!,
       callback: () async {
         statementInstance.hide();
-        useContext().pop();
+        context.pop();
         print(nostradamousChoices);
         // below must be after the buttonLogicExecuter (certainly!!!)
         await _container

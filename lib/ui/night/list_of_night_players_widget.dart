@@ -15,6 +15,7 @@ class ListOfNightPlayersWidget extends StatelessWidget {
     required this.nightFuture,
     required this.putChoiceLocally,
     required this.playersList,
+    required this.nostradamousChoices,
   })  : _height = height,
         _width = width;
 
@@ -28,6 +29,7 @@ class ListOfNightPlayersWidget extends StatelessWidget {
     required String newChoice,
   }) putChoiceLocally;
   final List<Player> playersList;
+  final ValueNotifier<List<String>> nostradamousChoices;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,9 @@ class ListOfNightPlayersWidget extends StatelessWidget {
                         return MyButton(
                           title: selectedPlayer.playerName!,
                           player: selectedPlayer,
-                          selected: selectedPlayer.playerName == choice.value,
+                          selected: selectedPlayer.playerName == choice.value ||
+                              nostradamousChoices.value
+                                  .contains(selectedPlayer.playerName!),
                           place: MyStrings.nightPlayer,
 
                           // criteria: ,

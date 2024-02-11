@@ -170,12 +170,12 @@ class NightsResuls extends HookConsumerWidget {
                               .then(
                                   (isar) => isar.retrievePlayer(isAlive: false))
                               .then((record) => record.players);
-                          print('dead : $dead');
+                          print('dead : ${dead.mapToNames()}');
 
                           final enquiry =
-                              await determineMafiaAndCitizenCountFromList(dead
-                                  .map((player) => player.playerName!)
-                                  .toList());
+                              await determineMafiaAndCitizenCountFromList(
+                            playerNames: dead.mapToNames(),
+                          );
                           print('enquiry : $enquiry');
 
                           statementInstance.show(
@@ -187,14 +187,6 @@ class NightsResuls extends HookConsumerWidget {
                               // useContext().goNamed('day');
                             },
                           );
-                          // showOverlay(
-                          //   context,
-                          //   () {
-                          //     enquiryOverlay.remove();
-                          //   },
-                          //   MyStrings.nightResults,
-                          //   dead.mapToNames(),
-                          // );
                         }),
                     SizedBox(height: width / 24),
                     MyButton(title: MyStrings.nextNight, onLongPress: () {}),

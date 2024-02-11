@@ -61,16 +61,22 @@ _watson(String chosenPlayerName) async {
 }
 
 // kane logic
-_kane(String chosenPlayerName) async {
+_kane(String chosenPlayerName, int night) async {
   final isar = await _container.read(isarServiceProvider.future);
   final chosenPlayer = await isar.getPlayerByName(chosenPlayerName);
   final kane = await isar.getPlayerByRole(RoleName.kane);
   //
-  isar.updatePlayer(playerName: kane!.playerName!, hasGuessed: true);
+  isar.updatePlayer(
+    playerName: kane!.playerName!,
+    hasGuessed: true,
+  );
   //
-  if (chosenPlayer!.type == RoleType.mafia)
+  if (chosenPlayer!.type == RoleType.mafia) {
     isar.updatePlayer(
         playerName: chosenPlayerName, disclosured: true, isReversible: false);
+    await isar.putNight(nightOfRightChoiceOfKane: '$night', night: night);
+  }
+  //
 }
 
 // konstantin logic
@@ -176,7 +182,7 @@ _saul(String chosenPlayerName) async {
 //TODO: handle when saul can do his job in ui & night must be restarted (in fact, in at the begining of godToDay or even before it !!!)
 /// godToDay logic
 /// """the core brain of decisions""";
-/// --> returns a [Future<Widget>] for showing the results of the night
+/// --> returns a [Future<Map<String, dynamic>?>] for showing the results of the night
 Future<Map<String, dynamic>?> god(
     {Map<String, String?>? json, bool isGettingDay = true}) async {
   // requirements
@@ -273,11 +279,6 @@ Future<Map<String, dynamic>?> god(
         toNightBlocked() != allPlayers[roleNames[RoleName.leon]])
       await _leon(leonChoice.playerName!);
 
-    // kane choice for guessing
-    if (kaneChoice != null &&
-        toNightBlocked() != allPlayers[roleNames[RoleName.kane]])
-      await _kane(kaneChoice.playerName!);
-
     // konstantin choice for returning
     if (konstantinChoice != null &&
         toNightBlocked() != allPlayers[roleNames[RoleName.konstantin]]) {
@@ -311,6 +312,25 @@ Future<Map<String, dynamic>?> god(
     final newDeadPlayers = await isar.retrievePlayer(isAlive: false);
     // final newAlivePlayers = await isar.retrievePlayer();
 
+    // kane choice for guessing
+    if (kaneChoice != null &&
+        toNightBlocked() != allPlayers[roleNames[RoleName.kane]] &&
+        !newDeadPlayers.players.contains(kaneChoice.playerName))
+      await _kane(kaneChoice.playerName!, nightNumber);
+
+    // check if kane choice was right *last night* -> he/she must be dead
+    final wasKaneChoiceBeenRightLastNight =
+        await isar.retrieveNightN(n: nightNumber - 1).then((json) => json.match(
+              (json) => json['nightOfRightChoiceOfKane'] != null,
+              (_) => false,
+            ));
+
+    if (wasKaneChoiceBeenRightLastNight)
+      await isar.updatePlayer(
+        playerName: allPlayers[roleNames[RoleName.kane]]!,
+        heart: 0,
+      );
+
     // // checking if anyone came back to life
     // if (newAlivePlayers.count > oldAlivePlayers.count) {
     //   // find new added alive player
@@ -320,19 +340,13 @@ Future<Map<String, dynamic>?> god(
     //   bornPlayer = newAddedAlivePlayer.playerName;
     // }
 
-    // checking if anyone died
-    if (newDeadPlayers.count > oldDeadPlayers.count) {
-      // find new added dead players
-      final List<Player> newAddedDeadPlayers = newDeadPlayers.players
-          .where((element) => !oldDeadPlayers.players.contains(element))
-          .toList();
-      killedPlayersOftonight =
-          newAddedDeadPlayers.map((e) => e.playerName).toList(growable: false);
-    }
+    final newAndOldDeadPlayersDiff = newDeadPlayers.players
+        .where((element) => !oldDeadPlayers.players.contains(element))
+        .toList();
 
-    // checking if anyone was disclosured
-    if (kaneChoice != null && kaneChoice.type == RoleType.mafia) {
-      disclosuredPlayerOfTonight = kaneChoice.playerName;
+    // checking if anyone died
+    if (newAndOldDeadPlayersDiff.isNotEmpty) {
+      killedPlayersOftonight = newAndOldDeadPlayersDiff.mapToNames();
     }
 
     final List<String> allDeadPlayers =
@@ -340,6 +354,12 @@ Future<Map<String, dynamic>?> god(
             .toSet()
             .toList()
             .mapToNames();
+
+// !TODO: if kane's choice has been killed tonight, don't do this
+    // checking if anyone was disclosured
+    if (kaneChoice != null && kaneChoice.type == RoleType.mafia) {
+      disclosuredPlayerOfTonight = kaneChoice.playerName;
+    }
 
     // TODO: show the results of the night (RESULT WIDGET)
     final info = {

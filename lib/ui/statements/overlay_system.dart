@@ -12,7 +12,9 @@ Future<String?> showOverlay(
 ) async {
   //
   final numberOfEachTyoeOfDeadPlayers =
-      await determineMafiaAndCitizenCountFromList(playersList!);
+      await determineMafiaAndCitizenCountFromList(
+    playerNames: playersList!,
+  );
   final mafia = numberOfEachTyoeOfDeadPlayers.mafiaPlayersCount;
   final citizen = numberOfEachTyoeOfDeadPlayers.citizen;
   final independent = numberOfEachTyoeOfDeadPlayers.independent;

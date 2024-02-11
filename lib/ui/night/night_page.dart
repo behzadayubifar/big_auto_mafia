@@ -92,9 +92,7 @@ class NightPage extends HookConsumerWidget {
                           await ref
                               .read(currentPlayersProvider.notifier)
                               .action(MyStrings.dayPage);
-                          nightContext.pushReplacementNamed(
-                            'day',
-                          );
+
                           nightContext.goNamed('day');
                         }),
 

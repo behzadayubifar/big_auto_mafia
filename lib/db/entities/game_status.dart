@@ -176,6 +176,8 @@ class Night {
   String leonChoice = '';
   // kane : {guess: true, person: "behzad"}
   String kaneChoice = "";
+  // night of right choice of kane
+  String nightOfRightChoiceOfKane = "";
   // konstantin : {return: true, person: "behzad"}
   String konstantinChoice = "";
   // watson : {person: "behzad"}
@@ -200,10 +202,12 @@ class Night {
     String? theRoleGuessedByGodfather,
     String? leonChoice,
     String? kaneChoice,
-    String? konstantinChoice,
+    String? kane,
+    String? nightOfRightChoiceOfKane,
     String? watsonChoice,
     String? matadorChoice,
     String? nightOfBlockage,
+    String? konstantinChoice,
     String? saulChoice,
     List<String>? nostradamousChoices,
   }) =>
@@ -223,6 +227,8 @@ class Night {
             theRoleGuessedByGodfather ?? this.theRoleGuessedByGodfather
         ..leonChoice = leonChoice ?? this.leonChoice
         ..kaneChoice = kaneChoice ?? this.kaneChoice
+        ..nightOfRightChoiceOfKane =
+            nightOfRightChoiceOfKane ?? this.nightOfRightChoiceOfKane
         ..konstantinChoice = konstantinChoice ?? this.konstantinChoice
         ..watsonChoice = watsonChoice ?? this.watsonChoice
         ..matadorChoice = matadorChoice ?? this.matadorChoice
@@ -246,5 +252,7 @@ class Night {
             "watsonChoice: $watsonChoice"
             "matadorChoice: $matadorChoice"
             "nightOfBlockage: $nightOfBlockage"
+            "nostradamousChoices: $nostradamousChoices"
+            "nightOfRightChoiceOfKane: $nightOfRightChoiceOfKane"
             "saulChoice: $saulChoice""";
 }

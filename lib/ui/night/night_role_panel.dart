@@ -13,6 +13,7 @@ import 'package:auto_mafia/ui/night/list_of_night_players_widget.dart';
 import 'package:auto_mafia/ui/night/roles_names_list_widget.dart';
 
 import 'package:auto_mafia/ui/ui_utils/get_criteria_for_night_role_panel.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -26,6 +27,7 @@ class NightRolePanel extends HookConsumerWidget {
     this.isGodfatherAlive,
     this.extraForMatador,
     this.mafiaHasBullet,
+    this.night,
     Key? key,
   }) : super(key: key);
 
@@ -35,9 +37,13 @@ class NightRolePanel extends HookConsumerWidget {
   final bool? isGodfatherAlive;
   final List<Player>? extraForMatador;
   final bool? mafiaHasBullet;
+  final int? night;
+
+  final CountDownController timerController = CountDownController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // print(night);
     final _height = MediaQuery.sizeOf(context).height;
     final _width = MediaQuery.sizeOf(context).width;
     //
@@ -79,12 +85,21 @@ class NightRolePanel extends HookConsumerWidget {
       //
       if (role == MyStrings.nostradamous) {
         final maxOfChoices = numberOfPlayers ~/ 3;
-        if (nostradamousChoices.value.length < maxOfChoices) {
-          nostradamousChoices.value.add(newChoice);
+        if (nostradamousChoices.value.contains(newChoice)) {
+          print('contained');
+
+          nostradamousChoices.value = nostradamousChoices.value
+              .where((element) => element != newChoice)
+              .toList();
+        } else if (nostradamousChoices.value.length >= maxOfChoices) {
+          // remove last element and add new one
+          nostradamousChoices.value.removeLast();
+          nostradamousChoices.value = [...nostradamousChoices.value, newChoice];
         } else {
-          nostradamousChoices.value.removeAt(0);
-          nostradamousChoices.value.add(newChoice);
+          nostradamousChoices.value = [...nostradamousChoices.value, newChoice];
         }
+
+        print('nostradamousChoices: ${nostradamousChoices.value}');
       } else {
         if (choice.value == newChoice) {
           choice.value = '';
@@ -105,9 +120,11 @@ class NightRolePanel extends HookConsumerWidget {
 
     //
     final finisher = () async {
+      timerController.pause();
       print('finisher');
       // it works BUT must be a more handle on loding states
       await buttonLogicExecuter(
+        context: context,
         currentPlayerName: name,
         currentPlayerRole: role,
         night: await nightFuture,
@@ -117,14 +134,21 @@ class NightRolePanel extends HookConsumerWidget {
         guessedRole: guessedRole.value,
         mafiaShotInabsenceOfGodfather: mafiaShotInabsenceOfGodfather.value,
       );
-      if (await nightFuture != 0 || role != MyStrings.nostradamous) {
-        print(choice.value);
-        // below must be after the buttonLogicExecuter (certainly!!!)
-        await ref
-            .read(currentPlayersProvider.notifier)
-            .action(MyStrings.nightPage);
-      }
-      context.pop();
+      // if (await nightFuture != 0 || role != MyStrings.nostradamous) {
+      //   print(choice.value);
+      //   // below must be after the buttonLogicExecuter (certainly!!!)
+      //   await ref
+      //       .read(currentPlayersProvider.notifier)
+      //       .action(MyStrings.nightPage);
+      // }
+
+      await ref
+          .read(currentPlayersProvider.notifier)
+          .action(MyStrings.nightPage);
+
+      if (!(role == MyStrings.nostradamous &&
+          night == 0 &&
+          nostradamousChoices.value.isNotEmpty)) context.pop();
     };
     //
     return WillPopScope(
@@ -185,7 +209,7 @@ class NightRolePanel extends HookConsumerWidget {
 //code
                       Text(
                         'کد  ' + code,
-                        style: MyTextStyles.rolePanel,
+                        style: MyTextStyles.bodyMD,
                       ),
 
                       SizedBox(
@@ -198,7 +222,7 @@ class NightRolePanel extends HookConsumerWidget {
                       ),
 
                       SizedBox(
-                        height: _height / 32,
+                        height: _height / 48,
                       ),
 
                       // role-of-selectedPlayer
@@ -221,11 +245,14 @@ class NightRolePanel extends HookConsumerWidget {
                   width: _width,
                   height: _height,
                   finisher: finisher,
+                  timerController: timerController,
                 ),
               ),
 
               // shoot or slaughter
-              if (role == MyStrings.godfather && shootOrSlaughter.value == '')
+              if (role == MyStrings.godfather &&
+                  shootOrSlaughter.value == '' &&
+                  night != 0)
                 Positioned(
                   bottom: _height / 4.8,
                   child: Column(
@@ -260,6 +287,7 @@ class NightRolePanel extends HookConsumerWidget {
                                     scrollControllerForListOfPlayers,
                                 width: _width,
                                 choice: choice,
+                                nostradamousChoices: nostradamousChoices,
                                 role: role,
                                 nightFuture: nightFuture,
                                 putChoiceLocally: putChoiceLocally,
@@ -292,6 +320,7 @@ class NightRolePanel extends HookConsumerWidget {
                             nightFuture: nightFuture,
                             putChoiceLocally: putShootInPlaceOfGodfatherLocally,
                             playersList: extraForMatador!,
+                            nostradamousChoices: nostradamousChoices,
                           ),
                         ],
                       ),

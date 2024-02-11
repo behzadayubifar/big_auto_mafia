@@ -72,13 +72,18 @@ const GameStatusSchema = CollectionSchema(
       name: r'timeLeft',
       type: IsarType.stringList,
     ),
-    r'wholeGameTimePassed': PropertySchema(
+    r'usedLastMoves': PropertySchema(
       id: 11,
+      name: r'usedLastMoves',
+      type: IsarType.stringList,
+    ),
+    r'wholeGameTimePassed': PropertySchema(
+      id: 12,
       name: r'wholeGameTimePassed',
       type: IsarType.long,
     ),
     r'winner': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'winner',
       type: IsarType.string,
     )
@@ -140,6 +145,20 @@ int _gameStatusEstimateSize(
     }
   }
   {
+    final list = object.usedLastMoves;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          if (value != null) {
+            bytesCount += value.length * 3;
+          }
+        }
+      }
+    }
+  }
+  {
     final value = object.winner;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -165,8 +184,9 @@ void _gameStatusSerialize(
   writer.writeString(offsets[8], object.situation);
   writer.writeString(offsets[9], object.statusOfGame);
   writer.writeStringList(offsets[10], object.timeLeft);
-  writer.writeLong(offsets[11], object.wholeGameTimePassed);
-  writer.writeString(offsets[12], object.winner);
+  writer.writeStringList(offsets[11], object.usedLastMoves);
+  writer.writeLong(offsets[12], object.wholeGameTimePassed);
+  writer.writeString(offsets[13], object.winner);
 }
 
 GameStatus _gameStatusDeserialize(
@@ -187,8 +207,9 @@ GameStatus _gameStatusDeserialize(
   object.situation = reader.readStringOrNull(offsets[8]);
   object.statusOfGame = reader.readStringOrNull(offsets[9]);
   object.timeLeft = reader.readStringList(offsets[10]);
-  object.wholeGameTimePassed = reader.readLongOrNull(offsets[11]);
-  object.winner = reader.readStringOrNull(offsets[12]);
+  object.usedLastMoves = reader.readStringOrNullList(offsets[11]);
+  object.wholeGameTimePassed = reader.readLongOrNull(offsets[12]);
+  object.winner = reader.readStringOrNull(offsets[13]);
   return object;
 }
 
@@ -222,8 +243,10 @@ P _gameStatusDeserializeProp<P>(
     case 10:
       return (reader.readStringList(offset)) as P;
     case 11:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNullList(offset)) as P;
     case 12:
+      return (reader.readLongOrNull(offset)) as P;
+    case 13:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1503,6 +1526,267 @@ extension GameStatusQueryFilter
   }
 
   QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'usedLastMoves',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'usedLastMoves',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.elementIsNull(
+        property: r'usedLastMoves',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.elementIsNotNull(
+        property: r'usedLastMoves',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'usedLastMoves',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'usedLastMoves',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'usedLastMoves',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'usedLastMoves',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'usedLastMoves',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'usedLastMoves',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'usedLastMoves',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'usedLastMoves',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'usedLastMoves',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'usedLastMoves',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'usedLastMoves',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'usedLastMoves',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'usedLastMoves',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'usedLastMoves',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'usedLastMoves',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      usedLastMovesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'usedLastMoves',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
       wholeGameTimePassedIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -2093,6 +2377,12 @@ extension GameStatusQueryWhereDistinct
     });
   }
 
+  QueryBuilder<GameStatus, GameStatus, QDistinct> distinctByUsedLastMoves() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'usedLastMoves');
+    });
+  }
+
   QueryBuilder<GameStatus, GameStatus, QDistinct>
       distinctByWholeGameTimePassed() {
     return QueryBuilder.apply(this, (query) {
@@ -2184,6 +2474,13 @@ extension GameStatusQueryProperty
     });
   }
 
+  QueryBuilder<GameStatus, List<String?>?, QQueryOperations>
+      usedLastMovesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'usedLastMoves');
+    });
+  }
+
   QueryBuilder<GameStatus, int?, QQueryOperations>
       wholeGameTimePassedProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -2259,33 +2556,38 @@ const NightSchema = CollectionSchema(
       name: r'nightOfBlockage',
       type: IsarType.string,
     ),
-    r'nostradamousChoices': PropertySchema(
+    r'nightOfRightChoiceOfKane': PropertySchema(
       id: 10,
+      name: r'nightOfRightChoiceOfKane',
+      type: IsarType.string,
+    ),
+    r'nostradamousChoices': PropertySchema(
+      id: 11,
       name: r'nostradamousChoices',
       type: IsarType.stringList,
     ),
     r'playerNameWhoIsComingBack': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'playerNameWhoIsComingBack',
       type: IsarType.string,
     ),
     r'playersWaitingForDoingTheirNightJob': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'playersWaitingForDoingTheirNightJob',
       type: IsarType.stringList,
     ),
     r'saulChoice': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'saulChoice',
       type: IsarType.string,
     ),
     r'theRoleGuessedByGodfather': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'theRoleGuessedByGodfather',
       type: IsarType.string,
     ),
     r'watsonChoice': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'watsonChoice',
       type: IsarType.string,
     )
@@ -2317,6 +2619,7 @@ int _nightEstimateSize(
   bytesCount += 3 + object.mafiasShot.length * 3;
   bytesCount += 3 + object.matadorChoice.length * 3;
   bytesCount += 3 + object.nightOfBlockage.length * 3;
+  bytesCount += 3 + object.nightOfRightChoiceOfKane.length * 3;
   bytesCount += 3 + object.nostradamousChoices.length * 3;
   {
     for (var i = 0; i < object.nostradamousChoices.length; i++) {
@@ -2364,13 +2667,14 @@ void _nightSerialize(
   writer.writeLong(offsets[7], object.nightCode);
   writer.writeLong(offsets[8], object.nightNumber);
   writer.writeString(offsets[9], object.nightOfBlockage);
-  writer.writeStringList(offsets[10], object.nostradamousChoices);
-  writer.writeString(offsets[11], object.playerNameWhoIsComingBack);
+  writer.writeString(offsets[10], object.nightOfRightChoiceOfKane);
+  writer.writeStringList(offsets[11], object.nostradamousChoices);
+  writer.writeString(offsets[12], object.playerNameWhoIsComingBack);
   writer.writeStringList(
-      offsets[12], object.playersWaitingForDoingTheirNightJob);
-  writer.writeString(offsets[13], object.saulChoice);
-  writer.writeString(offsets[14], object.theRoleGuessedByGodfather);
-  writer.writeString(offsets[15], object.watsonChoice);
+      offsets[13], object.playersWaitingForDoingTheirNightJob);
+  writer.writeString(offsets[14], object.saulChoice);
+  writer.writeString(offsets[15], object.theRoleGuessedByGodfather);
+  writer.writeString(offsets[16], object.watsonChoice);
 }
 
 Night _nightDeserialize(
@@ -2391,13 +2695,14 @@ Night _nightDeserialize(
   object.nightCode = reader.readLongOrNull(offsets[7]);
   object.nightNumber = reader.readLong(offsets[8]);
   object.nightOfBlockage = reader.readString(offsets[9]);
-  object.nostradamousChoices = reader.readStringList(offsets[10]) ?? [];
-  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[11]);
+  object.nightOfRightChoiceOfKane = reader.readString(offsets[10]);
+  object.nostradamousChoices = reader.readStringList(offsets[11]) ?? [];
+  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[12]);
   object.playersWaitingForDoingTheirNightJob =
-      reader.readStringList(offsets[12]);
-  object.saulChoice = reader.readString(offsets[13]);
-  object.theRoleGuessedByGodfather = reader.readString(offsets[14]);
-  object.watsonChoice = reader.readString(offsets[15]);
+      reader.readStringList(offsets[13]);
+  object.saulChoice = reader.readString(offsets[14]);
+  object.theRoleGuessedByGodfather = reader.readString(offsets[15]);
+  object.watsonChoice = reader.readString(offsets[16]);
   return object;
 }
 
@@ -2429,16 +2734,18 @@ P _nightDeserializeProp<P>(
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
-      return (reader.readStringList(offset) ?? []) as P;
-    case 11:
-      return (reader.readStringOrNull(offset)) as P;
-    case 12:
-      return (reader.readStringList(offset)) as P;
-    case 13:
       return (reader.readString(offset)) as P;
+    case 11:
+      return (reader.readStringList(offset) ?? []) as P;
+    case 12:
+      return (reader.readStringOrNull(offset)) as P;
+    case 13:
+      return (reader.readStringList(offset)) as P;
     case 14:
       return (reader.readString(offset)) as P;
     case 15:
+      return (reader.readString(offset)) as P;
+    case 16:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3646,6 +3953,144 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
   }
 
   QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nightOfRightChoiceOfKane',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nightOfRightChoiceOfKane',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nightOfRightChoiceOfKane',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nightOfRightChoiceOfKane',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nightOfRightChoiceOfKane',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nightOfRightChoiceOfKane',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nightOfRightChoiceOfKane',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nightOfRightChoiceOfKane',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nightOfRightChoiceOfKane',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
+      nightOfRightChoiceOfKaneIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nightOfRightChoiceOfKane',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterFilterCondition>
       nostradamousChoicesElementEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -4797,6 +5242,19 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterSortBy> sortByNightOfRightChoiceOfKane() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nightOfRightChoiceOfKane', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy>
+      sortByNightOfRightChoiceOfKaneDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nightOfRightChoiceOfKane', Sort.desc);
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterSortBy> sortByPlayerNameWhoIsComingBack() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'playerNameWhoIsComingBack', Sort.asc);
@@ -4981,6 +5439,19 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Night, Night, QAfterSortBy> thenByNightOfRightChoiceOfKane() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nightOfRightChoiceOfKane', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Night, Night, QAfterSortBy>
+      thenByNightOfRightChoiceOfKaneDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nightOfRightChoiceOfKane', Sort.desc);
+    });
+  }
+
   QueryBuilder<Night, Night, QAfterSortBy> thenByPlayerNameWhoIsComingBack() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'playerNameWhoIsComingBack', Sort.asc);
@@ -5104,6 +5575,14 @@ extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
     });
   }
 
+  QueryBuilder<Night, Night, QDistinct> distinctByNightOfRightChoiceOfKane(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'nightOfRightChoiceOfKane',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Night, Night, QDistinct> distinctByNostradamousChoices() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nostradamousChoices');
@@ -5212,6 +5691,13 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
   QueryBuilder<Night, String, QQueryOperations> nightOfBlockageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nightOfBlockage');
+    });
+  }
+
+  QueryBuilder<Night, String, QQueryOperations>
+      nightOfRightChoiceOfKaneProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'nightOfRightChoiceOfKane');
     });
   }
 

@@ -10,11 +10,13 @@ class NightTimer extends HookWidget {
     required this.width,
     required this.height,
     this.onComplete,
+    this.timerController,
   });
 
   final double width;
   final double height;
   final void Function()? onComplete;
+  final CountDownController? timerController;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class NightTimer extends HookWidget {
     var fillCollor = useState(AppColors.lighterGrey);
     return Center(
       child: CircularCountDownTimer(
+        controller: timerController,
         width: width,
         height: height,
         // later must read this from db (the user can change it)

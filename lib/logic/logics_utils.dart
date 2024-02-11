@@ -118,24 +118,44 @@ Future<String?> determineWinner({required int dayNumber}) async {
 // a method to determine the number of mafia & citizen players
 // from a given list of players
 Future<({int citizen, int independent, int mafiaPlayersCount})>
-    determineMafiaAndCitizenCountFromList(
-  List<String> playerNames,
-) async {
+    determineMafiaAndCitizenCountFromList({
+  required List<String> playerNames,
+  bool? isGodfatherCountedForMafia,
+}) async {
   final isar = await _isar;
   //
-  final mafiaPlayersCount = (await isar.retrievePlayer(
-    criteria: (player) => player.type == RoleType.mafia,
+
+  //
+  int citizenPlayersCount = (await isar.retrievePlayer(
+    criteria: (player) =>
+        player.type == RoleType.citizen &&
+        playerNames.contains(player.playerName!),
   ))
       .count;
   //
-  final citizenPlayersCount = (await isar.retrievePlayer(
-    criteria: (player) => player.type == RoleType.citizen,
+  final mafiaPlayersCount = (await isar.retrievePlayer(
+    criteria: (player) {
+      if (player.roleName == roleNames[RoleName.godfather] &&
+          playerNames.contains(player.playerName!)) {
+        if (isGodfatherCountedForMafia == false) {
+          citizenPlayersCount++;
+          return false;
+        }
+
+        return (isGodfatherCountedForMafia ?? true);
+      } else {
+        return player.type == RoleType.mafia &&
+            playerNames.contains(player.playerName!);
+      }
+    },
   ))
       .count;
   //
 
   final independentPlayersCount = (await isar.retrievePlayer(
-    criteria: (player) => player.type == RoleType.independent,
+    criteria: (player) =>
+        player.type == RoleType.independent &&
+        playerNames.contains(player.playerName!),
   ))
       .count;
   //
