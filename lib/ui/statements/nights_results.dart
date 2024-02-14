@@ -3,6 +3,7 @@ import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
@@ -19,6 +20,7 @@ class NightsResuls extends HookConsumerWidget {
   const NightsResuls({
     super.key,
     required this.tonight,
+    required this.remainedChancesForNightEnquiry,
     this.slaughtered,
     this.bornPlayer,
     this.disclosured,
@@ -38,9 +40,14 @@ class NightsResuls extends HookConsumerWidget {
   //
   final List<String>? allDeadPlayers;
   //
+  final int remainedChancesForNightEnquiry;
+  //
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print('slaughtered is $slaughtered');
+    print('tonightDeads is $tonightDeads');
+
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
@@ -81,24 +88,31 @@ class NightsResuls extends HookConsumerWidget {
                             names: [bornPlayer!, MyStrings.returnedToGame],
                             topic: MyStrings.bornPlayer),
                       if (bornPlayer != '') SizedBox(height: height / 24),
-                      ResultRow(
-                          width: width,
-                          names: [disclosured!, MyStrings.isMafia],
-                          topic: MyStrings.disclosured),
-                      SizedBox(height: height / 24),
+
+                      if (disclosured != '')
+                        ResultRow(
+                            width: width,
+                            names: [disclosured!, MyStrings.isMafia],
+                            topic: MyStrings.disclosured),
+                      if (disclosured != '') SizedBox(height: height / 32),
+
                       if (slaughtered != '')
                         ResultRow(
                             width: width,
                             names: [slaughtered!, MyStrings.isSlaughtered],
                             topic: MyStrings.slaughtered),
-                      SizedBox(height: height / 24),
-                      if (tonightDeads != '')
-                        ResultRow(
-                          width: width,
-                          names: tonightDeads!,
-                          topic: MyStrings.deads,
-                        ),
-                      if (tonightDeads != '') SizedBox(height: height / 16),
+                      if (slaughtered != '') SizedBox(height: height / 32),
+
+                      // if (tonightDeads!.isNotEmpty)
+                      ResultRow(
+                        width: width,
+                        names: tonightDeads!.isNotEmpty
+                            ? tonightDeads!
+                            : ["هیچکس فوت نکرد شکر خدا !!!"],
+                        topic: MyStrings.deads,
+                      ),
+                      SizedBox(height: height / 16),
+
                       Image.asset(
                         MyAssets.dashedLine,
                         scale: .2,
@@ -106,6 +120,8 @@ class NightsResuls extends HookConsumerWidget {
                         // width: width,
                       ),
                       SizedBox(height: height / 16),
+
+                      // under dashed line -> night code and all dead players
                       Column(
                         children: [
                           // show night code
@@ -120,7 +136,7 @@ class NightsResuls extends HookConsumerWidget {
                           if (nightCode != null) SizedBox(height: height / 16),
 
                           // show all the Deads
-                          if (allDeadPlayers != '')
+                          if (allDeadPlayers!.isNotEmpty)
                             Text(
                               MyStrings.allDeads + '  :',
                               style: MyTextStyles.bodyLarge.copyWith(
@@ -129,7 +145,7 @@ class NightsResuls extends HookConsumerWidget {
                               ),
                             ),
 
-                          if (allDeadPlayers != '')
+                          if (allDeadPlayers!.isNotEmpty)
                             SizedBox(height: height / 20),
 
                           for (String dead in allDeadPlayers!)
@@ -149,7 +165,7 @@ class NightsResuls extends HookConsumerWidget {
                                 SizedBox(height: height / 24),
                               ],
                             ),
-                          if (allDeadPlayers != '')
+                          if (allDeadPlayers!.isNotEmpty)
                             SizedBox(height: height / 32),
                         ],
                       )
@@ -162,32 +178,48 @@ class NightsResuls extends HookConsumerWidget {
                   children: [
                     MyButton(
                         title: MyStrings.enquiry,
-                        onLongPress: () async {
-                          final statementInstance = StatementScreen.instance();
+                        onLongPress: (allDeadPlayers!.isEmpty ||
+                                remainedChancesForNightEnquiry <= 0)
+                            ? null
+                            : () async {
+                                final statementInstance =
+                                    StatementScreen.instance();
 
-                          final List<Player> dead = await ref
-                              .read(isarServiceProvider.future)
-                              .then(
-                                  (isar) => isar.retrievePlayer(isAlive: false))
-                              .then((record) => record.players);
-                          print('dead : ${dead.mapToNames()}');
+                                final List<Player> dead = await ref
+                                    .read(isarServiceProvider.future)
+                                    .then((isar) =>
+                                        isar.retrievePlayer(isAlive: false))
+                                    .then((record) => record.players);
+                                print('dead : ${dead.mapToNames()}');
 
-                          final enquiry =
-                              await determineMafiaAndCitizenCountFromList(
-                            playerNames: dead.mapToNames(),
-                          );
-                          print('enquiry : $enquiry');
+                                final enquiry =
+                                    await determineMafiaAndCitizenCountFromList(
+                                  playerNames: dead.mapToNames(),
+                                );
+                                print('enquiry : $enquiry');
 
-                          statementInstance.show(
-                            mafia: enquiry.mafiaPlayersCount,
-                            citizen: enquiry.citizen,
-                            context: context,
-                            callback: () {
-                              statementInstance.hide();
-                              // useContext().goNamed('day');
-                            },
-                          );
-                        }),
+                                statementInstance.show(
+                                  mafia: enquiry.mafiaPlayersCount,
+                                  citizen: enquiry.citizen,
+                                  title: MyStrings.enquiryResults,
+                                  context: context,
+                                  callback: () async {
+                                    final isar = await ref
+                                        .read(isarServiceProvider.future);
+                                    final dayNumber = await isar.getDayNumber();
+
+                                    await isar.putGameStatus(
+                                      dayNumber: dayNumber,
+                                      remainedChancesForNightEnquiry:
+                                          remainedChancesForNightEnquiry - 1,
+                                    );
+
+                                    statementInstance.hide();
+
+                                    useContext().go('day/$dayNumber');
+                                  },
+                                );
+                              }),
                     SizedBox(height: width / 24),
                     MyButton(title: MyStrings.nextNight, onLongPress: () {}),
                   ],

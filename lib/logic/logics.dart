@@ -103,14 +103,15 @@ _mafiaShoot(
   print("--------------------------------------------------");
   final isar = await _container.read(isarServiceProvider.future);
   final chosenPlayer = await isar.getPlayerByName(chosenPlayerName!);
-  final previousHeart = chosenPlayer!.heart!;
+  final previousHeart = chosenPlayer?.heart!;
   final godFather = await isar.getPlayerByRole(RoleName.godfather);
   final day = await isar.getDayNumber();
   //
-  if (chosenPlayer.roleName != roleNames[RoleName.nostradamous] &&
+  if (chosenPlayer != null &&
+      chosenPlayer.roleName != roleNames[RoleName.nostradamous] &&
       chosenPlayer.isSaved != true) {
     await isar.updatePlayer(
-        playerName: chosenPlayerName, heart: (previousHeart - 1));
+        playerName: chosenPlayerName, heart: (previousHeart! - 1));
     final int newHeart = await isar
         .getPlayerByName(chosenPlayerName)
         .then((player) => player!.heart!);
@@ -216,6 +217,7 @@ Future<Map<String, dynamic>?> god(
     final matadaorChoice = await json["matadorChoice"];
     final nightOfBlockage = json["nightOfBlockage"];
     final isSomeoneBlockedTonight = nightOfBlockage == nightNumber.toString();
+    final nightOfRightChoiceOfKane = json["nightOfRightChoiceOfKane"];
 
     String? toNightBlocked() => isSomeoneBlockedTonight ? matadaorChoice : null;
     int? nightCode = 503;
@@ -286,6 +288,76 @@ Future<Map<String, dynamic>?> god(
       bornPlayer = konstantinChoice.playerName;
     }
 
+// _______________________________ RESULTS OF THE NIGHT _____________________________________
+
+    // it's time to retieve new alive and dead players
+    final newDeadPlayers = await isar.retrievePlayer(isAlive: false);
+    // final newAlivePlayers = await isar.retrievePlayer();
+
+    // kane choice for guessing
+    final isKaneStillAlive = await isar
+        .getPlayerByRole(RoleName.kane)
+        .then((player) => player!.heart! > 0);
+
+    if (kaneChoice != null &&
+        isKaneStillAlive &&
+        toNightBlocked() != allPlayers[roleNames[RoleName.kane]] &&
+        !newDeadPlayers.players.contains(kaneChoice.playerName))
+      await _kane(kaneChoice.playerName!, nightNumber);
+
+    // check if kane choice was right *last night* -> he/she must be dead
+    final wasKaneChoiceRightLastNight =
+        await isar.retrieveNightN(n: nightNumber - 1).then((json) => json.match(
+              (json) => json['nightOfRightChoiceOfKane'] == true,
+              (_) => false,
+            ));
+
+    if (wasKaneChoiceRightLastNight)
+      await isar.updatePlayer(
+        playerName: allPlayers[roleNames[RoleName.kane]]!,
+        heart: 0,
+      );
+
+    final newAndOldDeadPlayersDiff = newDeadPlayers.players
+        .where((element) => !oldDeadPlayers.players.contains(element))
+        .toList();
+
+    // checking if anyone died
+    if (newAndOldDeadPlayersDiff.isNotEmpty) {
+      killedPlayersOftonight = newAndOldDeadPlayersDiff.mapToNames();
+    }
+
+    final List<String> allDeadPlayers =
+        (newDeadPlayers.players + oldDeadPlayers.players)
+            .where((element) =>
+                slaughteredPlayerOfTonight != element.playerName &&
+                element.playerName != bornPlayer)
+            .mapToNames()
+            .toSet()
+            .toList();
+
+// !TODO: if kane's choice has been killed tonight, don't do this
+    // checking if anyone was disclosured
+    if (kaneChoice != null && kaneChoice.type == RoleType.mafia) {
+      disclosuredPlayerOfTonight = kaneChoice.playerName;
+    }
+
+    final remainedChancesForNightEnquiry = await isar
+        .retrieveGameStatusN(n: dayNumber)
+        .then((status) => status!.remainedChancesForNightEnquiry);
+
+    // TODO: show the results of the night (RESULT WIDGET)
+    final info = {
+      'tonight': nightNumber,
+      'bornPlayer': bornPlayer,
+      'disclosured': disclosuredPlayerOfTonight,
+      'slaughtered': slaughteredPlayerOfTonight,
+      'tonightDeads': newDeadPlayers.players.mapToNames(),
+      'nightCode': nightCode,
+      'allDeadPlayers': allDeadPlayers,
+      'remainedChancesForNightEnquiry': remainedChancesForNightEnquiry,
+    };
+
     // update players to be ready for new day
     for (String player in allPlayers.values) {
       await isar.updatePlayer(
@@ -303,74 +375,10 @@ Future<Map<String, dynamic>?> god(
       dayNumber: dayNumber + 1,
       isDay: true,
       nightCode: nightCode,
+      situation: MyStrings.nightResultsPage,
     );
     log('GameStatusInserted: $GameStatusInserted');
 
-// _______________________________ RESULTS OF THE NIGHT _____________________________________
-
-    // it's time to retieve new alive and dead players
-    final newDeadPlayers = await isar.retrievePlayer(isAlive: false);
-    // final newAlivePlayers = await isar.retrievePlayer();
-
-    // kane choice for guessing
-    if (kaneChoice != null &&
-        toNightBlocked() != allPlayers[roleNames[RoleName.kane]] &&
-        !newDeadPlayers.players.contains(kaneChoice.playerName))
-      await _kane(kaneChoice.playerName!, nightNumber);
-
-    // check if kane choice was right *last night* -> he/she must be dead
-    final wasKaneChoiceBeenRightLastNight =
-        await isar.retrieveNightN(n: nightNumber - 1).then((json) => json.match(
-              (json) => json['nightOfRightChoiceOfKane'] != null,
-              (_) => false,
-            ));
-
-    if (wasKaneChoiceBeenRightLastNight)
-      await isar.updatePlayer(
-        playerName: allPlayers[roleNames[RoleName.kane]]!,
-        heart: 0,
-      );
-
-    // // checking if anyone came back to life
-    // if (newAlivePlayers.count > oldAlivePlayers.count) {
-    //   // find new added alive player
-    //   final Player newAddedAlivePlayer = newAlivePlayers.players
-    //       .where((element) => !oldAlivePlayers.players.contains(element))
-    //       .first;
-    //   bornPlayer = newAddedAlivePlayer.playerName;
-    // }
-
-    final newAndOldDeadPlayersDiff = newDeadPlayers.players
-        .where((element) => !oldDeadPlayers.players.contains(element))
-        .toList();
-
-    // checking if anyone died
-    if (newAndOldDeadPlayersDiff.isNotEmpty) {
-      killedPlayersOftonight = newAndOldDeadPlayersDiff.mapToNames();
-    }
-
-    final List<String> allDeadPlayers =
-        (newDeadPlayers.players + oldDeadPlayers.players)
-            .toSet()
-            .toList()
-            .mapToNames();
-
-// !TODO: if kane's choice has been killed tonight, don't do this
-    // checking if anyone was disclosured
-    if (kaneChoice != null && kaneChoice.type == RoleType.mafia) {
-      disclosuredPlayerOfTonight = kaneChoice.playerName;
-    }
-
-    // TODO: show the results of the night (RESULT WIDGET)
-    final info = {
-      'tonight': nightNumber,
-      'bornPlayer': bornPlayer,
-      'disclosured': disclosuredPlayerOfTonight,
-      'slaughtered': slaughteredPlayerOfTonight,
-      'tonightDeads': newDeadPlayers.players.mapToNames(),
-      'nightCode': nightCode,
-      'allDeadPlayers': allDeadPlayers,
-    };
     // await _container
     //     .read(currentPlayersProvider.notifier)
     //     .action(MyStrings.dayPage);
@@ -379,46 +387,56 @@ Future<Map<String, dynamic>?> god(
 
     // TODO: call here the method for showing the night's resukts & use born and killed Player Of tonight & slaughtered player of tonight & also the night code & kane choice if it was right
     // TODO: or even MABEY the VICTORY message
-  } else {
+  }
+  // GO TO NEXT NIGHT
+  else {
     //-----------------------------------------------------
     //-------------------------------------------------------------------
     //--------------------------------------------------------------------------------
     // ______________________----------Day To Night-----------________________________
     // *going to night* -> update players' nightDone to false
 
-    // // assign new random codes to players
-    // final Map<String, int> newAssignedCodes =
-    //     assignRandomCode(allPlayers.values);
-
-    // // now put the generated code in db and handle the exposinf the night code in ui
-    // for (String player in allPlayers.values) {
-    //   await isar.updatePlayer(
-    //     playerName: player,
-    //     nightDone: false,
-    //     code: newAssignedCodes[player],
-    //   );
-    // }
-    // update night number and reset all night choices
     final bool newNightInserted = await isar.putNight(
       night: nightNumber + 1,
-      godfatherChoice: null,
+      /*    godfatherChoice: null,
       leonChoice: null,
       kaneChoice: null,
       konstantinChoice: null,
       watsonChoice: null,
       theRoleGuessedByGodfather: null,
       saulChoice: null,
-      mafiasShot: null,
+      mafiasShot: null, */
     );
+    log('newNightInserted: $newNightInserted');
 
     // insert new game status
     /* final bool GameStatusInserted = */ await isar.putGameStatus(
       dayNumber: dayNumber,
       isDay: false,
       remainedMafiasBullets: 1,
+      situation: MyStrings.nightPage,
     );
 
-    log('newNightInserted: $newNightInserted');
+    final allPlayers = await isar
+        .retrievePlayer()
+        .then((record) => record.players.mapToNames());
+
+    // assign new random codes to players
+    final Map<String, int> newAssignedCodes = assignRandomCode(allPlayers);
+
+    // now put the generated code in db and handle the exposinf the night code in ui
+    for (String player in allPlayers) {
+      await isar.updatePlayer(
+        playerName: player,
+        nightDone: false,
+        code: newAssignedCodes[player],
+      );
+    }
+
+    await _container
+        .read(currentPlayersProvider.notifier)
+        .action(MyStrings.nightPage);
+
     //
     // TODO: show the results of the day (RESULT WIDGET)
   }

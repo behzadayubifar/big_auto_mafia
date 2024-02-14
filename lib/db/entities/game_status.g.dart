@@ -52,38 +52,43 @@ const GameStatusSchema = CollectionSchema(
       name: r'playersWhoSawTheirRole',
       type: IsarType.stringList,
     ),
-    r'remainedMafiasBullets': PropertySchema(
+    r'remainedChancesForNightEnquiry': PropertySchema(
       id: 7,
+      name: r'remainedChancesForNightEnquiry',
+      type: IsarType.long,
+    ),
+    r'remainedMafiasBullets': PropertySchema(
+      id: 8,
       name: r'remainedMafiasBullets',
       type: IsarType.long,
     ),
     r'situation': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'situation',
       type: IsarType.string,
     ),
     r'statusOfGame': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'statusOfGame',
       type: IsarType.string,
     ),
     r'timeLeft': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'timeLeft',
       type: IsarType.stringList,
     ),
     r'usedLastMoves': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'usedLastMoves',
       type: IsarType.stringList,
     ),
     r'wholeGameTimePassed': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'wholeGameTimePassed',
       type: IsarType.long,
     ),
     r'winner': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'winner',
       type: IsarType.string,
     )
@@ -180,13 +185,14 @@ void _gameStatusSerialize(
   writer.writeBool(offsets[4], object.isFinished);
   writer.writeLong(offsets[5], object.nightCode);
   writer.writeStringList(offsets[6], object.playersWhoSawTheirRole);
-  writer.writeLong(offsets[7], object.remainedMafiasBullets);
-  writer.writeString(offsets[8], object.situation);
-  writer.writeString(offsets[9], object.statusOfGame);
-  writer.writeStringList(offsets[10], object.timeLeft);
-  writer.writeStringList(offsets[11], object.usedLastMoves);
-  writer.writeLong(offsets[12], object.wholeGameTimePassed);
-  writer.writeString(offsets[13], object.winner);
+  writer.writeLong(offsets[7], object.remainedChancesForNightEnquiry);
+  writer.writeLong(offsets[8], object.remainedMafiasBullets);
+  writer.writeString(offsets[9], object.situation);
+  writer.writeString(offsets[10], object.statusOfGame);
+  writer.writeStringList(offsets[11], object.timeLeft);
+  writer.writeStringList(offsets[12], object.usedLastMoves);
+  writer.writeLong(offsets[13], object.wholeGameTimePassed);
+  writer.writeString(offsets[14], object.winner);
 }
 
 GameStatus _gameStatusDeserialize(
@@ -203,13 +209,14 @@ GameStatus _gameStatusDeserialize(
   object.isFinished = reader.readBoolOrNull(offsets[4]);
   object.nightCode = reader.readLongOrNull(offsets[5]);
   object.playersWhoSawTheirRole = reader.readStringList(offsets[6]);
-  object.remainedMafiasBullets = reader.readLongOrNull(offsets[7]);
-  object.situation = reader.readStringOrNull(offsets[8]);
-  object.statusOfGame = reader.readStringOrNull(offsets[9]);
-  object.timeLeft = reader.readStringList(offsets[10]);
-  object.usedLastMoves = reader.readStringOrNullList(offsets[11]);
-  object.wholeGameTimePassed = reader.readLongOrNull(offsets[12]);
-  object.winner = reader.readStringOrNull(offsets[13]);
+  object.remainedChancesForNightEnquiry = reader.readLongOrNull(offsets[7]);
+  object.remainedMafiasBullets = reader.readLongOrNull(offsets[8]);
+  object.situation = reader.readStringOrNull(offsets[9]);
+  object.statusOfGame = reader.readStringOrNull(offsets[10]);
+  object.timeLeft = reader.readStringList(offsets[11]);
+  object.usedLastMoves = reader.readStringOrNullList(offsets[12]);
+  object.wholeGameTimePassed = reader.readLongOrNull(offsets[13]);
+  object.winner = reader.readStringOrNull(offsets[14]);
   return object;
 }
 
@@ -237,16 +244,18 @@ P _gameStatusDeserializeProp<P>(
     case 7:
       return (reader.readLongOrNull(offset)) as P;
     case 8:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 9:
       return (reader.readStringOrNull(offset)) as P;
     case 10:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 11:
-      return (reader.readStringOrNullList(offset)) as P;
+      return (reader.readStringList(offset)) as P;
     case 12:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNullList(offset)) as P;
     case 13:
+      return (reader.readLongOrNull(offset)) as P;
+    case 14:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -900,6 +909,80 @@ extension GameStatusQueryFilter
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedChancesForNightEnquiryIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'remainedChancesForNightEnquiry',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedChancesForNightEnquiryIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'remainedChancesForNightEnquiry',
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedChancesForNightEnquiryEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'remainedChancesForNightEnquiry',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedChancesForNightEnquiryGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'remainedChancesForNightEnquiry',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedChancesForNightEnquiryLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'remainedChancesForNightEnquiry',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
+      remainedChancesForNightEnquiryBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'remainedChancesForNightEnquiry',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
@@ -2090,6 +2173,20 @@ extension GameStatusQuerySortBy
   }
 
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      sortByRemainedChancesForNightEnquiry() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remainedChancesForNightEnquiry', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      sortByRemainedChancesForNightEnquiryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remainedChancesForNightEnquiry', Sort.desc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
       sortByRemainedMafiasBullets() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'remainedMafiasBullets', Sort.asc);
@@ -2241,6 +2338,20 @@ extension GameStatusQuerySortThenBy
   }
 
   QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      thenByRemainedChancesForNightEnquiry() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remainedChancesForNightEnquiry', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
+      thenByRemainedChancesForNightEnquiryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remainedChancesForNightEnquiry', Sort.desc);
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QAfterSortBy>
       thenByRemainedMafiasBullets() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'remainedMafiasBullets', Sort.asc);
@@ -2351,6 +2462,13 @@ extension GameStatusQueryWhereDistinct
   }
 
   QueryBuilder<GameStatus, GameStatus, QDistinct>
+      distinctByRemainedChancesForNightEnquiry() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'remainedChancesForNightEnquiry');
+    });
+  }
+
+  QueryBuilder<GameStatus, GameStatus, QDistinct>
       distinctByRemainedMafiasBullets() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'remainedMafiasBullets');
@@ -2450,6 +2568,13 @@ extension GameStatusQueryProperty
   }
 
   QueryBuilder<GameStatus, int?, QQueryOperations>
+      remainedChancesForNightEnquiryProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'remainedChancesForNightEnquiry');
+    });
+  }
+
+  QueryBuilder<GameStatus, int?, QQueryOperations>
       remainedMafiasBulletsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'remainedMafiasBullets');
@@ -2541,53 +2666,48 @@ const NightSchema = CollectionSchema(
       name: r'matadorChoice',
       type: IsarType.string,
     ),
-    r'nightCode': PropertySchema(
-      id: 7,
-      name: r'nightCode',
-      type: IsarType.long,
-    ),
     r'nightNumber': PropertySchema(
-      id: 8,
+      id: 7,
       name: r'nightNumber',
       type: IsarType.long,
     ),
     r'nightOfBlockage': PropertySchema(
-      id: 9,
+      id: 8,
       name: r'nightOfBlockage',
       type: IsarType.string,
     ),
     r'nightOfRightChoiceOfKane': PropertySchema(
-      id: 10,
+      id: 9,
       name: r'nightOfRightChoiceOfKane',
       type: IsarType.string,
     ),
     r'nostradamousChoices': PropertySchema(
-      id: 11,
+      id: 10,
       name: r'nostradamousChoices',
       type: IsarType.stringList,
     ),
     r'playerNameWhoIsComingBack': PropertySchema(
-      id: 12,
+      id: 11,
       name: r'playerNameWhoIsComingBack',
       type: IsarType.string,
     ),
     r'playersWaitingForDoingTheirNightJob': PropertySchema(
-      id: 13,
+      id: 12,
       name: r'playersWaitingForDoingTheirNightJob',
       type: IsarType.stringList,
     ),
     r'saulChoice': PropertySchema(
-      id: 14,
+      id: 13,
       name: r'saulChoice',
       type: IsarType.string,
     ),
     r'theRoleGuessedByGodfather': PropertySchema(
-      id: 15,
+      id: 14,
       name: r'theRoleGuessedByGodfather',
       type: IsarType.string,
     ),
     r'watsonChoice': PropertySchema(
-      id: 16,
+      id: 15,
       name: r'watsonChoice',
       type: IsarType.string,
     )
@@ -2664,17 +2784,16 @@ void _nightSerialize(
   writer.writeString(offsets[4], object.leonChoice);
   writer.writeString(offsets[5], object.mafiasShot);
   writer.writeString(offsets[6], object.matadorChoice);
-  writer.writeLong(offsets[7], object.nightCode);
-  writer.writeLong(offsets[8], object.nightNumber);
-  writer.writeString(offsets[9], object.nightOfBlockage);
-  writer.writeString(offsets[10], object.nightOfRightChoiceOfKane);
-  writer.writeStringList(offsets[11], object.nostradamousChoices);
-  writer.writeString(offsets[12], object.playerNameWhoIsComingBack);
+  writer.writeLong(offsets[7], object.nightNumber);
+  writer.writeString(offsets[8], object.nightOfBlockage);
+  writer.writeString(offsets[9], object.nightOfRightChoiceOfKane);
+  writer.writeStringList(offsets[10], object.nostradamousChoices);
+  writer.writeString(offsets[11], object.playerNameWhoIsComingBack);
   writer.writeStringList(
-      offsets[13], object.playersWaitingForDoingTheirNightJob);
-  writer.writeString(offsets[14], object.saulChoice);
-  writer.writeString(offsets[15], object.theRoleGuessedByGodfather);
-  writer.writeString(offsets[16], object.watsonChoice);
+      offsets[12], object.playersWaitingForDoingTheirNightJob);
+  writer.writeString(offsets[13], object.saulChoice);
+  writer.writeString(offsets[14], object.theRoleGuessedByGodfather);
+  writer.writeString(offsets[15], object.watsonChoice);
 }
 
 Night _nightDeserialize(
@@ -2692,17 +2811,16 @@ Night _nightDeserialize(
   object.leonChoice = reader.readString(offsets[4]);
   object.mafiasShot = reader.readString(offsets[5]);
   object.matadorChoice = reader.readString(offsets[6]);
-  object.nightCode = reader.readLongOrNull(offsets[7]);
-  object.nightNumber = reader.readLong(offsets[8]);
-  object.nightOfBlockage = reader.readString(offsets[9]);
-  object.nightOfRightChoiceOfKane = reader.readString(offsets[10]);
-  object.nostradamousChoices = reader.readStringList(offsets[11]) ?? [];
-  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[12]);
+  object.nightNumber = reader.readLong(offsets[7]);
+  object.nightOfBlockage = reader.readString(offsets[8]);
+  object.nightOfRightChoiceOfKane = reader.readString(offsets[9]);
+  object.nostradamousChoices = reader.readStringList(offsets[10]) ?? [];
+  object.playerNameWhoIsComingBack = reader.readStringOrNull(offsets[11]);
   object.playersWaitingForDoingTheirNightJob =
-      reader.readStringList(offsets[13]);
-  object.saulChoice = reader.readString(offsets[14]);
-  object.theRoleGuessedByGodfather = reader.readString(offsets[15]);
-  object.watsonChoice = reader.readString(offsets[16]);
+      reader.readStringList(offsets[12]);
+  object.saulChoice = reader.readString(offsets[13]);
+  object.theRoleGuessedByGodfather = reader.readString(offsets[14]);
+  object.watsonChoice = reader.readString(offsets[15]);
   return object;
 }
 
@@ -2728,24 +2846,22 @@ P _nightDeserializeProp<P>(
     case 6:
       return (reader.readString(offset)) as P;
     case 7:
-      return (reader.readLongOrNull(offset)) as P;
-    case 8:
       return (reader.readLong(offset)) as P;
+    case 8:
+      return (reader.readString(offset)) as P;
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
-      return (reader.readString(offset)) as P;
-    case 11:
       return (reader.readStringList(offset) ?? []) as P;
-    case 12:
+    case 11:
       return (reader.readStringOrNull(offset)) as P;
-    case 13:
+    case 12:
       return (reader.readStringList(offset)) as P;
+    case 13:
+      return (reader.readString(offset)) as P;
     case 14:
       return (reader.readString(offset)) as P;
     case 15:
-      return (reader.readString(offset)) as P;
-    case 16:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3695,75 +3811,6 @@ extension NightQueryFilter on QueryBuilder<Night, Night, QFilterCondition> {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'matadorChoice',
         value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> nightCodeIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nightCode',
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> nightCodeIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nightCode',
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> nightCodeEqualTo(
-      int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nightCode',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> nightCodeGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nightCode',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> nightCodeLessThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nightCode',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterFilterCondition> nightCodeBetween(
-    int? lower,
-    int? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nightCode',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
       ));
     });
   }
@@ -5206,18 +5253,6 @@ extension NightQuerySortBy on QueryBuilder<Night, Night, QSortBy> {
     });
   }
 
-  QueryBuilder<Night, Night, QAfterSortBy> sortByNightCode() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'nightCode', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterSortBy> sortByNightCodeDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'nightCode', Sort.desc);
-    });
-  }
-
   QueryBuilder<Night, Night, QAfterSortBy> sortByNightNumber() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nightNumber', Sort.asc);
@@ -5403,18 +5438,6 @@ extension NightQuerySortThenBy on QueryBuilder<Night, Night, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Night, Night, QAfterSortBy> thenByNightCode() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'nightCode', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Night, Night, QAfterSortBy> thenByNightCodeDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'nightCode', Sort.desc);
-    });
-  }
-
   QueryBuilder<Night, Night, QAfterSortBy> thenByNightNumber() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nightNumber', Sort.asc);
@@ -5555,12 +5578,6 @@ extension NightQueryWhereDistinct on QueryBuilder<Night, Night, QDistinct> {
     });
   }
 
-  QueryBuilder<Night, Night, QDistinct> distinctByNightCode() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nightCode');
-    });
-  }
-
   QueryBuilder<Night, Night, QDistinct> distinctByNightNumber() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nightNumber');
@@ -5673,12 +5690,6 @@ extension NightQueryProperty on QueryBuilder<Night, Night, QQueryProperty> {
   QueryBuilder<Night, String, QQueryOperations> matadorChoiceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'matadorChoice');
-    });
-  }
-
-  QueryBuilder<Night, int?, QQueryOperations> nightCodeProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'nightCode');
     });
   }
 

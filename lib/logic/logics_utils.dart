@@ -177,8 +177,8 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
 // a method to assign a last move (which is not in usedLastMoves in collection of gameStatus) to a player
 Future<String> getARandomLastMove() async {
   final isar = await _isar;
-  final toNight = await isar.getNightNumber();
-  final usedLastMoves = (await isar.retrieveGameStatusN(n: toNight))!
+  final dayNumber = await isar.getDayNumber();
+  final usedLastMoves = (await isar.retrieveGameStatusN(n: dayNumber))!
       .usedLastMoves!
       .where((element) => element != null)
       .toList();
@@ -199,7 +199,7 @@ String getARandomPlayer(List<String> playerNames) {
   return randomPlayer;
 }
 
-extension PlayersListConversion on List<Player> {
+extension PlayersListConversion on Iterable<Player> {
   List<String> mapToNames() => map(
         (Player player) => player.playerName!,
       ).toList();

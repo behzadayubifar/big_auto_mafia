@@ -72,7 +72,7 @@ class MyTextStyles {
     color: const Color(0xB2070E25),
     fontSize: 20,
     fontWeight: FontWeight.w400,
-    height: 0.09,
+    // height: 0.09,
   );
 
   ///Body - LG

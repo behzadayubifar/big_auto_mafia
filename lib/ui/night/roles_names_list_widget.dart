@@ -1,4 +1,5 @@
 import 'package:auto_mafia/constants/app_colors.dart';
+import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
@@ -44,7 +45,14 @@ class RoleNamesList extends StatelessWidget {
                       cacheExtent: _height / 1.64,
                       restorationId: 'night-page',
                       clipBehavior: Clip.antiAlias,
-                      itemCount: roleNames.values.length,
+                      itemCount: roleNames.values
+                          .where((role) => ![
+                                MyStrings.godfather,
+                                MyStrings.matador,
+                                MyStrings.saul,
+                                MyStrings.mafia,
+                              ].contains(role))
+                          .length,
                       itemBuilder: (context, index) {
                         return MyButton(
                           textStyle: MyTextStyles.bodyMedium

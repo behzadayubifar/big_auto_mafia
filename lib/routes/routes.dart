@@ -1,5 +1,6 @@
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
@@ -26,6 +27,7 @@ final _router = GoRouter(
   initialLocation: '/name_list',
   // initialLocation: '/nights_results',
   // initialLocation: '/day',
+  // initialLocation: '/x-page',
 
   routes: <RouteBase>[
     GoRoute(
@@ -59,6 +61,8 @@ final _router = GoRouter(
           tonightDeads: info['tonightDeads'],
           nightCode: info['nightCode'],
           allDeadPlayers: info['allDeadPlayers'],
+          remainedChancesForNightEnquiry:
+              info['remainedChancesForNightEnquiry'],
         );
       },
     ),
@@ -105,8 +109,10 @@ final _router = GoRouter(
         final String code = info['code']!;
         final bool isGodfatherIsAlive = info['isGodfatherIsAlive']!;
         final bool? mafiaHasBullet = info['mafiaHasBullet'];
-        // final String name = 'بازیکن 7';
-        // final String role = 'کنستانتین';
+        final int night = info['night']!;
+        final List<Player> playersListForShootInAbsenceOfGodfather =
+            info['playersListForShootInAbsenceOfGodfather']!;
+        final bool isHandCuffed = info['isHandCuffed']!;
 
         return NightRolePanel(
           name: name,
@@ -114,14 +120,22 @@ final _router = GoRouter(
           code: code,
           isGodfatherAlive: isGodfatherIsAlive,
           mafiaHasBullet: mafiaHasBullet,
+          playersListForShootInAbsenceOfGodfather:
+              playersListForShootInAbsenceOfGodfather,
+          night: night,
+          isHandCuffed: isHandCuffed,
         );
       },
     ),
     GoRoute(
       name: 'day',
-      path: '/day',
+      path: '/day/:dayNumber',
       builder: (context, state) {
-        return Day();
+        final dayNumber = int.parse(state.pathParameters['dayNumber']!);
+        print('dayNumber: $dayNumber');
+        return Day(
+          dayNumber: dayNumber,
+        );
       },
     ),
     GoRoute(

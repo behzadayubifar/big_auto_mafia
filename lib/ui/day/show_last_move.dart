@@ -8,6 +8,8 @@ import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/day/grid_list_of_players.dart';
+import 'package:auto_mafia/ui/dialogs/last_move_dialog.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -26,7 +28,7 @@ class ShowLastMove extends HookConsumerWidget {
   final String playerWithCardName;
   final String playerWithCardRoleName;
 
-  final pageFlipKey = GlobalKey<PageFlipBuilderState>();
+  final pageFlipKeyb1 = GlobalKey<PageFlipBuilderState>();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,6 +36,10 @@ class ShowLastMove extends HookConsumerWidget {
       initialScrollOffset: 0,
       keepScrollOffset: true,
     );
+    //
+    final beautifulMindForNostradamous =
+        lastMoveName == MyStrings.beautifulMind &&
+            playerWithCardRoleName == MyStrings.nostradamous;
     //
     final titleOfButton = switch (lastMoveName) {
       MyStrings.faceOff => 'تعویض نقش',
@@ -52,64 +58,99 @@ class ShowLastMove extends HookConsumerWidget {
     //
     return Scaffold(
       body: PageFlipBuilder(
-        frontBuilder: (context) {
-          return GestureDetector(
-            onTap: () {
-              print('on tap');
-              pageFlipKey.currentState!.flip();
-            },
-            child: Image.asset(
-              MyAssets.getCardByLastMoveName(lastMoveName),
-              width: width / 1.5,
+        frontBuilder: (_) {
+          return Center(
+            child: GestureDetector(
+              onTap: () {
+                print('on tap');
+                pageFlipKeyb1.currentState?.flip();
+              },
+              child: Image.asset(
+                MyAssets.getCardByLastMoveName(lastMoveName),
+                width: width,
+              ),
             ),
           );
         },
-        backBuilder: (context) {
-          return Column(
-            children: [
-              // list of players
-              listOfPlayersForLastMoves(
-                asyncAlivePlayers,
-                height,
-                width,
-                selectedPlayers,
-                scrollController,
-                playerWithCardRoleName,
-              ),
-
-              // button
-              MyButton(
-                  title: titleOfButton,
-                  onPressed: () async {
-                    switch (lastMoveName) {
-                      case MyStrings.faceOff:
-                        faceOff(
-                          playerWithCardName: playerWithCardName,
-                          otherPlayerName: selectedPlayers.value.first,
-                        );
-                        break;
-                      case MyStrings.handCuff:
-                        handCuff(playerName: selectedPlayers.value.first);
-                        break;
-                      case MyStrings.silenceOfSheep:
-                        silenceOfSheep(playerName: selectedPlayers.value.first);
-                        break;
-                      case MyStrings.roleReveal:
-                        identityReveal(playerName: selectedPlayers.value.first);
-                        break;
-                      case MyStrings.beautifulMind:
-                        beautifulMind(
-                            guessedToBeNostradamous:
-                                selectedPlayers.value.first);
-                        break;
-                      default:
-                        print('no last move');
-                    }
-                    await god(isGettingDay: true);
-                    context.goNamed('night-page', extra: Info.night);
-                  }),
-            ],
-          );
+        backBuilder: (_) {
+          return lastMoveName == MyStrings.roleReveal
+              ? Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        '$playerWithCardName، $playerWithCardRoleName بود',
+                      ),
+                      SizedBox(height: height / 32),
+                      MyButton(
+                        title: 'بریم شب بعد',
+                        onPressed: () async {
+                          final isar =
+                              await ref.read(isarServiceProvider.future);
+                          await isar.updatePlayer(
+                            playerName: playerWithCardName,
+                            disclosured: true,
+                            heart: 0,
+                          );
+                          await god(isGettingDay: false);
+                          context.goNamed('night', extra: Info.night);
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              : beautifulMindForNostradamous
+                  ? Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            '$playerWithCardName و در بازی می‌ماند نوستراداموس است',
+                          ),
+                          SizedBox(height: height / 32),
+                          MyButton(
+                            title: 'بریم شب بعد',
+                            onPressed: () async {
+                              final isar =
+                                  await ref.read(isarServiceProvider.future);
+                              await isar.updatePlayer(
+                                playerName: playerWithCardName,
+                                disclosured: true,
+                                heart: 1,
+                              );
+                              await god(isGettingDay: false);
+                              context.goNamed('night', extra: Info.night);
+                            },
+                          ),
+                        ],
+                      ),
+                    )
+                  : Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // list of players
+                          listOfPlayersForLastMoves(
+                            asyncAlivePlayers,
+                            height,
+                            width,
+                            selectedPlayers,
+                            scrollController,
+                            playerWithCardRoleName,
+                          ),
+                          SizedBox(height: height / 16),
+                          // button
+                          MyButton(
+                            title: titleOfButton,
+                            onPressed: () => showLastMoveDialog(
+                              context: context,
+                              lastMoveName: lastMoveName,
+                              playerWithCardName: playerWithCardName,
+                              playerWithCardRoleName: playerWithCardRoleName,
+                              selectedPlayers: selectedPlayers.value,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
         },
       ),
     );
@@ -135,6 +176,7 @@ class ShowLastMove extends HookConsumerWidget {
           width: width,
           selectedPlayers: selectedPlayers,
           scrollController: scrollController,
+          axix: Axis.vertical,
         );
         break;
       case MyStrings.roleReveal:

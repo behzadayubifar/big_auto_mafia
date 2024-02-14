@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
@@ -105,7 +106,9 @@ class PlayerNameWidget extends HookConsumerWidget {
             final int tonight = await isar.getNightNumber();
 
             await isar.putGameStatus(
-                dayNumber: dayNumber, situation: relatedRolePage);
+              dayNumber: dayNumber,
+              situation: relatedRolePage,
+            );
 
             await ref
                 .read(currentPlayersProvider.notifier)
@@ -124,9 +127,19 @@ class PlayerNameWidget extends HookConsumerWidget {
                 .retrieveGameStatusN(n: dayNumber)
                 .then((gameStatus) => gameStatus!.remainedMafiasBullets! > 0);
 
+            final playersListForShootInAbsenceOfGodfather = await isar
+                .retrievePlayer(
+                  criteria: (player) => player.type != RoleType.mafia,
+                )
+                .then((record) => record.players);
+
             final int code = await isar.retrieveAssignedCodes().then(
                   (mapOfCodes) => mapOfCodes[playerName]!,
                 );
+
+            final isHandCuffed = await isar
+                .getPlayerByName(playerName)
+                .then((Player? player) => player!.handCuffed!);
 
             final info = {
               'name': playerName,
@@ -135,6 +148,9 @@ class PlayerNameWidget extends HookConsumerWidget {
               'isGodfatherIsAlive': isGodfatherIsAlive,
               'mafiaHasBullet': mafiaHasBullet,
               'night': tonight,
+              'playersListForShootInAbsenceOfGodfather':
+                  playersListForShootInAbsenceOfGodfather,
+              'isHandCuffed': isHandCuffed,
             };
 
             nightContext.pushNamed(

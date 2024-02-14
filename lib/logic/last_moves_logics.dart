@@ -11,18 +11,25 @@ Future<List<bool>> faceOff({
   required String otherPlayerName,
 }) async {
   final isar = await _container.read(isarServiceProvider.future);
+  //
   final Player playerWithCard =
       (await isar.getPlayerByName(playerWithCardName))!;
   final Player otherPlayer = (await isar.getPlayerByName(otherPlayerName))!;
 
-  // now change their roles with each other
+  // now change their roles with each other * NOt Correct
+  // instead change their [NAMES] with each other
 
   final newPlayerWithCard = playerWithCard.copy(
-    roleName: otherPlayer.roleName,
+    playerName: otherPlayerName,
+    // the player doesn't have shield anymore (whatever it was)
+    heart: 1,
   );
 
+  // this is actually the dead player
+  // the selected player is alive but not its PLAYER Object
   final newOtherPlayer = otherPlayer.copy(
-    roleName: playerWithCard.roleName,
+    playerName: playerWithCardName,
+    heart: 0,
   );
 
   return isar.updatePlayers([newPlayerWithCard, newOtherPlayer]);
@@ -31,13 +38,15 @@ Future<List<bool>> faceOff({
 // handcuff
 handCuff({required String playerName}) async {
   final isar = await _container.read(isarServiceProvider.future);
-  return isar.updatePlayer(playerName: playerName, handCuffed: true);
+  await isar.updatePlayer(playerName: playerName, handCuffed: true);
 }
 
 // silence of sheep
-silenceOfSheep({required String playerName}) async {
+silenceOfSheep({required List<String> playersNames}) async {
   final isar = await _container.read(isarServiceProvider.future);
-  return isar.updatePlayer(playerName: playerName, silenced: true);
+  for (var playerName in playersNames) {
+    await isar.updatePlayer(playerName: playerName, silenced: true);
+  }
 }
 
 // beautiful mind

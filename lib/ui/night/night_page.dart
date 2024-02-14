@@ -11,6 +11,7 @@ import 'package:auto_mafia/ui/common/title_widget.dart';
 import 'package:auto_mafia/ui/statements/statement_overlay_screen.dart';
 import 'package:auto_mafia/ui/widgets/player_name_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,6 +28,11 @@ class NightPage extends HookConsumerWidget {
     final width = MediaQuery.sizeOf(nightContext).width;
     //
     final asyncPlayers = ref.watch(currentPlayersProvider);
+    //
+    final scrollController = useScrollController(
+      initialScrollOffset: 0,
+      keepScrollOffset: true,
+    );
     //
 
     return Scaffold(
@@ -47,6 +53,7 @@ class NightPage extends HookConsumerWidget {
                       width: width / 1.5,
                       // height: height / 1.5,
                       child: ListView.separated(
+                        shrinkWrap: true,
                         cacheExtent: height / 1.64,
                         restorationId: 'night-page',
                         // addAutomaticKeepAlives: true,
@@ -79,85 +86,80 @@ class NightPage extends HookConsumerWidget {
                   ),
 
                   // spacer
-                  if ((info['button'] != null &&
-                          info['button'] == MyStrings.nightResults &&
-                          value.length == 0) ||
-                      info['button'] != MyStrings.nightResults)
-                    if (info['button'] != null) SizedBox(height: height / 24),
+                  if (info['button'] != null) SizedBox(height: height / 24),
 
                   if (info['situation'] == MyStrings.showRoles)
                     MyButton(
                         title: 'go to day',
                         onPressed: () async {
+                          final isar =
+                              await ref.read(isarServiceProvider.future);
+
+                          final yesterday = await isar.getDayNumber();
+
                           await ref
                               .read(currentPlayersProvider.notifier)
                               .action(MyStrings.dayPage);
 
-                          nightContext.goNamed('day');
+                          nightContext.go('/day/$yesterday');
                         }),
 
                   // button
-                  if ((info['button'] != null &&
-                          info['button'] ==
-                              MyStrings
-                                  .nightResults /* &&
-                          value.length == 0 */
-                      ) ||
-                      info['button'] != MyStrings.nightResults)
-                    if (info['button'] != null)
-                      MyButton(
-                        state: MyStrings.disabledButton,
-                        title: info['button']!,
-                        // criteria: value.length == 0,
-                        // TODO: add a function to the button (show night's results)
-                        onLongPress: /* value.length != 0
+                  if (info['button'] != null &&
+                      info['button'] == MyStrings.nightResults)
+                    MyButton(
+                      state: MyStrings.disabledButton,
+                      title: info['button']!,
+                      // criteria: value.length == 0,
+                      // TODO: add a function to the button (show night's results)
+                      onLongPress: /* value.length != 0
                             ? null
                             : */
-                            () async {
-                          final isar =
-                              await ref.read(isarServiceProvider.future);
-                          final tonight = await isar.getNightNumber();
-                          final nightResultJson =
-                              await (isar.retrieveNightN(n: tonight)).then(
-                            (json) => json.match(
-                              (json) => json,
-                              (_) => null,
-                            ),
+                          () async {
+                        final isar = await ref.read(isarServiceProvider.future);
+                        final tonight = await isar.getNightNumber();
+                        final nightResultJson =
+                            await (isar.retrieveNightN(n: tonight)).then(
+                          (json) => json.match(
+                            (json) => json,
+                            (_) => null,
+                          ),
+                        );
+
+                        log('json: $nightResultJson');
+                        // TODO: we must handle the loading
+                        if (tonight != 0) {
+                          final info = await god(json: nightResultJson);
+                          nightContext.goNamed(
+                            'nights-results',
+                            extra: info,
                           );
-                          /*   final allPlayers = await isar
-                                    .retrievePlayer()
-                                    .then((record) =>
-                                        record.players.mapToNames());
-                                // assign new random codes to players
-                                final Map<String, int> newAssignedCodes =
-                                    assignRandomCode(allPlayers);
+                        } else {
+                          int dayNumber = await isar.getDayNumber();
+                          await isar.putGameStatus(
+                            dayNumber: dayNumber + 1,
+                            isDay: true,
+                            situation: MyStrings.dayPage,
+                          );
 
-                                // now put the generated code in db and handle the exposinf the night code in ui
-                                for (String player in allPlayers) {
-                                  await isar.updatePlayer(
-                                    playerName: player,
-                                    nightDone: false,
-                                    code: newAssignedCodes[player],
-                                  );
-                                } */
-                          log('json: $nightResultJson');
-                          // TODO: we must handle the loading
-                          if (tonight != 0) {
-                            final info = await god(json: nightResultJson);
-                            nightContext.goNamed(
-                              'nights-results',
-                              extra: info,
-                            );
-                          } else {
-                            nightContext.goNamed('day');
-                          }
+                          await ref
+                              .read(currentPlayersProvider.notifier)
+                              .action(MyStrings.dayPage);
 
-                          // nightContext.goNamed(MyStrings.nightResults);
-                          // TODO: we must handle the loading
+                          dayNumber = await isar.getDayNumber();
+
+                          nightContext.goNamed(
+                            'day',
+                            pathParameters: {'dayNumber': '$dayNumber'},
+                          );
+                        }
+
+                        // nightContext.goNamed(MyStrings.nightResults);
+                        // TODO: we must handle the loading
 
 // showing the result of night
-                        },
-                      ),
+                      },
+                    ),
 
                   // spacer
                   SizedBox(height: height / 16),

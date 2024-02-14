@@ -108,6 +108,11 @@ class NamingPage extends HookConsumerWidget {
                             // pageInfo: _pageInfo,
                             listOfPlayersNames: _listOfPlayersNames,
                           );
+                          await isar.then((isar) => isar.putGameStatus(
+                                dayNumber: 0,
+                                situation: MyStrings.showRoles,
+                              ));
+
                           context.pushReplacementNamed('night',
                               extra: Info.showRoles);
                           break;

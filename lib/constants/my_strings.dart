@@ -24,6 +24,7 @@ class MyStrings {
   static const String finish = 'تموم';
   static const String understand = 'فهمیدم';
   static const String enquiry = 'استعلام';
+  static const String enquiryResults = 'نتیجۀ استعلام';
 
   // situation
   static const String naming = 'naming';
@@ -31,6 +32,7 @@ class MyStrings {
   static const String nightPage = 'night-page';
   static const String rolePanel = 'role-panel';
   static const String dayPage = 'day-page';
+  static const String nightResultsPage = 'night-results-page';
 
   // show-role-page situations
   static const String beforeShowingRole = 'before-showing-role';
@@ -99,6 +101,7 @@ class MyStrings {
   static const String nightCode = ' کد شب :  ';
   static const String allDeads = 'همۀ رفتگان';
   static const String nextNight = 'شب بعد';
+  static const String nextDAy = 'روز بعد';
   static const String returnedToGame = 'به بازی برگشت';
   static const String isMafia = 'مافیاست';
   static const String isSlaughtered = 'سلاخی شد';

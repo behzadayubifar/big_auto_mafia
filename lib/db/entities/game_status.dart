@@ -57,6 +57,9 @@ class GameStatus {
   // last moves
   List<String?>? usedLastMoves = [];
 
+  // raemained chances for night-enquiry
+  int? remainedChancesForNightEnquiry = 2;
+
   // if konstantin choose someone to come back,
   // this will be set to that player's name
 
@@ -75,6 +78,7 @@ class GameStatus {
             "winner: $winner"
             "situation: $situation"
             "isChaos: $isChaos"
+            "remainedMafiasBullets: $remainedMafiasBullets"
             """;
 
   GameStatus copy({
@@ -91,6 +95,7 @@ class GameStatus {
     List<String>? playersWhoSawTheirRole,
     int? remainedMafiasBullets,
     List<String?>? usedLastMoves,
+    int? remainedChancesForNightEnquiry,
   }) {
     final newStatus = GameStatus()
       ..id = id
@@ -109,6 +114,8 @@ class GameStatus {
       ..remainedMafiasBullets =
           remainedMafiasBullets ?? this.remainedMafiasBullets
       ..usedLastMoves = usedLastMoves ?? this.usedLastMoves
+      ..remainedChancesForNightEnquiry =
+          remainedChancesForNightEnquiry ?? this.remainedChancesForNightEnquiry
       ..isChaos = isChaos ?? this.isChaos;
 
     //
@@ -133,6 +140,8 @@ class GameStatus {
           situation == other.situation &&
           remainedMafiasBullets == other.remainedMafiasBullets &&
           listEquals(usedLastMoves, other.usedLastMoves) &&
+          remainedChancesForNightEnquiry ==
+              other.remainedChancesForNightEnquiry &&
           isChaos == other.isChaos;
 
   @override
@@ -149,6 +158,7 @@ class GameStatus {
         isChaos,
         remainedMafiasBullets,
         usedLastMoves,
+        remainedChancesForNightEnquiry,
       );
 }
 
@@ -159,8 +169,8 @@ class Night {
   List<String>? playersWaitingForDoingTheirNightJob;
 
   //
-  // String? inComplete;
-  int? nightCode;
+  // // String? inComplete;
+
   bool isNight = false;
   String? playerNameWhoIsComingBack;
 
@@ -194,7 +204,6 @@ class Night {
   Night copy({
     int? nightNumber,
     List<String>? playersWaitingForDoingTheirNightJob,
-    int? nightCode,
     bool? isNight,
     String? playerNameWhoIsComingBack,
     String? mafiasShot,
@@ -217,7 +226,6 @@ class Night {
         ..playersWaitingForDoingTheirNightJob =
             playersWaitingForDoingTheirNightJob ??
                 this.playersWaitingForDoingTheirNightJob
-        ..nightCode = nightCode ?? this.nightCode
         ..isNight = isNight ?? this.isNight
         ..playerNameWhoIsComingBack =
             playerNameWhoIsComingBack ?? this.playerNameWhoIsComingBack
@@ -240,7 +248,7 @@ class Night {
   String toString() => """"New Night is:"
             "nightNumber: $nightNumber"
             "playersWaitingForDoingTheirNightJob: $playersWaitingForDoingTheirNightJob"
-            "nightCode: $nightCode"
+            
             "isNight: $isNight"
             "playerNameWhoIsComingBack: $playerNameWhoIsComingBack"
             "mafiasShot: $mafiasShot"

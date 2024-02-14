@@ -10,19 +10,20 @@ Widget GridOfPlayers({
   required double width,
   required ValueNotifier<List<String>>? selectedPlayers,
   required ScrollController scrollController,
+  Axis axix = Axis.horizontal,
 }) {
   return Center(
     child: Center(
       child: switch (asyncAlivePlayers) {
         AsyncData(:final value) => SizedBox(
-            height: height / 6,
+            height: axix == Axis.horizontal ? height / 6 : height / 2,
             width: width / 1.2,
             child: Scrollbar(
               controller: scrollController,
               child: GridView.builder(
                 controller: scrollController,
                 shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
+                scrollDirection: axix,
                 cacheExtent: height / 1.64,
                 restorationId: 'day-page',
                 clipBehavior: Clip.antiAlias,
@@ -53,10 +54,10 @@ Widget GridOfPlayers({
                   );
                 },
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: axix == Axis.horizontal ? 2 : 1,
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
-                  childAspectRatio: .4,
+                  childAspectRatio: axix == Axis.horizontal ? .4 : 4,
                 ),
               ),
             ),

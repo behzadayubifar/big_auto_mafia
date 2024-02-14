@@ -19,6 +19,7 @@ class StatementScreen {
     int? independent,
     required BuildContext context,
     required VoidCallback callback,
+    required String title,
   }) {
     controller = showOverlay(
       context: context,
@@ -26,6 +27,7 @@ class StatementScreen {
       mafia: mafia,
       citizen: citizen,
       independent: independent,
+      title: MyStrings.nightResults,
     );
   }
 
@@ -38,6 +40,7 @@ class StatementScreen {
     int? mafia,
     int? citizen,
     int? independent,
+    required String title,
     required BuildContext context,
     required VoidCallback callback,
   }) {
@@ -64,7 +67,7 @@ class StatementScreen {
                   // Image.asset('assets/overlays/nostradamousResultOfPredict.png'),
                   SizedBox(height: 20),
                   Text(
-                    MyStrings.resultOfPrediction,
+                    title,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

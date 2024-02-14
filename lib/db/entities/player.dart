@@ -24,7 +24,7 @@ class Player {
   // and if isBlocked is false, it means that the player was chosen by matador last night
   // and if isBlocked is null, it means that the player was not chosen by matador last night and can be chosen again
   bool? isBlocked;
-  bool? handCuffed;
+  bool? handCuffed = false;
   bool? isReversible = true;
   bool? isSaved = false;
   bool? disclosured = false;

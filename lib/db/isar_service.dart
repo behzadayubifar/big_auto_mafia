@@ -148,6 +148,17 @@ class CurrentPlayers extends _$CurrentPlayers {
     final playersWhoSawTheirRole = await isar
         .retrieveGameStatusN(n: 0)
         .then((status) => status?.playersWhoSawTheirRole);
+    //
+    final Player? konstantin = await isar.getPlayerByRole(RoleName.konstantin);
+    final Player? kane = await isar.getPlayerByRole(RoleName.kane);
+    final Player? leon = await isar.getPlayerByRole(RoleName.leon);
+    final Player? mafia = await isar.getPlayerByRole(RoleName.mafia);
+    final Player? godfather = await isar.getPlayerByRole(RoleName.godfather);
+    final Player? matador = await isar.getPlayerByRole(RoleName.matador);
+    final Player? watson = await isar.getPlayerByRole(RoleName.watson);
+    final Player? saul = await isar.getPlayerByRole(RoleName.saul);
+
+    //
     // Set the state to loading
     await Future.delayed(Duration(milliseconds: 400));
     List<Player>? extraList = [];
@@ -185,7 +196,7 @@ class CurrentPlayers extends _$CurrentPlayers {
 // --- role-panels
 
             case MyStrings.leonPage:
-              if (tonight != 0)
+              if (tonight != 0 && leon?.handCuffed != true)
                 return await isar
                     .retrievePlayer(
                       criteria: (player) => player.roleName != MyStrings.leon,
@@ -194,7 +205,9 @@ class CurrentPlayers extends _$CurrentPlayers {
               return [];
 
             case MyStrings.kanePage:
-              if (tonight != 0)
+              if (tonight != 0 &&
+                  kane?.hasGuessed != true &&
+                  kane?.handCuffed != true)
                 return await isar
                     .retrievePlayer(
                       criteria: (player) => player.roleName != MyStrings.kane,
@@ -205,19 +218,29 @@ class CurrentPlayers extends _$CurrentPlayers {
             case MyStrings.godfatherPage:
             case MyStrings.mafiaPage:
             case MyStrings.saulPage:
+              if (tonight == 0 ||
+                  (situation == MyStrings.saulPage &&
+                      saul?.handCuffed == true) ||
+                  (situation == MyStrings.godfatherPage &&
+                      godfather?.handCuffed == true) ||
+                  (situation == MyStrings.mafiaPage &&
+                      mafia?.handCuffed == true)) return [];
+
               if (tonight != 0) {
                 extraList = await isar
                     .retrievePlayer(
                       criteria: (player) => player.type != RoleType.mafia,
                     )
                     .then((record) => record.players);
-
                 return Future.value(extraList);
               }
+
+              // NEVER REACHED
+              print('________________NEVER REACHED_________________');
               return [];
 
             case MyStrings.matadorPage:
-              if (tonight != 0) {
+              if (tonight != 0 && matador?.handCuffed != true) {
                 final lastNight = await isar.getNightNumber();
 
                 extraList = await isar
@@ -248,14 +271,21 @@ class CurrentPlayers extends _$CurrentPlayers {
               return [];
 
             case MyStrings.konstantinPage:
-              if (tonight != 0)
+              if (tonight != 0 &&
+                  konstantin?.hasReturned != true &&
+                  konstantin?.handCuffed != true)
                 return await isar
-                    .retrievePlayer(isAlive: false)
+                    .retrievePlayer(
+                      isAlive: false,
+                      criteria: (player) =>
+                          player.disclosured != true &&
+                          player.isReversible == true,
+                    )
                     .then((value) => value.players);
               return [];
 
             case MyStrings.watsonPage:
-              if (tonight != 0)
+              if (tonight != 0 && watson?.handCuffed != true)
                 return await isar.retrievePlayer(
                   criteria: (player) {
                     // watson
@@ -277,6 +307,7 @@ class CurrentPlayers extends _$CurrentPlayers {
               return [];
 
             case MyStrings.dayPage:
+              print("dayPage --action");
               return await isar.retrievePlayer().then(
                     (value) => value.players,
                   );
@@ -599,6 +630,8 @@ class IsarService {
           "matadorChoice": nightChoices.matadorChoice,
           "nightOfBlockage": nightChoices.nightOfBlockage,
           "saulChoice": nightChoices.saulChoice,
+          "theRoleGuessedByGodfather": nightChoices.theRoleGuessedByGodfather,
+          "nightOfRightChoiceOfKane": nightChoices.nightOfRightChoiceOfKane,
         }));
   }
 
@@ -629,16 +662,16 @@ class IsarService {
     return -1;
   }
 
-  /// update night code
-  updateNightCode(int nightCode) =>
-      isar.writeTxnSync(() => isar.nights.put(Night()..nightCode = nightCode));
+  // /// update night code
+  // updateNightCode(int nightCode) =>
+  //     isar.writeTxnSync(() => isar.nights.put(Night()..nightCode = nightCode));
 
-  /// get night code
-  Future<int?> getNightCode() async {
-    final code = isar.nights.where(distinct: true).findAllSync().last.nightCode;
-    log('night code is $code', name: 'getNightCode');
-    return code;
-  }
+  // /// get night code
+  // Future<int?> getNightCode() async {
+  //   final code = isar.nights.where(distinct: true).findAllSync().last.nightCode;
+  //   log('night code is $code', name: 'getNightCode');
+  //   return code;
+  // }
 
   /// get day number
   Future<int> getDayNumber() async {
@@ -652,6 +685,7 @@ class IsarService {
     return 0;
   }
 
+  /// implementaion of the game status must be somehow that it's always single
   Future<bool> putGameStatus({
     required int dayNumber,
     bool? isDay = false,
@@ -665,10 +699,11 @@ class IsarService {
     String? situation,
     List<String>? playersWhoSawTheirRole,
     int? remainedMafiasBullets,
+    int? remainedChancesForNightEnquiry,
     List<String?>? usedLastMoves,
   }) async {
-    final alreadyExists =
-        await isar.gameStatus.filter().dayNumberEqualTo(dayNumber).findFirst();
+    // the only game status for all the game
+    final alreadyExists = await isar.gameStatus.where().findFirst();
     log('alreadyExists: ${alreadyExists.toString()}', name: 'insertGameStatus');
 
     // inserting new status
@@ -688,6 +723,7 @@ class IsarService {
         situation: situation,
         remainedMafiasBullets: remainedMafiasBullets,
         usedLastMoves: usedLastMoves,
+        remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
       );
 
       await isar.writeTxn(() => isar.gameStatus.put(newGameStatus));
@@ -695,7 +731,8 @@ class IsarService {
     }
     // game status already exists
     else {
-      isar.writeTxn(() => isar.gameStatus.put(alreadyExists.copy(
+      await isar.writeTxn(() => isar.gameStatus.put(alreadyExists.copy(
+            dayNumber: dayNumber,
             isDay: isDay,
             wholeGameTimePassed: wholeGameTimePassed,
             timeLeft: timeLeft,
@@ -708,6 +745,7 @@ class IsarService {
             playersWhoSawTheirRole: playersWhoSawTheirRole,
             remainedMafiasBullets: remainedMafiasBullets,
             usedLastMoves: usedLastMoves,
+            remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
           )));
 
       log('game status *updated* successfully', name: 'insertGameStatus');
@@ -774,8 +812,8 @@ class IsarService {
 }
 // how to manage which player has done his/her night job
 // and which one has not?
-// and how to differntiate between
-// | [timeLeft] in Night table |/
+// and how to differntiate between` timeLeft` and `nightDone`?
+// | [timeLeft] in Night table |
 // timeLeft determines whether the player has done his/her night job or not
 // (and still were in role panel) here is how it works:
 //  | if (timeLeft[0] == '') then it must show list of players who has not done their night's jobs yet|

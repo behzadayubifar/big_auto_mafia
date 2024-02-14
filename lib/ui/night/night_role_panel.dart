@@ -24,8 +24,9 @@ class NightRolePanel extends HookConsumerWidget {
     required this.role,
     required this.name,
     required this.code,
+    required this.isHandCuffed,
     this.isGodfatherAlive,
-    this.extraForMatador,
+    this.playersListForShootInAbsenceOfGodfather,
     this.mafiaHasBullet,
     this.night,
     Key? key,
@@ -35,8 +36,9 @@ class NightRolePanel extends HookConsumerWidget {
   final String name;
   final String code;
   final bool? isGodfatherAlive;
-  final List<Player>? extraForMatador;
+  final List<Player>? playersListForShootInAbsenceOfGodfather;
   final bool? mafiaHasBullet;
+  final bool isHandCuffed;
   final int? night;
 
   final CountDownController timerController = CountDownController();
@@ -49,7 +51,7 @@ class NightRolePanel extends HookConsumerWidget {
     //
     final choice = useState('');
     final nostradamousChoices = useState(<String>[]);
-    final shootOrSlaughter = useState('');
+    final shootOrSlaughter = useState(isHandCuffed ? 'shoot' : '');
     final guessedRole = useState('');
 
     final mafiaShotInabsenceOfGodfather = useState('');
@@ -134,13 +136,6 @@ class NightRolePanel extends HookConsumerWidget {
         guessedRole: guessedRole.value,
         mafiaShotInabsenceOfGodfather: mafiaShotInabsenceOfGodfather.value,
       );
-      // if (await nightFuture != 0 || role != MyStrings.nostradamous) {
-      //   print(choice.value);
-      //   // below must be after the buttonLogicExecuter (certainly!!!)
-      //   await ref
-      //       .read(currentPlayersProvider.notifier)
-      //       .action(MyStrings.nightPage);
-      // }
 
       await ref
           .read(currentPlayersProvider.notifier)
@@ -302,10 +297,10 @@ class NightRolePanel extends HookConsumerWidget {
                     // show names for other mafias when godfather is dead and must check mafiaShot is empty
 
                     if (isGodfatherAlive == false &&
+                        mafiaHasBullet == true &&
                         (role == MyStrings.matador ||
                             role == MyStrings.saul ||
-                            role == MyStrings.mafia) &&
-                        mafiaHasBullet == true)
+                            role == MyStrings.mafia))
                       Column(
                         children: [
                           Text('انتخاب شلیک', style: MyTextStyles.bodyMedium),
@@ -319,7 +314,8 @@ class NightRolePanel extends HookConsumerWidget {
                             role: role,
                             nightFuture: nightFuture,
                             putChoiceLocally: putShootInPlaceOfGodfatherLocally,
-                            playersList: extraForMatador!,
+                            playersList:
+                                playersListForShootInAbsenceOfGodfather!,
                             nostradamousChoices: nostradamousChoices,
                           ),
                         ],

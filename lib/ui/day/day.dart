@@ -16,7 +16,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class Day extends HookConsumerWidget {
-  Day({super.key});
+  const Day({required this.dayNumber, super.key});
+
+  final int dayNumber;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,7 +57,7 @@ class Day extends HookConsumerWidget {
                 style: MyTextStyles.bodyMD,
                 children: [
                   TextSpan(
-                    text: '1',
+                    text: ' $dayNumber',
                     style: MyTextStyles.displayMedium,
                   ),
                 ],
@@ -79,49 +81,63 @@ class Day extends HookConsumerWidget {
             ),
           ),
 
-          // MyButton(title: 'قرئۀ مرگ')
-          Positioned(
-            bottom: _height / 4,
-            left: _width / 16,
-            child: AnimatedOpacity(
-              opacity: selectedPlayers.value.length <= 1 ? 0 : 1,
-              duration: Duration(milliseconds: 400),
-              child: MyButton(
-                title: 'قرئۀ مرگ',
-                onPressed: () {
-                  selectedPlayers.value = [
-                    getARandomPlayer(selectedPlayers.value)
-                  ];
-                },
+          // MyButton(title: 'قرعۀ مرگ')
+          if (dayNumber != 0)
+            Positioned(
+              bottom: _height / 4,
+              left: _width / 16,
+              child: AnimatedOpacity(
+                opacity: selectedPlayers.value.length <= 1 ? 0 : 1,
+                duration: Duration(milliseconds: 400),
+                child: MyButton(
+                  title: 'قرعۀ مرگ',
+                  onPressed: () {
+                    selectedPlayers.value = [
+                      getARandomPlayer(selectedPlayers.value)
+                    ];
+                  },
+                ),
               ),
             ),
-          ),
 
           // buttons for death and lastMove
-          AnimatedPositioned(
-            bottom: _height / 4,
-            right:
-                selectedPlayers.value.length == 1 ? _width / 3.5 : _width / 20,
-            duration: Duration(milliseconds: 400),
-            child: AnimatedOpacity(
-              opacity: selectedPlayers.value.isEmpty ? 0 : 1,
+          if (dayNumber != 0)
+            AnimatedPositioned(
+              bottom: _height / 4,
+              right: selectedPlayers.value.length == 1
+                  ? _width / 3.5
+                  : _width / 20,
               duration: Duration(milliseconds: 400),
-              child: MyButton(
-                  title: 'حرکت آخر',
-                  onPressed: () async {
-                    lastMove = await getARandomLastMove();
-                    final String playerWithCardName = selectedPlayers.value[0];
-                    final String playerWithCardRoleName = await ref
-                        .read(isarServiceProvider.future)
-                        .then((isar) => isar
-                            .getPlayerByName(playerWithCardName)
-                            .then((player) => player!.roleName!));
+              child: AnimatedOpacity(
+                opacity: selectedPlayers.value.isEmpty ? 0 : 1,
+                duration: Duration(milliseconds: 400),
+                child: MyButton(
+                    title: 'حرکت آخر',
+                    onPressed: () async {
+                      final isar = await ref.read(isarServiceProvider.future);
+                      lastMove = await getARandomLastMove();
+                      final String playerWithCardName =
+                          selectedPlayers.value[0];
+                      final String playerWithCardRoleName = await ref
+                          .read(isarServiceProvider.future)
+                          .then((isar) => isar
+                              .getPlayerByName(playerWithCardName)
+                              .then((player) => player!.roleName!));
 
-                    context.goNamed(
-                        'last-move/$lastMove/$playerWithCardName/$playerWithCardRoleName');
-                  }),
+                      await isar.updatePlayer(
+                        playerName: playerWithCardName,
+                        heart: 0,
+                      );
+
+                      await ref
+                          .read(currentPlayersProvider.notifier)
+                          .action(MyStrings.dayPage);
+
+                      context.go(
+                          '/last_move/$lastMove/$playerWithCardName/$playerWithCardRoleName');
+                    }),
+              ),
             ),
-          ),
 
           // moon to night
           Positioned(
@@ -132,30 +148,13 @@ class Day extends HookConsumerWidget {
                 isGettingNight.value = !isGettingNight.value;
                 await Future.delayed(Duration(milliseconds: 600));
 
-                final isar = await ref.read(isarServiceProvider.future);
-                final allPlayers = await isar
-                    .retrievePlayer()
-                    .then((record) => record.players.mapToNames());
+                // final isar = await ref.read(isarServiceProvider.future);
 
-                // assign new random codes to players
-                final Map<String, int> newAssignedCodes =
-                    assignRandomCode(allPlayers);
-
-                // now put the generated code in db and handle the exposinf the night code in ui
-                for (String player in allPlayers) {
-                  await isar.updatePlayer(
-                    playerName: player,
-                    nightDone: false,
-                    code: newAssignedCodes[player],
-                  );
-                }
                 await god(isGettingDay: false);
                 await ref
                     .read(currentPlayersProvider.notifier)
                     .action(MyStrings.nightPage);
-                context.pushReplacementNamed(
-                  'day',
-                );
+
                 context.goNamed('night', extra: Info.night);
               },
               child: AnimatedContainer(

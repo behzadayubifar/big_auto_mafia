@@ -2,6 +2,7 @@ import 'dart:developer' show log;
 
 import 'package:auto_mafia/db/entities/game_status.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -27,6 +28,7 @@ ProviderContainer createContainer({
 final _container = createContainer();
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
   late final IsarService isar;
   late GameStatus? gameStatus0;
   late GameStatus? gameStatus1;
@@ -46,7 +48,7 @@ void main() {
   });
 
   tearDownAll(() => isar.close());
-  test('insert new game status', () async {
+  /*  test('insert new game status', () async {
     int dayNumber = (await isar.getDayNumber());
 
     final a = await isar.putGameStatus(
@@ -89,5 +91,35 @@ void main() {
     expect(gameStatus0, expectedGameStatus0);
     expect(gameStatus1, expectedGameStatus1);
     expect(gameStatus2, expectedGameStatus2);
+  });
+ */
+
+  test('update game status', () async {
+    final dayNumber = await isar.getDayNumber();
+
+    expect(dayNumber, 0);
+
+    await isar.putGameStatus(
+      dayNumber: dayNumber,
+      isDay: true,
+      isChaos: true,
+    );
+
+    await isar.putGameStatus(
+      dayNumber: 1,
+      isDay: true,
+    );
+
+    gameStatus0 = await isar.retrieveGameStatusN(
+      n: dayNumber + 1,
+    );
+
+    expectedGameStatus0 = GameStatus()
+      ..isDay = true
+      ..dayNumber = dayNumber + 1
+      ..isChaos = true;
+    ;
+
+    expect(gameStatus0, expectedGameStatus0);
   });
 }

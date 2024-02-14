@@ -122,14 +122,17 @@ Future<bool?> buttonLogicExecuter({
     // show the result of the prediction
     statementInstance.show(
       context: context!,
+      title: MyStrings.resultOfPrediction,
       callback: () async {
         statementInstance.hide();
-        context.pop();
+        // context.pop();
         print(nostradamousChoices);
         // below must be after the buttonLogicExecuter (certainly!!!)
         await _container
             .read(currentPlayersProvider.notifier)
             .action(MyStrings.nightPage);
+
+        context.pop();
       },
       mafia: resultOfPrediction.mafiaPlayersCount,
       citizen: resultOfPrediction.citizen,
