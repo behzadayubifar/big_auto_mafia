@@ -119,7 +119,9 @@ class PlayerNameWidget extends HookConsumerWidget {
                   criteria: (player) =>
                       player.roleName == roleNames[RoleName.godfather],
                 )
-                .then((record) => record.players.first.isAlive);
+                .then((record) => record.players.isNotEmpty
+                    ? record.players.first.isAlive
+                    : false);
 
             print("tonight is $tonight");
 

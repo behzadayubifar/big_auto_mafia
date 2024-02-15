@@ -109,7 +109,7 @@ class PlayerNamingFrameWidget extends HookConsumerWidget {
                     keyboardAppearance: Brightness.dark,
                     showCursor: false,
                     textAlign: TextAlign.center,
-                    maxLength: 16,
+                    maxLength: 12,
                     maxLines: 1,
                     controller: _controller,
                     decoration: InputDecoration(

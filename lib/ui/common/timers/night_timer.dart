@@ -29,7 +29,7 @@ class NightTimer extends HookWidget {
         width: width,
         height: height,
         // later must read this from db (the user can change it)
-        duration: 6000,
+        duration: 3000,
         onChange: (remained) {
           // print(double.tryParse(remained));
           // print(remained);

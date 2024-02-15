@@ -1,3 +1,4 @@
+import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
@@ -78,7 +79,7 @@ class NightRolePanel extends HookConsumerWidget {
     //
     final asyncPlayers = ref.watch(currentPlayersProvider);
     //
-    final criteria = ref.watch(buttonCriteriaControllerProvider);
+    // final criteria = ref.watch(buttonCriteriaControllerProvider);
     //
     Future<void> putChoiceLocally({required String newChoice}) async {
       final int numberOfPlayers = await ref
@@ -124,6 +125,7 @@ class NightRolePanel extends HookConsumerWidget {
     final finisher = () async {
       timerController.pause();
       print('finisher');
+      print('choice : ${choice.value}');
       // it works BUT must be a more handle on loding states
       await buttonLogicExecuter(
         context: context,
@@ -267,68 +269,75 @@ class NightRolePanel extends HookConsumerWidget {
 
               Positioned(
                 top: shootOrSlaughter.value == '' ? _height / 2 : _height / 2.1,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    if (role != MyStrings.godfather ||
-                        shootOrSlaughter.value != '')
-                      asyncPlayers.when(
-                        data: (playersList) => playersList.isEmpty
-                            ? SizedBox()
-                            : ListOfNightPlayersWidget(
-                                height: _height,
-                                scrollController:
-                                    scrollControllerForListOfPlayers,
-                                width: _width,
-                                choice: choice,
-                                nostradamousChoices: nostradamousChoices,
-                                role: role,
-                                nightFuture: nightFuture,
-                                putChoiceLocally: putChoiceLocally,
-                                playersList: playersList,
-                              ),
-                        loading: () => Center(child: defaultLoading),
-                        error: (error, stackTrace) => Text(
-                          'Error: $error',
-                          // style: MyTextStyles.error,
-                        ),
-                      ),
-                    // show names for other mafias when godfather is dead and must check mafiaShot is empty
-
-                    if (isGodfatherAlive == false &&
-                        mafiaHasBullet == true &&
-                        (role == MyStrings.matador ||
-                            role == MyStrings.saul ||
-                            role == MyStrings.mafia))
-                      Column(
-                        children: [
-                          Text('انتخاب شلیک', style: MyTextStyles.bodyMedium),
-                          SizedBox(height: _height / 24),
-                          ListOfNightPlayersWidget(
-                            height: _height / 1.2,
-                            scrollController:
-                                scrollControllerForShootInPlaceOfGodfather,
-                            width: _width,
-                            choice: choice,
-                            role: role,
-                            nightFuture: nightFuture,
-                            putChoiceLocally: putShootInPlaceOfGodfatherLocally,
-                            playersList:
-                                playersListForShootInAbsenceOfGodfather!,
-                            nostradamousChoices: nostradamousChoices,
+                child: SizedBox(
+                  height: _height / 1.6,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      if (role != MyStrings.godfather ||
+                          shootOrSlaughter.value != '')
+                        asyncPlayers.when(
+                          data: (playersList) => playersList.isEmpty
+                              ? SizedBox()
+                              : ListOfNightPlayersWidget(
+                                  height: _height,
+                                  scrollController:
+                                      scrollControllerForListOfPlayers,
+                                  width: _width,
+                                  choice: choice,
+                                  nostradamousChoices:
+                                      nostradamousChoices.value,
+                                  role: role,
+                                  nightFuture: nightFuture,
+                                  putChoiceLocally: putChoiceLocally,
+                                  playersList: playersList,
+                                ),
+                          loading: () => Center(child: defaultLoading),
+                          error: (error, stackTrace) => Text(
+                            'Error: $error',
+                            // style: MyTextStyles.error,
                           ),
-                        ],
-                      ),
-                    // show role names
-                    if (shootOrSlaughter.value == 'slaughter')
-                      RoleNamesList(
-                        width: _width,
-                        height: _height,
-                        scrollController: scrollControllerForSlaughter,
-                        guessedRole: guessedRole,
-                      ),
-                  ],
+                        ),
+
+                      // show names for other mafias when godfather is dead and must check mafiaShot is empty
+                      if (isGodfatherAlive == false &&
+                          mafiaHasBullet == true &&
+                          (role == MyStrings.matador ||
+                              role == MyStrings.saul ||
+                              role == MyStrings.mafia))
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // SizedBox(height: _height / 24),
+
+                            ListOfNightPlayersWidget(
+                              purpose: MyStrings.shootInPlaceOfGodfather,
+                              nostradamousChoices: [],
+                              height: _height,
+                              scrollController:
+                                  scrollControllerForShootInPlaceOfGodfather,
+                              width: _width,
+                              choice: mafiaShotInabsenceOfGodfather,
+                              role: role,
+                              nightFuture: nightFuture,
+                              putChoiceLocally:
+                                  putShootInPlaceOfGodfatherLocally,
+                              playersList:
+                                  playersListForShootInAbsenceOfGodfather!,
+                            ),
+                          ],
+                        ),
+                      // show role names
+                      if (shootOrSlaughter.value == 'slaughter')
+                        RoleNamesList(
+                          width: _width,
+                          height: _height,
+                          scrollController: scrollControllerForSlaughter,
+                          guessedRole: guessedRole,
+                        ),
+                    ],
+                  ),
                 ),
               )
             ],

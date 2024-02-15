@@ -190,17 +190,20 @@ class NightsResuls extends HookConsumerWidget {
                                     .then((isar) =>
                                         isar.retrievePlayer(isAlive: false))
                                     .then((record) => record.players);
+
                                 print('dead : ${dead.mapToNames()}');
 
                                 final enquiry =
                                     await determineMafiaAndCitizenCountFromList(
                                   playerNames: dead.mapToNames(),
+                                  isGodfatherCountedForMafia: true,
                                 );
                                 print('enquiry : $enquiry');
 
                                 statementInstance.show(
                                   mafia: enquiry.mafiaPlayersCount,
                                   citizen: enquiry.citizen,
+                                  independent: enquiry.independent,
                                   title: MyStrings.enquiryResults,
                                   context: context,
                                   callback: () async {
@@ -216,12 +219,20 @@ class NightsResuls extends HookConsumerWidget {
 
                                     statementInstance.hide();
 
-                                    useContext().go('day/$dayNumber');
+                                    context.go('/day/$dayNumber');
                                   },
                                 );
                               }),
                     SizedBox(height: width / 24),
-                    MyButton(title: MyStrings.nextNight, onLongPress: () {}),
+                    MyButton(
+                        title: MyStrings.nextNight,
+                        onLongPress: () async {
+                          final isar =
+                              await ref.read(isarServiceProvider.future);
+                          final dayNumber = await isar.getDayNumber();
+
+                          context.go('/day/$dayNumber');
+                        }),
                   ],
                 ),
                 // SizedBox(height: height / 64),

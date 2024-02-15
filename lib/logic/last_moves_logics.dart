@@ -55,9 +55,7 @@ Future<bool> beautifulMind({required String guessedToBeNostradamous}) async {
   final isar = await _container.read(isarServiceProvider.future);
   final realRoleOfGuessed =
       (await isar.getPlayerByName(guessedToBeNostradamous))?.roleName;
-  if (realRoleOfGuessed != null)
-    return realRoleOfGuessed == roleNames[RoleName.nostradamous];
-  return false;
+  return realRoleOfGuessed == roleNames[RoleName.nostradamous];
 }
 
 // identity reveal

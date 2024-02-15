@@ -1,5 +1,7 @@
+import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/entities/game_status.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
@@ -76,9 +78,12 @@ class ShowLastMove extends HookConsumerWidget {
           return lastMoveName == MyStrings.roleReveal
               ? Center(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         '$playerWithCardName، $playerWithCardRoleName بود',
+                        style: MyTextStyles.bodyLarge
+                            .copyWith(color: AppColors.lighterGrey),
                       ),
                       SizedBox(height: height / 32),
                       MyButton(
@@ -86,12 +91,15 @@ class ShowLastMove extends HookConsumerWidget {
                         onPressed: () async {
                           final isar =
                               await ref.read(isarServiceProvider.future);
+
                           await isar.updatePlayer(
                             playerName: playerWithCardName,
                             disclosured: true,
                             heart: 0,
                           );
+
                           await god(isGettingDay: false);
+
                           context.goNamed('night', extra: Info.night);
                         },
                       ),

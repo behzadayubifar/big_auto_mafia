@@ -35,6 +35,8 @@ void showLastMoveDialog({
   required List<String> selectedPlayers,
 }) async {
   //
+  print(lastMoveName);
+  //
   final isar = await _container.read(isarServiceProvider.future);
   //
   String title = switch (lastMoveName) {
@@ -49,16 +51,19 @@ void showLastMoveDialog({
 
   late final String? selectedPlayerRoleName;
 
-  if (lastMoveName == MyStrings.faceOff) {
+  if (lastMoveName == MyStrings.faceOff ||
+      lastMoveName == MyStrings.beautifulMind) {
     selectedPlayerRoleName = await isar
-        .getPlayerByName(playerWithCardName)
+        .getPlayerByName(selectedPlayers.single)
         .then((value) => value!.roleName);
   }
 
   String desc = switch (lastMoveName) {
     MyStrings.faceOff =>
-      '$playerWithCardName با نقش $playerWithCardRoleName نقش خود را با $selectedPlayers[0] با نقش $selectedPlayerRoleName عوض کرد',
-    MyStrings.beautifulMind => '${selectedPlayers.single} نوستراداموس نیست',
+      '$playerWithCardName با نقش $playerWithCardRoleName نقش خود را با ${selectedPlayers.single} با نقش $selectedPlayerRoleName عوض کرد',
+    MyStrings.beautifulMind => selectedPlayerRoleName == MyStrings.nostradamous
+        ? 'شما به جای ${selectedPlayers.single} در بازی می‌مانید'
+        : '${selectedPlayers.single} نوستراداموس نیست',
     MyStrings.silenceOfSheep =>
       '${selectedPlayers.single} روز بعد نمی‌تواند صحبت کند',
     MyStrings.roleReveal => '',
@@ -75,8 +80,11 @@ void showLastMoveDialog({
     animType: AnimType.LEFTSLIDE,
     body: Column(
       children: [
-        SizedBox(height: 20),
-        Text(title, style: MyTextStyles.headlineSmall),
+        SizedBox(height: 32),
+        Text(title,
+            style: MyTextStyles.headlineSmall.copyWith(
+              height: 1,
+            )),
         SizedBox(height: 40),
         Text(
           desc,
@@ -113,6 +121,8 @@ void showLastMoveDialog({
             if (isGuessedNostradamous) {
               await isar.updatePlayer(
                 playerName: selectedPlayers.single,
+                disclosured: true,
+                isReversible: false,
                 heart: 0,
               );
               await isar.updatePlayer(
@@ -127,6 +137,9 @@ void showLastMoveDialog({
         }
 
         await god(isGettingDay: false);
+        await _container
+            .read(currentPlayersProvider.notifier)
+            .action(MyStrings.nightPage);
         context.goNamed('night', extra: Info.night);
       },
     ),

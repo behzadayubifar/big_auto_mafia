@@ -20,18 +20,21 @@ _leon(String chosenPlayerName) async {
   final chosenPlayer = await isar.getPlayerByName(chosenPlayerName);
   final leon = await isar.getPlayerByRole(RoleName.leon);
   final bool isMafia = chosenPlayer!.type == RoleType.mafia;
+  final isSaved = chosenPlayer.isSaved!;
   final previousHeart = chosenPlayer.heart!;
   final previousShotCount = leon!.shotCount;
   //
   if (isMafia) {
     await isar.updatePlayer(
-        playerName: chosenPlayerName, heart: previousHeart - 1);
-    await isar.updatePlayer(
         playerName: leon.playerName!, shotCount: previousShotCount + 1);
+    if (!isSaved) {
+      await isar.updatePlayer(
+          playerName: chosenPlayerName, heart: previousHeart - 1);
+    }
 
     // it's not mafia
   } else {
-    isar.updatePlayer(
+    await isar.updatePlayer(
       playerName: leon.playerName!,
       shotCount: previousShotCount + 1,
       heart: 0,
@@ -45,7 +48,7 @@ _watson(String chosenPlayerName) async {
   final chosenPlayer = await isar.getPlayerByName(chosenPlayerName);
   final watson = await isar.getPlayerByRole(RoleName.watson);
 
-  final bool chosenPlayerISWatson = chosenPlayer == watson;
+  final chosenPlayerISWatson = chosenPlayer?.playerName == watson?.playerName;
   if (chosenPlayerISWatson) {
     //TODO: handle this also in ui later so he cannot even tap on his name in ui at the firt place !!!
     isar.updatePlayer(
@@ -291,7 +294,11 @@ Future<Map<String, dynamic>?> god(
 // _______________________________ RESULTS OF THE NIGHT _____________________________________
 
     // it's time to retieve new alive and dead players
-    final newDeadPlayers = await isar.retrievePlayer(isAlive: false);
+    final newDeadPlayers = await isar.retrievePlayer(
+      isAlive: false,
+      criteria: (player) =>
+          !oldDeadPlayers.players.mapToNames().contains(player.playerName),
+    );
     // final newAlivePlayers = await isar.retrievePlayer();
 
     // kane choice for guessing
@@ -302,7 +309,7 @@ Future<Map<String, dynamic>?> god(
     if (kaneChoice != null &&
         isKaneStillAlive &&
         toNightBlocked() != allPlayers[roleNames[RoleName.kane]] &&
-        !newDeadPlayers.players.contains(kaneChoice.playerName))
+        !newDeadPlayers.players.mapToNames().contains(kaneChoice.playerName))
       await _kane(kaneChoice.playerName!, nightNumber);
 
     // check if kane choice was right *last night* -> he/she must be dead
@@ -319,19 +326,19 @@ Future<Map<String, dynamic>?> god(
       );
 
     final newAndOldDeadPlayersDiff = newDeadPlayers.players
-        .where((element) => !oldDeadPlayers.players.contains(element))
+        .mapToNames()
+        .where((playerName) =>
+            !oldDeadPlayers.players.mapToNames().contains(playerName))
         .toList();
 
     // checking if anyone died
     if (newAndOldDeadPlayersDiff.isNotEmpty) {
-      killedPlayersOftonight = newAndOldDeadPlayersDiff.mapToNames();
+      killedPlayersOftonight = newAndOldDeadPlayersDiff;
     }
 
     final List<String> allDeadPlayers =
         (newDeadPlayers.players + oldDeadPlayers.players)
-            .where((element) =>
-                slaughteredPlayerOfTonight != element.playerName &&
-                element.playerName != bornPlayer)
+            .where((element) => element.playerName != bornPlayer)
             .mapToNames()
             .toSet()
             .toList();
@@ -352,7 +359,10 @@ Future<Map<String, dynamic>?> god(
       'bornPlayer': bornPlayer,
       'disclosured': disclosuredPlayerOfTonight,
       'slaughtered': slaughteredPlayerOfTonight,
-      'tonightDeads': newDeadPlayers.players.mapToNames(),
+      'tonightDeads': newDeadPlayers.players
+          .toSet()
+          .where((element) => slaughteredPlayerOfTonight != element.playerName)
+          .mapToNames(),
       'nightCode': nightCode,
       'allDeadPlayers': allDeadPlayers,
       'remainedChancesForNightEnquiry': remainedChancesForNightEnquiry,

@@ -124,16 +124,22 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
 }) async {
   final isar = await _isar;
   //
-
+  print('mio2 : $playerNames');
   //
   int citizenPlayersCount = (await isar.retrievePlayer(
-    criteria: (player) =>
-        player.type == RoleType.citizen &&
-        playerNames.contains(player.playerName!),
+    isAlive: isGodfatherCountedForMafia! ? false : true,
+    criteria: (player) {
+      // print("${player.playerName} : ${player.type == RoleType.citizen}");
+      return player.type == RoleType.citizen &&
+          playerNames.contains(player.playerName!);
+    },
   ))
       .count;
+
+  print('object : $citizenPlayersCount');
   //
   final mafiaPlayersCount = (await isar.retrievePlayer(
+    isAlive: isGodfatherCountedForMafia! ? false : true,
     criteria: (player) {
       if (player.roleName == roleNames[RoleName.godfather] &&
           playerNames.contains(player.playerName!)) {
@@ -153,6 +159,7 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
   //
 
   final independentPlayersCount = (await isar.retrievePlayer(
+    isAlive: isGodfatherCountedForMafia! ? false : true,
     criteria: (player) =>
         player.type == RoleType.independent &&
         playerNames.contains(player.playerName!),

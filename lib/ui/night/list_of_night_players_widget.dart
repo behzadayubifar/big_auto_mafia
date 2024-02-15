@@ -1,4 +1,6 @@
+import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
@@ -16,6 +18,7 @@ class ListOfNightPlayersWidget extends StatelessWidget {
     required this.putChoiceLocally,
     required this.playersList,
     required this.nostradamousChoices,
+    this.purpose,
   })  : _height = height,
         _width = width;
 
@@ -29,7 +32,8 @@ class ListOfNightPlayersWidget extends StatelessWidget {
     required String newChoice,
   }) putChoiceLocally;
   final List<Player> playersList;
-  final ValueNotifier<List<String>> nostradamousChoices;
+  final List<String> nostradamousChoices;
+  final String? purpose;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +48,19 @@ class ListOfNightPlayersWidget extends StatelessWidget {
             controller: scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (purpose != null)
+                  Padding(
+                    padding: EdgeInsets.only(bottom: _height / 56),
+                    child: Text(
+                      MyStrings.shootInPlaceOfGodfather,
+                      style: MyTextStyles.bodyMD.copyWith(
+                        color: AppColors.secondaries[1],
+                      ),
+                    ),
+                  ),
                 Expanded(
                   child: SizedBox(
                     width: _width / 2,
@@ -62,27 +76,26 @@ class ListOfNightPlayersWidget extends StatelessWidget {
                         return MyButton(
                           title: selectedPlayer.playerName!,
                           player: selectedPlayer,
-                          selected: selectedPlayer.playerName == choice.value ||
-                              nostradamousChoices.value
-                                  .contains(selectedPlayer.playerName!),
+                          selected: nostradamousChoices!.isEmpty
+                              ? selectedPlayer.playerName == choice.value
+                              : nostradamousChoices
+                                  ?.contains(selectedPlayer.playerName!),
                           place: MyStrings.nightPlayer,
 
                           // criteria: ,
-                          onDoubleTap: role != MyStrings.godfather
-                              ? null
-                              : () async {
-                                  return putGodfatherChoice(
-                                    night: await nightFuture,
-                                    name: selectedPlayer.playerName!,
-                                    guessedRole: selectedPlayer.roleName!,
-                                  );
-                                },
+                          // onDoubleTap: role != MyStrings.godfather
+                          //     ? null
+                          //     : () async {
+                          //         return putGodfatherChoice(
+                          //           night: await nightFuture,
+                          //           name: selectedPlayer.playerName!,
+                          //           guessedRole: selectedPlayer.roleName!,
+                          //         );
+                          //       },
                           // onLongPress: putChoiceLocally,
                           onPressed: () => putChoiceLocally(
                             newChoice: selectedPlayer.playerName!,
                           ),
-                          /* () => choice.value =
-                    selectedPlayer.playerName!, */
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {

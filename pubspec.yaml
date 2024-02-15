@@ -57,6 +57,7 @@ dependencies:
   circular_countdown_timer: ^0.2.3
   toastification: ^1.2.0
   awesome_dialog: 2.0.0
+  photo_view: ^0.14.0
 
 dev_dependencies:
   flutter_test:

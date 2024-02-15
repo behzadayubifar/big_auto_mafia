@@ -196,7 +196,9 @@ class CurrentPlayers extends _$CurrentPlayers {
 // --- role-panels
 
             case MyStrings.leonPage:
-              if (tonight != 0 && leon?.handCuffed != true)
+              if (tonight != 0 &&
+                  leon?.handCuffed != true &&
+                  leon!.shotCount < 2)
                 return await isar
                     .retrievePlayer(
                       criteria: (player) => player.roleName != MyStrings.leon,
@@ -538,7 +540,12 @@ class IsarService {
         .filter()
         .isAliveEqualTo(isAlive)
         .findAll()
-        .then((player) => player.where(criteria ?? (_) => true).toList());
+        .then((player) {
+      return player
+          .where(criteria ?? (_) => true)
+          .where((player) => isAlive ? player.heart! > 0 : player.heart == 0)
+          .toList();
+    });
     final int count = players.length;
     final result = (count: count, players: players);
     return result;

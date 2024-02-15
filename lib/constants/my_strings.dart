@@ -82,6 +82,7 @@ class MyStrings {
   // night-role-panel
   static const String nightDoneJob = 'nightDoneJob';
   static const String undoJob = 'صرف نظر از انتخاب قبلی';
+  static const String shootInPlaceOfGodfather = 'شلیک به جای پدر خوانده';
 
   // button-states
   static const String defaultButton = 'default';

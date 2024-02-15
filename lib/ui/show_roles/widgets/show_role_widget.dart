@@ -32,10 +32,15 @@ class ShowRoleWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            image,
-            width: _width,
-            alignment: Alignment.center,
+          InteractiveViewer(
+            maxScale: 4.0,
+            minScale: 0.1,
+            boundaryMargin: EdgeInsets.all(20),
+            child: SvgPicture.asset(
+              image,
+              width: _width,
+              alignment: Alignment.center,
+            ),
           ),
           if (isComplete ?? true) SizedBox(height: 16),
           if (isComplete ?? true)

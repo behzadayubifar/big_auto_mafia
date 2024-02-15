@@ -142,7 +142,7 @@ Future<bool?> buttonLogicExecuter({
   // others
   if (mafiaShotInabsenceOfGodfather != null &&
       mafiaShotInabsenceOfGodfather != '') {
-    putMafiaShotChoice(
+    await putMafiaShotChoice(
       night: night,
       name: mafiaShotInabsenceOfGodfather,
     );
@@ -151,62 +151,61 @@ Future<bool?> buttonLogicExecuter({
   if (selectedPlayer != null && selectedPlayer != '')
     switch (currentPlayerRole) {
       case MyStrings.godfather:
-        {
-          shootOrSlaughter == 'shoot'
-              ? putMafiaShotChoice(
-                  night: night,
-                  name: selectedPlayer,
-                )
-              : putGodfatherChoice(
-                  night: night,
-                  name: selectedPlayer,
-                  guessedRole: guessedRole!,
-                );
-        }
-        ;
+        shootOrSlaughter == 'shoot'
+            ? await putMafiaShotChoice(
+                night: night,
+                name: selectedPlayer,
+              )
+            : await putGodfatherChoice(
+                night: night,
+                name: selectedPlayer,
+                guessedRole: guessedRole!,
+              );
         break;
 
       case MyStrings.saul:
-        putSaulChoice(
+        print('saul\'s choice is put');
+        await putSaulChoice(
           night: night,
           name: selectedPlayer,
         );
         break;
 
       case MyStrings.matador:
-        putMatadorChoice(
+        print('matador\s choice is put');
+        await putMatadorChoice(
           night: night,
           name: selectedPlayer,
         );
-        isar.putNight(
+        await isar.putNight(
           night: night,
           nightOfBlockage: "$night",
         );
         break;
 
       case MyStrings.watson:
-        putWatsonChoice(
+        await putWatsonChoice(
           night: night,
           name: selectedPlayer,
         );
         break;
 
       case MyStrings.leon:
-        putLeonChoice(
+        await putLeonChoice(
           night: night,
           name: selectedPlayer,
         );
         break;
 
       case MyStrings.kane:
-        putKaneChoice(
+        await putKaneChoice(
           night: night,
           name: selectedPlayer,
         );
         break;
 
       case MyStrings.konstantin:
-        putKonstantinChoice(
+        await putKonstantinChoice(
           night: night,
           name: selectedPlayer,
         );
