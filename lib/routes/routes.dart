@@ -89,7 +89,7 @@ final _router = GoRouter(
       name: 'night',
       path: '/night',
       builder: (context, state) {
-        final info = state.extra as Map<String, String>;
+        final info = state.extra as Map<String, dynamic>;
         return NightPage(info: info);
       },
     ),

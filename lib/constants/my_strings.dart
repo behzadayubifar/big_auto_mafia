@@ -33,6 +33,7 @@ class MyStrings {
   static const String rolePanel = 'role-panel';
   static const String dayPage = 'day-page';
   static const String nightResultsPage = 'night-results-page';
+  static const String reNight = 're-night';
 
   // show-role-page situations
   static const String beforeShowingRole = 'before-showing-role';

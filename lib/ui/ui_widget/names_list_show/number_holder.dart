@@ -33,10 +33,10 @@ class NumberHolder extends StatelessWidget {
         ),
         // number
         AnimatedPositioned(
-          top: isNotFocused ? 8 : 16,
-          left: isNotFocused ? 12 : 24,
+          top: isNotFocused ? 4 : 16,
+          left: isNotFocused ? 14 : 24,
           right: 0,
-          bottom: 0,
+          bottom: 20,
           duration: const Duration(milliseconds: 400),
           child: Center(
             child: Text(

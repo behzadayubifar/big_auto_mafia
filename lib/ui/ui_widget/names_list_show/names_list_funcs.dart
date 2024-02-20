@@ -34,7 +34,4 @@ Future<void> startAssignRole({
 
   // time to add players to db
   await (await isar).initializePlayers(playerRoleMapList);
-
-  // update info
-  // pageInfo.value = Info.updateInfo(topic: InfoOptions.showRoles);
 }

@@ -74,7 +74,7 @@ class MyButton extends HookConsumerWidget {
                   shadowColor: AppColors.lightText,
                   elevation: 9,
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                   backgroundColor: AppColors.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -85,7 +85,7 @@ class MyButton extends HookConsumerWidget {
                   shadowColor: AppColors.lightText,
                   elevation: 9,
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                   backgroundColor: AppColors.tintsOfBlack[3],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),

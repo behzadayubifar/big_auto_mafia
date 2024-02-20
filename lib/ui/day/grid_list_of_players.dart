@@ -57,7 +57,7 @@ Widget GridOfPlayers({
                   crossAxisCount: axix == Axis.horizontal ? 2 : 1,
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
-                  childAspectRatio: axix == Axis.horizontal ? .4 : 4,
+                  childAspectRatio: axix == Axis.horizontal ? .36 : 4,
                 ),
               ),
             ),

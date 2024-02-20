@@ -8,12 +8,27 @@ import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
+import 'package:auto_mafia/ui/day/show_last_move.dart';
 import 'package:auto_mafia/ui/statements/statement_overlay_screen.dart';
 import 'package:auto_mafia/ui/widgets/player_name_widget.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+// class NightPage extends StatefulHookConsumerWidget {
+//   const NightPage({super.key});
+
+//   @override
+//   ConsumerState<ConsumerStatefulWidget> createState() => _NightPageState();
+// }
+// class _NightPageState extends ConsumerState<NightPage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container();
+//   }
+// }
 
 class NightPage extends HookConsumerWidget {
   NightPage({
@@ -21,8 +36,9 @@ class NightPage extends HookConsumerWidget {
     Key? key,
   }) : super(key: key);
 
-  final Map<String, String> info;
+  final Map<String, dynamic> info;
 
+  @override
   Widget build(BuildContext nightContext, WidgetRef ref) {
     final height = MediaQuery.sizeOf(nightContext).height;
     final width = MediaQuery.sizeOf(nightContext).width;
@@ -33,7 +49,8 @@ class NightPage extends HookConsumerWidget {
       initialScrollOffset: 0,
       keepScrollOffset: true,
     );
-    //
+    // -for saul-
+    final bool mafiaBuyed = info['saulChoice'] ?? false;
     //
 
     return Scaffold(
@@ -119,22 +136,79 @@ class NightPage extends HookConsumerWidget {
                           () async {
                         final isar = await ref.read(isarServiceProvider.future);
                         final tonight = await isar.getNightNumber();
-                        final nightResultJson =
-                            await (isar.retrieveNightN(n: tonight)).then(
-                          (json) => json.match(
-                            (json) => json,
-                            (_) => null,
-                          ),
-                        );
 
-                        log('json: $nightResultJson');
                         // TODO: we must handle the loading
                         if (tonight != 0) {
-                          final info = await god(json: nightResultJson);
-                          nightContext.goNamed(
-                            'nights-results',
-                            extra: info,
-                          );
+                          final situation = await isar
+                              .retrieveGameStatusN(
+                                n: tonight,
+                              )
+                              .then((status) => status!.situation);
+                          if (mafiaBuyed &&
+                              value.length != 0 &&
+                              situation != MyStrings.reNight) {
+                            AwesomeDialog(
+                                context: nightContext,
+                                dialogType: DialogType.NO_HEADER,
+                                animType: AnimType.BOTTOMSLIDE,
+                                body: Column(
+                                  children: [
+                                    TiTleTile(title: "خریداری!"),
+                                    SizedBox(height: 16),
+                                    Text(
+                                        "مافیا شب گذشته اقدام به خریداری کرد، بنابراین همۀ افراد مجددا با دانش به این قضیه باید وظیفۀ امشب خود را انجام دهند."),
+                                    AnimatedButton(
+                                      text: "شروع مجدد شب",
+                                      pressEvent: () async {
+                                        //
+                                        final allPlayers =
+                                            await isar.playersRolesMap();
+
+                                        for (String player
+                                            in allPlayers.values) {
+                                          await isar.updatePlayer(
+                                            playerName: player,
+                                            nightDone: false,
+                                            handCuffed: false,
+                                            isSaved: false,
+                                            hasBeenSlaughtered: false,
+                                            isBlocked: false,
+                                          );
+                                        }
+                                        //
+                                        await ref
+                                            .read(
+                                                currentPlayersProvider.notifier)
+                                            .action(MyStrings.nightPage);
+                                        // update situtaion to re-nihgt !!
+                                        await isar.putGameStatus(
+                                          dayNumber: await isar.getDayNumber(),
+                                          isDay: false,
+                                          situation: MyStrings.reNight,
+                                        );
+                                        // pop the dialog
+                                        Navigator.of(nightContext).pop();
+                                      },
+                                    ),
+                                  ],
+                                ))
+                              ..show();
+                          } else {
+                            final nightResultJson =
+                                await (isar.retrieveNightN(n: tonight)).then(
+                              (json) => json.match(
+                                (json) => json,
+                                (_) => null,
+                              ),
+                            );
+
+                            log('json: $nightResultJson');
+                            final info = await god(json: nightResultJson);
+                            nightContext.goNamed(
+                              'nights-results',
+                              extra: info,
+                            );
+                          }
                         } else {
                           int dayNumber = await isar.getDayNumber();
                           await isar.putGameStatus(

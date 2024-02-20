@@ -17,6 +17,7 @@ import 'package:auto_mafia/ui/ui_utils/get_criteria_for_night_role_panel.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,6 +30,8 @@ class NightRolePanel extends HookConsumerWidget {
     this.isGodfatherAlive,
     this.playersListForShootInAbsenceOfGodfather,
     this.mafiaHasBullet,
+    this.isOneOfMafiaDead,
+    this.hasMafiaBuyedOnce,
     this.night,
     Key? key,
   }) : super(key: key);
@@ -41,18 +44,28 @@ class NightRolePanel extends HookConsumerWidget {
   final bool? mafiaHasBullet;
   final bool isHandCuffed;
   final int? night;
+  final bool? isOneOfMafiaDead;
+  final bool? hasMafiaBuyedOnce;
 
   final CountDownController timerController = CountDownController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //
+    bool? saulCanBuy = false;
+    if (isOneOfMafiaDead != null && hasMafiaBuyedOnce != null) {
+      saulCanBuy =
+          role == MyStrings.saul && isOneOfMafiaDead! && !hasMafiaBuyedOnce!;
+    }
+    //
     // print(night);
     final _height = MediaQuery.sizeOf(context).height;
     final _width = MediaQuery.sizeOf(context).width;
     //
     final choice = useState('');
     final nostradamousChoices = useState(<String>[]);
-    final shootOrSlaughter = useState(isHandCuffed ? 'shoot' : '');
+    final shootOrSlaughter =
+        useState((role == MyStrings.godfather && isHandCuffed) ? 'shoot' : '');
     final guessedRole = useState('');
 
     final mafiaShotInabsenceOfGodfather = useState('');
@@ -139,17 +152,36 @@ class NightRolePanel extends HookConsumerWidget {
         mafiaShotInabsenceOfGodfather: mafiaShotInabsenceOfGodfather.value,
       );
 
+      // for saul - Have mafia done buying ?-
+      final isar = await ref.read(isarServiceProvider.future);
+      final String? saulChoice = await isar
+          .retrieveNightN(n: await nightFuture)
+          .then(((result) => result.match(
+              (json) => json
+                  .filterWithKey((key, value) => key == 'saulChoice')
+                  .values
+                  .singleOrNull,
+              (_) => null)));
+      //
+      Map<String, String?> info = {'saulChoice': saulChoice}
+        ..addAll(Info.night);
+      //
+
       await ref
           .read(currentPlayersProvider.notifier)
           .action(MyStrings.nightPage);
 
       if (!(role == MyStrings.nostradamous &&
           night == 0 &&
-          nostradamousChoices.value.isNotEmpty)) context.pop();
+          nostradamousChoices.value.isNotEmpty))
+        context.goNamed(
+          'night',
+          extra: info,
+        );
     };
     //
-    return WillPopScope(
-      onWillPop: () => Future.value(false),
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         body: Center(
           child: Stack(
@@ -275,8 +307,11 @@ class NightRolePanel extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      if (role != MyStrings.godfather ||
-                          shootOrSlaughter.value != '')
+                      if ((role != MyStrings.godfather &&
+                              role != MyStrings.saul) ||
+                          (shootOrSlaughter.value != '' &&
+                              role != MyStrings.saul) ||
+                          saulCanBuy)
                         asyncPlayers.when(
                           data: (playersList) => playersList.isEmpty
                               ? SizedBox()

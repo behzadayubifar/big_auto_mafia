@@ -174,6 +174,8 @@ _saul(String chosenPlayerName) async {
   isar.updatePlayer(
     playerName: chosenPlayerName,
     side: RoleType.mafia,
+    // set role name to mafia
+    roleName: roleNames[RoleName.mafia],
   );
 
   //

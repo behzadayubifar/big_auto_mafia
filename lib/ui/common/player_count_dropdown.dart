@@ -23,7 +23,6 @@ class PlayersCountDropdown extends StatelessWidget {
             Column(
               children: [
                 Center(child: SvgPicture.asset(MyAssets.titleBg2, height: 50)),
-                SizedBox(height: 16),
               ],
             ),
             SizedBox(width: 10),
