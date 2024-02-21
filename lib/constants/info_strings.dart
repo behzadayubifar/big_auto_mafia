@@ -1,7 +1,26 @@
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/gen/assets.gen.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/my_assets.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+ProviderContainer _createContainer({
+  ProviderContainer? parent,
+  List<Override> overrides = const [],
+  List<ProviderObserver>? observers,
+}) {
+  // Create a ProviderContainer, and optionally allow specifying parameters.
+  final container = ProviderContainer(
+    parent: parent,
+    overrides: overrides,
+    observers: observers,
+  );
+  return container;
+}
+
+final _container = _createContainer();
+final Future<IsarService> _isar = _container.read(isarServiceProvider.future);
 
 enum InfoOptions {
   naming,
@@ -24,11 +43,13 @@ class Info {
     // 'button': MyStrings.assignRole,
   };
 
-  static const Map<String, String> night = {
-    'title': MyStrings.nightTitle,
-    'button': MyStrings.nightResults,
-    'situation': MyStrings.nightPage,
-  };
+  static Future<Map<String, String>> night() async => {
+        'title': MyStrings.nightTitle,
+        'button': MyStrings.nightResults,
+        'situation': MyStrings.nightPage,
+        'nightNumber':
+            (await _isar.then((isar) => isar.getNightNumber())).toString(),
+      };
 
   static Map<String, String> nightRolePanel({
     required String playerName,

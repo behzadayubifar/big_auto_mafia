@@ -99,21 +99,22 @@ void showLastMoveDialog({
     btnOk: MyButton(
       title: MyStrings.nextNight,
       onLongPress: () async {
+        // final today = await isar.getDayNumber();
         switch (lastMoveName) {
           case MyStrings.faceOff:
-            faceOff(
+            await faceOff(
               playerWithCardName: playerWithCardName,
               otherPlayerName: selectedPlayers.single,
             );
             break;
           case MyStrings.handCuff:
-            handCuff(playerName: selectedPlayers.single);
+            await handCuff(playerName: selectedPlayers.single);
             break;
           case MyStrings.silenceOfSheep:
-            silenceOfSheep(playersNames: selectedPlayers);
+            await silenceOfSheep(playersNames: selectedPlayers);
             break;
           case MyStrings.roleReveal:
-            identityReveal(playerName: selectedPlayers.single);
+            await identityReveal(playerName: selectedPlayers.single);
             break;
           case MyStrings.beautifulMind:
             final isGuessedNostradamous = await beautifulMind(
@@ -140,7 +141,8 @@ void showLastMoveDialog({
         await _container
             .read(currentPlayersProvider.notifier)
             .action(MyStrings.nightPage);
-        context.goNamed('night', extra: Info.night);
+        //
+        context.goNamed('night', extra: await Info.night());
       },
     ),
   )..show();

@@ -149,7 +149,7 @@ class PlayerNameWidget extends HookConsumerWidget {
                       isAlive: false,
                       criteria: (player) => player.type == RoleType.mafia,
                     )
-                    .then((record) => record.count) !=
+                    .then((record) => record.count) >
                 0;
 
             final hasMafiaBuyedOnce = await isar
@@ -166,7 +166,7 @@ class PlayerNameWidget extends HookConsumerWidget {
               'name': playerName,
               'role': role,
               'code': code.toString(),
-              'isGodfatherIsAlive': isGodfatherIsAlive,
+              'isGodfatherAlive': isGodfatherIsAlive,
               'mafiaHasBullet': mafiaHasBullet,
               'night': tonight,
               'playersListForShootInAbsenceOfGodfather':
@@ -175,6 +175,8 @@ class PlayerNameWidget extends HookConsumerWidget {
               'isOneOfMafiaDead': isOneOfMafiaDead,
               'hasMafiaBuyedOnce': hasMafiaBuyedOnce,
             };
+
+            print('from GoRouter: $info');
 
             nightContext.goNamed(
               'night_role_panel',

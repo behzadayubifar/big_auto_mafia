@@ -123,7 +123,11 @@ class CurrentPlayers extends _$CurrentPlayers {
 
             case MyStrings.konstantinPage:
               return await isar
-                  .retrievePlayer(isAlive: false)
+                  .retrievePlayer(
+                      isAlive: false,
+                      criteria: (player) =>
+                          player.disclosured != true &&
+                          player.isReversible == true)
                   .then((value) => value.players);
 
             case MyStrings.nightDoneJob:

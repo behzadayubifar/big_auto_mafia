@@ -155,7 +155,7 @@ class Day extends HookConsumerWidget {
                     .read(currentPlayersProvider.notifier)
                     .action(MyStrings.nightPage);
 
-                context.goNamed('night', extra: Info.night);
+                context.goNamed('night', extra: await Info.night());
               },
               child: AnimatedContainer(
                 child: Image.asset(MyAssets.excludeForMoonInDay),

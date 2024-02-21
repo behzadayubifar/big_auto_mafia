@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
@@ -40,17 +41,23 @@ class NightPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext nightContext, WidgetRef ref) {
+    //
+    String nightNumber = '';
+    //
     final height = MediaQuery.sizeOf(nightContext).height;
     final width = MediaQuery.sizeOf(nightContext).width;
     //
     final asyncPlayers = ref.watch(currentPlayersProvider);
     //
-    final scrollController = useScrollController(
+    /*   final scrollController = useScrollController(
       initialScrollOffset: 0,
       keepScrollOffset: true,
-    );
+    ); */
     // -for saul-
-    final bool mafiaBuyed = info['saulChoice'] ?? false;
+    final bool mafiaBuyed = (info['saulChoice'] != "") ?? false;
+    final bool isNight = info['situation'] == MyStrings.nightPage;
+    if (isNight)
+      nightNumber = info['nightNumber'] == '0' ? "معارفه" : info['nightNumber'];
     //
 
     return Scaffold(
@@ -64,7 +71,11 @@ class NightPage extends HookConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 // mainAxisSize: MainAxisSize.min,
                 children: [
-                  TiTleTile(title: info['title']!),
+                  TiTleTile(
+                    title: info['nightNumber'] == '0'
+                        ? nightNumber
+                        : info['title']! + ' $nightNumber',
+                  ),
                   SizedBox(height: height / 24),
                   Expanded(
                     child: SizedBox(
@@ -175,6 +186,8 @@ class NightPage extends HookConsumerWidget {
                                             isBlocked: false,
                                           );
                                         }
+                                        //
+                                        await saul(info['saulChoice']);
                                         //
                                         await ref
                                             .read(

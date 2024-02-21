@@ -1,3 +1,5 @@
+import 'package:auto_mafia/constants/info_strings.dart';
+import 'package:auto_mafia/db/entities/game_status.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
@@ -132,7 +134,10 @@ Future<bool?> buttonLogicExecuter({
             .read(currentPlayersProvider.notifier)
             .action(MyStrings.nightPage);
 
-        context.pop();
+        context.goNamed(
+          'night',
+          extra: await Info.night(),
+        );
       },
       mafia: resultOfPrediction.mafiaPlayersCount,
       citizen: resultOfPrediction.citizen,
@@ -146,6 +151,8 @@ Future<bool?> buttonLogicExecuter({
       night: night,
       name: mafiaShotInabsenceOfGodfather,
     );
+    //
+    await isar.putGameStatus(dayNumber: night, remainedMafiasBullets: 0);
   }
 
   if (selectedPlayer != null && selectedPlayer != '')

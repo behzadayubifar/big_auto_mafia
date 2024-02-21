@@ -53,10 +53,10 @@ class NightRolePanel extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     //
     bool? saulCanBuy = false;
-    if (isOneOfMafiaDead != null && hasMafiaBuyedOnce != null) {
-      saulCanBuy =
-          role == MyStrings.saul && isOneOfMafiaDead! && !hasMafiaBuyedOnce!;
-    }
+    if (isOneOfMafiaDead == true &&
+        hasMafiaBuyedOnce != true &&
+        role == MyStrings.saul) saulCanBuy = true;
+
     //
     // print(night);
     final _height = MediaQuery.sizeOf(context).height;
@@ -163,8 +163,9 @@ class NightRolePanel extends HookConsumerWidget {
                   .singleOrNull,
               (_) => null)));
       //
+      // final toNight = await isar.getNightNumber();
       Map<String, String?> info = {'saulChoice': saulChoice}
-        ..addAll(Info.night);
+        ..addAll(await Info.night());
       //
 
       await ref
@@ -242,7 +243,7 @@ class NightRolePanel extends HookConsumerWidget {
                       ),
 
                       SizedBox(
-                        height: _height / 20,
+                        height: _height / 24,
                       ),
 
                       Text(
@@ -251,7 +252,7 @@ class NightRolePanel extends HookConsumerWidget {
                       ),
 
                       SizedBox(
-                        height: _height / 48,
+                        height: _height / 36,
                       ),
 
                       // role-of-selectedPlayer

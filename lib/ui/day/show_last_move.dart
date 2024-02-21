@@ -100,7 +100,7 @@ class ShowLastMove extends HookConsumerWidget {
 
                           await god(isGettingDay: false);
 
-                          context.goNamed('night', extra: Info.night);
+                          context.goNamed('night', extra: await Info.night());
                         },
                       ),
                     ],
@@ -125,7 +125,8 @@ class ShowLastMove extends HookConsumerWidget {
                                 heart: 1,
                               );
                               await god(isGettingDay: false);
-                              context.goNamed('night', extra: Info.night);
+                              context.goNamed('night',
+                                  extra: await Info.night());
                             },
                           ),
                         ],

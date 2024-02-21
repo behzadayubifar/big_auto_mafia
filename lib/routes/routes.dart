@@ -107,23 +107,27 @@ final _router = GoRouter(
         final String name = info['name']!;
         final String role = info['role']!;
         final String code = info['code']!;
-        final bool isGodfatherIsAlive = info['isGodfatherIsAlive']!;
+        final bool isGodfatherAlive = info['isGodfatherAlive']!;
         final bool? mafiaHasBullet = info['mafiaHasBullet'];
         final int night = info['night']!;
         final List<Player> playersListForShootInAbsenceOfGodfather =
             info['playersListForShootInAbsenceOfGodfather']!;
         final bool isHandCuffed = info['isHandCuffed']!;
+        final bool isOneOfMafiaDead = info['isOneOfMafiaDead'];
+        final bool hasMafiaBuyedOnce = info['hasMafiaBuyedOnce'];
 
         return NightRolePanel(
           name: name,
           role: role,
           code: code,
-          isGodfatherAlive: isGodfatherIsAlive,
+          isGodfatherAlive: isGodfatherAlive,
           mafiaHasBullet: mafiaHasBullet,
           playersListForShootInAbsenceOfGodfather:
               playersListForShootInAbsenceOfGodfather,
           night: night,
           isHandCuffed: isHandCuffed,
+          isOneOfMafiaDead: isOneOfMafiaDead,
+          hasMafiaBuyedOnce: hasMafiaBuyedOnce,
         );
       },
     ),

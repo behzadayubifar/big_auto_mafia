@@ -51,12 +51,12 @@ _watson(String chosenPlayerName) async {
   final chosenPlayerISWatson = chosenPlayer?.playerName == watson?.playerName;
   if (chosenPlayerISWatson) {
     //TODO: handle this also in ui later so he cannot even tap on his name in ui at the firt place !!!
-    isar.updatePlayer(
+    await isar.updatePlayer(
         playerName: chosenPlayerName,
         isSaved: chosenPlayer!.isSavedOnce ? false : true,
         isSavedOnce: true);
   } else {
-    isar.updatePlayer(
+    await isar.updatePlayer(
       playerName: chosenPlayerName,
       isSaved: true,
     );
@@ -69,13 +69,13 @@ _kane(String chosenPlayerName, int night) async {
   final chosenPlayer = await isar.getPlayerByName(chosenPlayerName);
   final kane = await isar.getPlayerByRole(RoleName.kane);
   //
-  isar.updatePlayer(
+  await isar.updatePlayer(
     playerName: kane!.playerName!,
     hasGuessed: true,
   );
   //
   if (chosenPlayer!.type == RoleType.mafia) {
-    isar.updatePlayer(
+    await isar.updatePlayer(
         playerName: chosenPlayerName, disclosured: true, isReversible: false);
     await isar.putNight(nightOfRightChoiceOfKane: '$night', night: night);
   }
@@ -87,12 +87,12 @@ _konstantin(String chosenPlayerName) async {
   final isar = await _container.read(isarServiceProvider.future);
   final konstantin = await isar.getPlayerByRole(RoleName.konstantin);
   //
-  isar.updatePlayer(
+  await isar.updatePlayer(
     playerName: konstantin!.playerName!,
     hasReturned: true,
   );
   //
-  isar.updatePlayer(
+  await isar.updatePlayer(
     playerName: chosenPlayerName,
     heart: 1,
     isReversible: false,
@@ -101,28 +101,32 @@ _konstantin(String chosenPlayerName) async {
 
 // mafiaShoot logic
 _mafiaShoot(
-  String? chosenPlayerName,
+  String chosenPlayerName,
 ) async {
   print("--------------------------------------------------");
   final isar = await _container.read(isarServiceProvider.future);
-  final chosenPlayer = await isar.getPlayerByName(chosenPlayerName!);
-  final previousHeart = chosenPlayer?.heart!;
+  final chosenPlayer = (await isar.getPlayerByName(chosenPlayerName))!;
+  final previousHeart = chosenPlayer.heart!;
   final godFather = await isar.getPlayerByRole(RoleName.godfather);
   final day = await isar.getDayNumber();
   //
-  if (chosenPlayer != null &&
-      chosenPlayer.roleName != roleNames[RoleName.nostradamous] &&
+  if (chosenPlayer.roleName != roleNames[RoleName.nostradamous] &&
       chosenPlayer.isSaved != true) {
+    print("---------------------Mafia Shot is Runnig-----------------------");
+    log('chosenPlayerName: $chosenPlayerName and isSaved: ${chosenPlayer.isSaved}',
+        name: 'mafia shoot *********');
+    print("--------------------------------------------------");
+
     await isar.updatePlayer(
-        playerName: chosenPlayerName, heart: (previousHeart! - 1));
+        playerName: chosenPlayerName, heart: (previousHeart - 1));
     final int newHeart = await isar
         .getPlayerByName(chosenPlayerName)
         .then((player) => player!.heart!);
     log('${chosenPlayerName}\'s new heart is: ${newHeart}',
         name: 'mafia shoot');
 
-    isar.updatePlayer(playerName: godFather!.playerName!, shotCount: 1);
-    isar.putGameStatus(dayNumber: day, remainedMafiasBullets: 0);
+    await isar.updatePlayer(playerName: godFather!.playerName!, shotCount: 1);
+    await isar.putGameStatus(dayNumber: day, remainedMafiasBullets: 0);
     print("--------------------------------------------------");
     log('godfather\'s shotCount is: ${godFather.shotCount}',
         name: 'mafia shoot');
@@ -135,25 +139,25 @@ _godfatherSlaughter(String chosenPlayerName) async {
   final godFather = await isar.getPlayerByRole(RoleName.godfather);
   final day = await isar.getDayNumber();
   //
-  isar.updatePlayer(
+  await isar.updatePlayer(
     playerName: chosenPlayerName,
     hasBeenSlaughtered: true,
     heart: 0,
   );
   //
-  isar.updatePlayer(
+  await isar.updatePlayer(
     playerName: godFather!.playerName!,
     shotCount: 1,
   );
   //
-  isar.putGameStatus(dayNumber: day, remainedMafiasBullets: 0);
+  await isar.putGameStatus(dayNumber: day, remainedMafiasBullets: 0);
 }
 
 // matador logic
 _matador(String chosenPlayerName, int toNight) async {
   final isar = await _container.read(isarServiceProvider.future);
   //
-  isar.updatePlayer(
+  await isar.updatePlayer(
     playerName: chosenPlayerName,
     isBlocked: true,
   );
@@ -167,11 +171,11 @@ _matador(String chosenPlayerName, int toNight) async {
 
 //TODO: handle when saul can do his job in ui & night must be restarted (in fact, in at the begining of godToDay or even before it !!!)
 // saul logic
-_saul(String chosenPlayerName) async {
+saul(String chosenPlayerName) async {
   final isar = await _container.read(isarServiceProvider.future);
   final saul = await isar.getPlayerByRole(RoleName.saul);
 
-  isar.updatePlayer(
+  await isar.updatePlayer(
     playerName: chosenPlayerName,
     side: RoleType.mafia,
     // set role name to mafia
@@ -179,7 +183,7 @@ _saul(String chosenPlayerName) async {
   );
 
   //
-  isar.updatePlayer(
+  await isar.updatePlayer(
     playerName: saul!.playerName!,
     hasBuyed: true,
   );
@@ -271,8 +275,9 @@ Future<Map<String, dynamic>?> god(
         toNightBlocked() != allPlayers[roleNames[RoleName.watson]])
       await _watson(watsonChoice.playerName!);
 
-    // saul choice for blocking
-    if (saulChoice != null) await _saul(saulChoice.playerName!);
+/*     // saul choice for buying
+    if (saulChoice != null) await saul(saulChoice.playerName!);
+ */
 
     // mafia shot
     if (mafiaShot != null) await _mafiaShoot(mafiaShot);
@@ -299,7 +304,7 @@ Future<Map<String, dynamic>?> god(
     final newDeadPlayers = await isar.retrievePlayer(
       isAlive: false,
       criteria: (player) =>
-          !oldDeadPlayers.players.mapToNames().contains(player.playerName),
+          !(oldDeadPlayers.players.mapToNames().contains(player.playerName)),
     );
     // final newAlivePlayers = await isar.retrievePlayer();
 
@@ -311,8 +316,14 @@ Future<Map<String, dynamic>?> god(
     if (kaneChoice != null &&
         isKaneStillAlive &&
         toNightBlocked() != allPlayers[roleNames[RoleName.kane]] &&
-        !newDeadPlayers.players.mapToNames().contains(kaneChoice.playerName))
+        !newDeadPlayers.players.mapToNames().contains(kaneChoice.playerName)) {
       await _kane(kaneChoice.playerName!, nightNumber);
+      // !TODO: if kane's choice has been killed tonight, don't do this
+      // checking if anyone was disclosured
+      if (kaneChoice.type == RoleType.mafia) {
+        disclosuredPlayerOfTonight = kaneChoice.playerName;
+      }
+    }
 
     // check if kane choice was right *last night* -> he/she must be dead
     final wasKaneChoiceRightLastNight =
@@ -344,12 +355,6 @@ Future<Map<String, dynamic>?> god(
             .mapToNames()
             .toSet()
             .toList();
-
-// !TODO: if kane's choice has been killed tonight, don't do this
-    // checking if anyone was disclosured
-    if (kaneChoice != null && kaneChoice.type == RoleType.mafia) {
-      disclosuredPlayerOfTonight = kaneChoice.playerName;
-    }
 
     final remainedChancesForNightEnquiry = await isar
         .retrieveGameStatusN(n: dayNumber)
@@ -450,6 +455,7 @@ Future<Map<String, dynamic>?> god(
         .action(MyStrings.nightPage);
 
     //
+    return null;
     // TODO: show the results of the day (RESULT WIDGET)
   }
 }
