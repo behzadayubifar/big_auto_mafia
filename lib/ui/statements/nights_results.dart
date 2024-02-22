@@ -211,6 +211,31 @@ class NightsResuls extends HookConsumerWidget {
                                         .read(isarServiceProvider.future);
                                     final dayNumber = await isar.getDayNumber();
 
+                                    final winner = await determineWinner(
+                                        dayNumber: dayNumber);
+
+                                    if (winner != null) {
+                                      context.go('/game-over/$winner');
+                                      return;
+                                    }
+
+                                    final alivePlayers =
+                                        await isar.retrievePlayer();
+
+                                    if (alivePlayers.count == 3) {
+                                      await isar.putGameStatus(
+                                          isChaos: true, dayNumber: dayNumber);
+
+                                      context.go(
+                                        '/chaos',
+                                        extra:
+                                            alivePlayers.players.mapToNames(),
+                                      );
+                                    }
+
+                                    print(
+                                        "MUST NOT BE EXECUTED IF GAME IS OVER OR CHAOS");
+
                                     await isar.putGameStatus(
                                       dayNumber: dayNumber,
                                       remainedChancesForNightEnquiry:

@@ -91,6 +91,7 @@ Future<bool?> buttonLogicExecuter({
   BuildContext? context,
 }) async {
   final isar = await _container.read(isarServiceProvider.future);
+  await isar.putGameStatus(dayNumber: night, situation: MyStrings.nightPage);
   final roleEnum = roleNames.keys.firstWhere(
     (key) => roleNames[key] == currentPlayerRole,
     orElse: () => throw Exception('role not found'),

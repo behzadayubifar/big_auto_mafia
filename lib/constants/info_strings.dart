@@ -98,6 +98,8 @@ class Info {
         return MyAssets.godfatherCard;
       case "ماتادور":
         return MyAssets.matadorCard;
+      case "مافیا ساده":
+        return MyAssets.mafiaCard;
       case "سائول گودمن":
         return MyAssets.saulCard;
       case "کنستانتین":

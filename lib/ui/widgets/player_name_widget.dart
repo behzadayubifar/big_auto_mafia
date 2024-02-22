@@ -153,14 +153,14 @@ class PlayerNameWidget extends HookConsumerWidget {
                 0;
 
             final hasMafiaBuyedOnce = await isar
-                    .retrieveNightN(n: tonight)
-                    .then((result) => result.match(
-                        (json) => json
-                            .filterWithKey((key, value) => key == 'saulChoice')
-                            .values
-                            .singleOrNull,
-                        (r) => null)) !=
-                null;
+                .retrieveNightN(n: tonight)
+                .then((result) => result.match(
+                    (json) => json
+                        .filterWithKey((key, value) => key == 'saulChoice')
+                        .values
+                        .singleOrNull
+                        ?.isNotEmpty,
+                    (r) => null));
 
             final info = {
               'name': playerName,

@@ -54,7 +54,8 @@ class NightPage extends HookConsumerWidget {
       keepScrollOffset: true,
     ); */
     // -for saul-
-    final bool mafiaBuyed = (info['saulChoice'] != "") ?? false;
+    final bool mafiaBuyed =
+        (info['saulChoice'] != null && info['saulChoice'] != "");
     final bool isNight = info['situation'] == MyStrings.nightPage;
     if (isNight)
       nightNumber = info['nightNumber'] == '0' ? "معارفه" : info['nightNumber'];
@@ -148,62 +149,98 @@ class NightPage extends HookConsumerWidget {
                         final isar = await ref.read(isarServiceProvider.future);
                         final tonight = await isar.getNightNumber();
 
+                        //
+                        final isReNight = await isar
+                            .retrieveGameStatusN(
+                              n: tonight,
+                            )
+                            .then((status) => status!.isReNight);
+                        if (mafiaBuyed &&
+                            value.length == 0 &&
+                            isReNight != true) await saul(info['saulChoice']);
+                        final nightCode = await isar
+                            .retrieveGameStatusN(
+                              n: await isar.getDayNumber(),
+                            )
+                            .then((status) => status?.nightCode);
+
                         // TODO: we must handle the loading
                         if (tonight != 0) {
-                          final situation = await isar
-                              .retrieveGameStatusN(
-                                n: tonight,
-                              )
-                              .then((status) => status!.situation);
                           if (mafiaBuyed &&
-                              value.length != 0 &&
-                              situation != MyStrings.reNight) {
+                              value.length == 0 &&
+                              isReNight != true) {
                             AwesomeDialog(
                                 context: nightContext,
                                 dialogType: DialogType.NO_HEADER,
                                 animType: AnimType.BOTTOMSLIDE,
-                                body: Column(
-                                  children: [
-                                    TiTleTile(title: "خریداری!"),
-                                    SizedBox(height: 16),
-                                    Text(
-                                        "مافیا شب گذشته اقدام به خریداری کرد، بنابراین همۀ افراد مجددا با دانش به این قضیه باید وظیفۀ امشب خود را انجام دهند."),
-                                    AnimatedButton(
-                                      text: "شروع مجدد شب",
-                                      pressEvent: () async {
-                                        //
-                                        final allPlayers =
-                                            await isar.playersRolesMap();
+                                body: SizedBox(
+                                  // height: height / 2.5,
+                                  child: Column(
+                                    children: [
+                                      Text("خریداری!",
+                                          style: MyTextStyles.displaySmall
+                                              .copyWith(
+                                            height: 1,
+                                            color: AppColors.secondaries[2],
+                                          )),
+                                      SizedBox(height: height / 32),
+                                      Text(
+                                        "مافیا شب گذشته اقدام به خریداری کرد، بنابراین همۀ افراد مجددا با دانش به این قضیه باید وظیفۀ امشب خود را انجام دهند.",
+                                        style: MyTextStyles.bodyMD.copyWith(
+                                          height: 1.6,
+                                        ),
+                                      ),
+                                      SizedBox(height: height / 48),
+                                      Text(
+                                        'کد خریداری : $nightCode',
+                                        style: MyTextStyles.bodyMD.copyWith(
+                                          height: 1.6,
+                                        ),
+                                      ),
+                                      SizedBox(height: height / 64),
+                                      AnimatedButton(
+                                        text: "شروع مجدد شب",
+                                        width: width / 2.5,
+                                        color: AppColors.green,
+                                        pressEvent: () async {
+                                          //
+                                          final allPlayers =
+                                              await isar.getAllPlayers();
 
-                                        for (String player
-                                            in allPlayers.values) {
-                                          await isar.updatePlayer(
-                                            playerName: player,
-                                            nightDone: false,
-                                            handCuffed: false,
-                                            isSaved: false,
-                                            hasBeenSlaughtered: false,
-                                            isBlocked: false,
+                                          print('allPlayers : $allPlayers');
+
+                                          for (String playerName
+                                              in allPlayers.mapToNames()) {
+                                            await isar.updatePlayer(
+                                              playerName: playerName,
+                                              nightDone: false,
+                                              // handCuffed: false,
+                                              // isSaved: false,
+                                              // hasBeenSlaughtered: false,
+                                              // isBlocked: false,
+                                            );
+                                          }
+                                          //
+
+                                          //
+                                          await ref
+                                              .read(currentPlayersProvider
+                                                  .notifier)
+                                              .action(MyStrings.nightPage);
+                                          // update situtaion to re-nihgt !!
+                                          await isar.putGameStatus(
+                                            dayNumber:
+                                                await isar.getDayNumber(),
+                                            isDay: false,
+                                            isReNight: true,
                                           );
-                                        }
-                                        //
-                                        await saul(info['saulChoice']);
-                                        //
-                                        await ref
-                                            .read(
-                                                currentPlayersProvider.notifier)
-                                            .action(MyStrings.nightPage);
-                                        // update situtaion to re-nihgt !!
-                                        await isar.putGameStatus(
-                                          dayNumber: await isar.getDayNumber(),
-                                          isDay: false,
-                                          situation: MyStrings.reNight,
-                                        );
-                                        // pop the dialog
-                                        Navigator.of(nightContext).pop();
-                                      },
-                                    ),
-                                  ],
+                                          // pop the dialog
+                                          Navigator.of(nightContext).pop();
+                                        },
+                                      ),
+                                      SizedBox(height: height / 64),
+                                    ],
+                                  ),
                                 ))
                               ..show();
                           } else {

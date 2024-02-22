@@ -124,6 +124,14 @@ class Day extends HookConsumerWidget {
                               .getPlayerByName(playerWithCardName)
                               .then((player) => player!.roleName!));
 
+                      final usedLastMoves = await isar
+                          .retrieveGameStatusN(n: dayNumber)
+                          .then((status) => status?.usedLastMoves);
+
+                      await isar.putGameStatus(
+                          dayNumber: dayNumber,
+                          usedLastMoves: [...?usedLastMoves, (lastMove)]);
+
                       await isar.updatePlayer(
                         playerName: playerWithCardName,
                         heart: 0,

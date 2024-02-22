@@ -60,6 +60,9 @@ class GameStatus {
   // raemained chances for night-enquiry
   int? remainedChancesForNightEnquiry = 2;
 
+  // re-night is run
+  bool? isReNight = false;
+
   // if konstantin choose someone to come back,
   // this will be set to that player's name
 
@@ -96,6 +99,7 @@ class GameStatus {
     int? remainedMafiasBullets,
     List<String?>? usedLastMoves,
     int? remainedChancesForNightEnquiry,
+    bool? isReNight,
   }) {
     final newStatus = GameStatus()
       ..id = id
@@ -116,6 +120,7 @@ class GameStatus {
       ..usedLastMoves = usedLastMoves ?? this.usedLastMoves
       ..remainedChancesForNightEnquiry =
           remainedChancesForNightEnquiry ?? this.remainedChancesForNightEnquiry
+      ..isReNight = isReNight ?? this.isReNight
       ..isChaos = isChaos ?? this.isChaos;
 
     //

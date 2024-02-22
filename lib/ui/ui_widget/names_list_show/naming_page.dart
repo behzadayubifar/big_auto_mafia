@@ -16,7 +16,49 @@ import 'package:go_router/go_router.dart';
 List<String> _listOfPlayersNames = [];
 
 class NamingPage extends HookConsumerWidget {
-  const NamingPage({Key? key}) : super(key: key);
+  NamingPage({Key? key}) : super(key: key);
+/* 
+  List<TextEditingController> controllers = [];
+  int playersNumber = 7;
+
+  List<String> initialNames = [
+    'فاطمه',
+    'بهزاد',
+    'مرتضی',
+    'زهرا',
+    'مامان',
+    'مریم',
+    'محسن',
+    'مرضیه',
+    'حمید',
+    'علی',
+    'محبوبه',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // initialNames.shuffle();
+    controllers = List.generate(playersNumber, (index) {
+      final String inititalText =
+          index < initialNames.length ? initialNames[index] : '';
+      return TextEditingController(text: inititalText);
+    });
+  } */
+
+  final List<String> initialNames = [
+    'فاطمه',
+    'بهزاد',
+    'مریم',
+    'مرضیه',
+    'زهرا',
+    'علی',
+    'محبوبه',
+    'مرتضی',
+    'مامان',
+    'محسن',
+    'حمید',
+  ]..shuffle();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,8 +71,10 @@ class NamingPage extends HookConsumerWidget {
 
     final List<TextEditingController> _controllers = List.generate(
       _playerNumber.value,
-      (i) {
-        return useTextEditingController(text: 'بازیکن ${i + 1}');
+      (index) {
+        final String inititalText =
+            index < initialNames.length ? initialNames[index] : '';
+        return TextEditingController(text: inititalText);
       },
     );
 

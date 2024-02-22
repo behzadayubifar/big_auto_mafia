@@ -420,6 +420,11 @@ class IsarService {
     return result;
   }
 
+  Future<List<Player>> getAllPlayers() async {
+    final players = await isar.players.where(distinct: true).findAll();
+    return players;
+  }
+
   Future<Player?> getPlayerByName(String playerName) async =>
       await isar.players.filter().playerNameEqualTo(playerName).findFirst();
 
@@ -714,6 +719,7 @@ class IsarService {
     int? remainedMafiasBullets,
     int? remainedChancesForNightEnquiry,
     List<String?>? usedLastMoves,
+    bool? isReNight,
   }) async {
     // the only game status for all the game
     final alreadyExists = await isar.gameStatus.where().findFirst();
@@ -736,6 +742,7 @@ class IsarService {
         situation: situation,
         remainedMafiasBullets: remainedMafiasBullets,
         usedLastMoves: usedLastMoves,
+        isReNight: isReNight,
         remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
       );
 
@@ -758,6 +765,7 @@ class IsarService {
             playersWhoSawTheirRole: playersWhoSawTheirRole,
             remainedMafiasBullets: remainedMafiasBullets,
             usedLastMoves: usedLastMoves,
+            isReNight: isReNight,
             remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
           )));
 

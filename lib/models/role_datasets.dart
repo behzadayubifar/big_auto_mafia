@@ -37,10 +37,10 @@ List<String> roleNamesList(playersCount) => [
       roleNames[RoleName.konstantin]!,
       roleNames[RoleName.nostradamous]!,
       if (playersCount >= 8) roleNames[RoleName.citizen]!,
-      if (playersCount >= 9 && playersCount < 11) roleNames[RoleName.mafia]!,
+      if (playersCount == 9 || playersCount == 10) roleNames[RoleName.mafia]!,
       if (playersCount >= 10) roleNames[RoleName.citizen]!,
       if (playersCount == 11) roleNames[RoleName.citizen]!,
-      if (playersCount >= 11) roleNames[RoleName.saul]!,
+      if (playersCount == 11) roleNames[RoleName.saul]!,
     ];
 
 Map<RoleName, Map<String, dynamic>> allRoles = {

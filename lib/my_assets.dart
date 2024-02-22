@@ -28,6 +28,7 @@ class MyAssets {
   static final String matadorCard = Assets.cards.roles.matadorCard.path;
   static final String godfatherCard = Assets.cards.roles.godfatherCard.path;
   static final String whichRole = Assets.cards.roles.whichRole.path;
+  static final String mafiaCard = Assets.cards.roles.mafiaCard.path;
   static final String mysteriousGangsterCharacter =
       Assets.cards.roles.mysteriousGangsterCharacter.path;
 

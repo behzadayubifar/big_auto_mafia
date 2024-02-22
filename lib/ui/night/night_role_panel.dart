@@ -314,21 +314,26 @@ class NightRolePanel extends HookConsumerWidget {
                               role != MyStrings.saul) ||
                           saulCanBuy)
                         asyncPlayers.when(
-                          data: (playersList) => playersList.isEmpty
-                              ? SizedBox()
-                              : ListOfNightPlayersWidget(
-                                  height: _height,
-                                  scrollController:
-                                      scrollControllerForListOfPlayers,
-                                  width: _width,
-                                  choice: choice,
-                                  nostradamousChoices:
-                                      nostradamousChoices.value,
-                                  role: role,
-                                  nightFuture: nightFuture,
-                                  putChoiceLocally: putChoiceLocally,
-                                  playersList: playersList,
-                                ),
+                          data: (playersList) {
+                            (playersList.forEach((player) {
+                              print(player.playerToString(true));
+                            }));
+                            return playersList.isEmpty
+                                ? SizedBox()
+                                : ListOfNightPlayersWidget(
+                                    height: _height,
+                                    scrollController:
+                                        scrollControllerForListOfPlayers,
+                                    width: _width,
+                                    choice: choice,
+                                    nostradamousChoices:
+                                        nostradamousChoices.value,
+                                    role: role,
+                                    nightFuture: nightFuture,
+                                    putChoiceLocally: putChoiceLocally,
+                                    playersList: playersList,
+                                  );
+                          },
                           loading: () => Center(child: defaultLoading),
                           error: (error, stackTrace) => Text(
                             'Error: $error',

@@ -201,6 +201,10 @@ class $AssetsImagesGen {
 class $AssetsOverlaysGen {
   const $AssetsOverlaysGen();
 
+  /// File path: assets/overlays/Dropdown.png
+  AssetGenImage get dropdown =>
+      const AssetGenImage('assets/overlays/Dropdown.png');
+
   /// File path: assets/overlays/Visible_eye_invisible_seen.png
   AssetGenImage get visibleEyeInvisibleSeen =>
       const AssetGenImage('assets/overlays/Visible_eye_invisible_seen.png');
@@ -212,10 +216,6 @@ class $AssetsOverlaysGen {
   /// File path: assets/overlays/devil_emoji.png
   AssetGenImage get devilEmoji =>
       const AssetGenImage('assets/overlays/devil_emoji.png');
-
-  /// File path: assets/overlays/dropdown.png
-  AssetGenImage get dropdown =>
-      const AssetGenImage('assets/overlays/dropdown.png');
 
   /// File path: assets/overlays/knife.png
   AssetGenImage get knife => const AssetGenImage('assets/overlays/knife.png');
@@ -252,10 +252,10 @@ class $AssetsOverlaysGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+        dropdown,
         visibleEyeInvisibleSeen,
         decorate,
         devilEmoji,
-        dropdown,
         knife,
         mask,
         night,
@@ -321,6 +321,10 @@ class $AssetsCardsRolesGen {
   SvgGenImage get leonCard =>
       const SvgGenImage('assets/cards/roles/leon-card.svg');
 
+  /// File path: assets/cards/roles/mafia-card.svg
+  SvgGenImage get mafiaCard =>
+      const SvgGenImage('assets/cards/roles/mafia-card.svg');
+
   /// File path: assets/cards/roles/matador-card.svg
   SvgGenImage get matadorCard =>
       const SvgGenImage('assets/cards/roles/matador-card.svg');
@@ -352,6 +356,7 @@ class $AssetsCardsRolesGen {
         kaneCard,
         konstantinCard,
         leonCard,
+        mafiaCard,
         matadorCard,
         mysteriousGangsterCharacter,
         nostradamusCard,

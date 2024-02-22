@@ -8,6 +8,8 @@ import 'package:auto_mafia/ui/home/home_page.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
 import 'package:auto_mafia/ui/night/night_role_panel.dart';
 import 'package:auto_mafia/ui/show_roles/show_role_page.dart';
+import 'package:auto_mafia/ui/statements/chaos_page.dart';
+import 'package:auto_mafia/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/ui/statements/nights_results.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/ui/x_page.dart';
@@ -28,6 +30,7 @@ final _router = GoRouter(
   // initialLocation: '/nights_results',
   // initialLocation: '/day',
   // initialLocation: '/x-page',
+  // initialLocation: '/chaos',
 
   routes: <RouteBase>[
     GoRoute(
@@ -74,7 +77,7 @@ final _router = GoRouter(
     GoRoute(
       name: 'name-list',
       path: '/name_list',
-      builder: (context, state) => const NamingPage(),
+      builder: (context, state) => NamingPage(),
       routes: [
         GoRoute(
             name: 'show-roles',
@@ -129,6 +132,27 @@ final _router = GoRouter(
           isOneOfMafiaDead: isOneOfMafiaDead,
           hasMafiaBuyedOnce: hasMafiaBuyedOnce,
         );
+      },
+    ),
+    GoRoute(
+      name: 'game-over',
+      path: '/game_over/:winner',
+      builder: (context, state) {
+        final winner = state.pathParameters['winner']!;
+        return GameOverPage(winner: winner);
+      },
+    ),
+    GoRoute(
+      name: 'chaos',
+      path: '/chaos',
+      builder: (context, state) {
+        final threeRemainedPlayers = state.extra as List<String>;
+        // final threeRemainedPlayers = [
+        //   'بازیکن 1',
+        //   'بازیکن 2',
+        //   'بازیکن 3',
+        // ];
+        return Chaos(playersNames: threeRemainedPlayers);
       },
     ),
     GoRoute(

@@ -174,18 +174,47 @@ _matador(String chosenPlayerName, int toNight) async {
 saul(String chosenPlayerName) async {
   final isar = await _container.read(isarServiceProvider.future);
   final saul = await isar.getPlayerByRole(RoleName.saul);
+  //
+  int chosenPlayerCode;
+  //
+  final chosenPlayerRoleName = await isar
+      .getPlayerByName(chosenPlayerName)
+      .then((player) => player?.roleName);
+  //
+  final isBuyable = chosenPlayerRoleName == MyStrings.nostradamous ||
+      chosenPlayerRoleName == MyStrings.citizen;
+  //
 
-  await isar.updatePlayer(
-    playerName: chosenPlayerName,
-    side: RoleType.mafia,
-    // set role name to mafia
-    roleName: roleNames[RoleName.mafia],
-  );
+  final Map<String, int> assignedCodes = await isar.retrieveAssignedCodes();
+
+  if (isBuyable) {
+    chosenPlayerCode = await isar
+        .getPlayerByName(chosenPlayerName)
+        .then((player) => player!.code!);
+
+    await isar.updatePlayer(
+      playerName: chosenPlayerName,
+      side: RoleType.mafia,
+      // set role name to mafia
+      roleName: roleNames[RoleName.mafia],
+      heart: 1,
+    );
+  } else {
+    // get a random int number between 1 & 20 which is not in the assigned codes
+    do {
+      chosenPlayerCode = randomInt(1, 20).run();
+    } while (assignedCodes.containsValue(chosenPlayerCode));
+  }
 
   //
   await isar.updatePlayer(
     playerName: saul!.playerName!,
     hasBuyed: true,
+  );
+  //
+  await isar.putGameStatus(
+    dayNumber: await isar.getDayNumber(),
+    nightCode: chosenPlayerCode,
   );
 }
 
@@ -328,7 +357,7 @@ Future<Map<String, dynamic>?> god(
     // check if kane choice was right *last night* -> he/she must be dead
     final wasKaneChoiceRightLastNight =
         await isar.retrieveNightN(n: nightNumber - 1).then((json) => json.match(
-              (json) => json['nightOfRightChoiceOfKane'] == true,
+              (json) => json['nightOfRightChoiceOfKane'] == (nightNumber - 1),
               (_) => false,
             ));
 
@@ -382,7 +411,7 @@ Future<Map<String, dynamic>?> god(
         nightDone: false,
         handCuffed: false,
         isSaved: false,
-        hasBeenSlaughtered: false,
+        // hasBeenSlaughtered: false,
         isBlocked: false,
       );
     }

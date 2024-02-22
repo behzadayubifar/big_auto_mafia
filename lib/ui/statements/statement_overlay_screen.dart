@@ -27,7 +27,7 @@ class StatementScreen {
       mafia: mafia,
       citizen: citizen,
       independent: independent,
-      title: MyStrings.nightResults,
+      title: title,
     );
   }
 

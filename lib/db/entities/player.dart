@@ -162,6 +162,13 @@ class Player {
           ..description = allRoles[RoleName.matador]!['description']
           ..type = allRoles[RoleName.matador]!['type']
           ..heart = allRoles[RoleName.matador]!['heart'];
+      case 'مافیا ساده':
+        return Player()
+          ..playerName = map.keys.single
+          ..roleName = allRoles[RoleName.mafia]!['roleName']
+          ..description = allRoles[RoleName.mafia]!['description']
+          ..type = allRoles[RoleName.mafia]!['type']
+          ..heart = allRoles[RoleName.mafia]!['heart'];
 
       default:
         return Player();

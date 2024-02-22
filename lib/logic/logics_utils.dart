@@ -78,7 +78,7 @@ Future<int> getPlayersCountCountBasedOnType({required RoleType type}) async {
 /// call this method right after (god method is called and RESULT WIDGET was shown)
 Future<String?> determineWinner({required int dayNumber}) async {
   final isar = await _isar;
-  late final String? winner;
+  String? winner;
   final alivePlayersCount = (await isar.retrievePlayer()).count;
   final mafiaPlayersCount = await getPlayersCountCountBasedOnType(
     type: RoleType.mafia,
@@ -95,24 +95,22 @@ Future<String?> determineWinner({required int dayNumber}) async {
   log('isGameOver: $isGameOver', name: 'isGameOver');
 
   if (isGameOver) {
-    if (mafiaPlayersCount == 0) {
-      winner = 'citizens';
-    } else if (citizenPlayersCount == 0) {
-      winner = 'mafias';
-    } else if (mafiaPlayersCount >= otherThanMafiaPlayersCount) {
+    if (citizenPlayersCount == 0 ||
+        (mafiaPlayersCount >= otherThanMafiaPlayersCount)) {
       winner = 'mafias';
     } else {
       winner = 'citizens';
     }
 
     log('winner: $winner', name: 'determineWinner');
-    isar.putGameStatus(dayNumber: dayNumber, isFinished: true, winner: winner);
+    await isar.putGameStatus(
+        dayNumber: dayNumber, isFinished: true, winner: winner);
   }
 
-  if (alivePlayersCount == 3)
-    isar.putGameStatus(isChaos: true, dayNumber: dayNumber);
-
-  return null;
+/*   if (alivePlayersCount == 3)
+    await isar.putGameStatus(isChaos: true, dayNumber: dayNumber);
+ */
+  return winner;
 }
 
 // a method to determine the number of mafia & citizen players
@@ -185,10 +183,9 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
 Future<String> getARandomLastMove() async {
   final isar = await _isar;
   final dayNumber = await isar.getDayNumber();
-  final usedLastMoves = (await isar.retrieveGameStatusN(n: dayNumber))!
-      .usedLastMoves!
-      .where((element) => element != null)
-      .toList();
+  final usedLastMoves =
+      (await isar.retrieveGameStatusN(n: dayNumber))!.usedLastMoves!;
+
   final shuffledRemainedLastMoves = allLastMoves.keys
       .where((element) => !usedLastMoves.contains(element))
       .toList()
@@ -210,4 +207,28 @@ extension PlayersListConversion on Iterable<Player> {
   List<String> mapToNames() => map(
         (Player player) => player.playerName!,
       ).toList();
+}
+
+Future<String> winnerOfChaod(List<String> handShakenPlayers) async {
+  final isar = await _container.read(isarServiceProvider.future);
+  final dayNumber = await isar.getDayNumber();
+  String winner = '';
+  final rolesTypeOfThem = await isar
+      .retrievePlayer(
+        criteria: (player) => handShakenPlayers.contains(player.playerName!),
+      )
+      .then((rec) => rec.players.map((e) => e.type).toList());
+  if (rolesTypeOfThem.contains(
+    RoleType.mafia,
+  )) {
+    winner = 'mafias';
+  } else {
+    winner = 'citizens';
+  }
+  await isar.putGameStatus(
+    dayNumber: dayNumber,
+    isFinished: true,
+    winner: winner,
+  );
+  return winner;
 }
