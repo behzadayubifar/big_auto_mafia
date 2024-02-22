@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final _container = ProviderContainer();
 
-Future<List<bool>> faceOff({
+Future<List<Player?>> faceOff({
   required String playerWithCardName,
   required String otherPlayerName,
 }) async {
@@ -32,7 +32,7 @@ Future<List<bool>> faceOff({
     heart: 0,
   );
 
-  return isar.updatePlayers([newPlayerWithCard, newOtherPlayer]);
+  return await isar.updatePlayers([newPlayerWithCard, newOtherPlayer]);
 }
 
 // handcuff

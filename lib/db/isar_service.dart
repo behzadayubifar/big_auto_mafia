@@ -101,7 +101,7 @@ class CurrentPlayers extends _$CurrentPlayers {
                   .then((record) => record.players);
 
             case MyStrings.matadorPage:
-              final lastNight = await isar.getNightNumber();
+              final lastNight = (await isar.getNightNumber()) - 1;
               final lastNightOfBlockage =
                   await isar.retrieveNightN(n: lastNight).then(
                         (value) => value.match(
@@ -233,6 +233,7 @@ class CurrentPlayers extends _$CurrentPlayers {
                       mafia?.handCuffed == true)) return [];
 
               if (tonight != 0) {
+                // for shoot in absence of godfather
                 extraList = await isar
                     .retrievePlayer(
                       criteria: (player) => player.type != RoleType.mafia,
@@ -247,8 +248,9 @@ class CurrentPlayers extends _$CurrentPlayers {
 
             case MyStrings.matadorPage:
               if (tonight != 0 && matador?.handCuffed != true) {
-                final lastNight = await isar.getNightNumber();
+                final lastNight = (await isar.getNightNumber()) - 1;
 
+                // for shoot in absence of godfather
                 extraList = await isar
                     .retrievePlayer(
                       criteria: (player) => player.type != RoleType.mafia,
@@ -488,17 +490,24 @@ class IsarService {
 
 // I doubt this works
 
-  Future<List<bool>> updatePlayers(List<Player> players) async {
-    final Map<String, bool> result = {};
-    result.addEntries(
-        players.map((player) => MapEntry(player.playerName!, false)));
-    for (var player in players) {
-      final bool isUpdated = await updatePlayer(
-        playerName: player.playerName!,
-      );
-      result.update(player.playerName!, (value) => isUpdated);
+  Future<List<Player?>> updatePlayers(List<Player> players) async {
+    final updatedPlayers = <Player?>[];
+    for (Player player in players) {
+      await isar.writeTxn(() async {
+        final playerToUpdate = await isar.players
+            .filter()
+            .playerNameEqualTo(player.playerName!)
+            .findFirst();
+        // remove from db
+        if (playerToUpdate != null) {
+          await isar.players.delete(playerToUpdate.id!);
+        }
+        // add new one
+        await isar.players.put(player);
+        updatedPlayers.add(player);
+      });
     }
-    return result.values.toList();
+    return updatedPlayers;
   }
 
   Future<bool> deletePlayer(String playerName) async {

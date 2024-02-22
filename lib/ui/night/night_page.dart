@@ -220,7 +220,23 @@ class NightPage extends HookConsumerWidget {
                                               // isBlocked: false,
                                             );
                                           }
-                                          //
+
+                                          // clear tonight's choices
+                                          await isar.putNight(
+                                            night: tonight,
+                                            godfatherChoice: '',
+                                            saulChoice: '',
+                                            watsonChoice: '',
+                                            leonChoice: '',
+                                            kaneChoice: '',
+                                            konstantinChoice: '',
+                                            mafiasShot: '',
+                                            matadorChoice: '',
+                                            nightOfBlockage: '',
+                                            nightOfRightChoiceOfKane: '',
+                                            nostradamousChoices: [],
+                                            theRoleGuessedByGodfather: '',
+                                          );
 
                                           //
                                           await ref
@@ -233,6 +249,8 @@ class NightPage extends HookConsumerWidget {
                                                 await isar.getDayNumber(),
                                             isDay: false,
                                             isReNight: true,
+                                            nightCode: null,
+                                            remainedMafiasBullets: 1,
                                           );
                                           // pop the dialog
                                           Navigator.of(nightContext).pop();
