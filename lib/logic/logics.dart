@@ -105,13 +105,15 @@ _mafiaShoot(
 ) async {
   print("--------------------------------------------------");
   final isar = await _container.read(isarServiceProvider.future);
-  final chosenPlayer = (await isar.getPlayerByName(chosenPlayerName))!;
-  final previousHeart = chosenPlayer.heart!;
+  final chosenPlayer = (await isar.getPlayerByName(chosenPlayerName));
+  final previousHeart = chosenPlayer?.heart;
   final godFather = await isar.getPlayerByRole(RoleName.godfather);
   final day = await isar.getDayNumber();
   //
-  if (chosenPlayer.roleName != roleNames[RoleName.nostradamous] &&
-      chosenPlayer.isSaved != true) {
+  if (chosenPlayer != null &&
+      chosenPlayer.roleName != roleNames[RoleName.nostradamous] &&
+      chosenPlayer.isSaved != true &&
+      previousHeart != null) {
     print("---------------------Mafia Shot is Runnig-----------------------");
     log('chosenPlayerName: $chosenPlayerName and isSaved: ${chosenPlayer.isSaved}',
         name: 'mafia shoot *********');
@@ -329,6 +331,19 @@ Future<Map<String, dynamic>?> god(
 
 // _______________________________ RESULTS OF THE NIGHT _____________________________________
 
+    // check if kane choice was right *last night* -> he/she must be dead
+    final wasKaneChoiceRightLastNight =
+        await isar.retrieveNightN(n: nightNumber - 1).then((json) => json.match(
+              (json) => json['nightOfRightChoiceOfKane'] != '',
+              (_) => false,
+            ));
+
+    if (wasKaneChoiceRightLastNight)
+      await isar.updatePlayer(
+        playerName: allPlayers[roleNames[RoleName.kane]]!,
+        heart: 0,
+      );
+
     // it's time to retieve new alive and dead players
     final newDeadPlayers = await isar.retrievePlayer(
       isAlive: false,
@@ -353,19 +368,6 @@ Future<Map<String, dynamic>?> god(
         disclosuredPlayerOfTonight = kaneChoice.playerName;
       }
     }
-
-    // check if kane choice was right *last night* -> he/she must be dead
-    final wasKaneChoiceRightLastNight =
-        await isar.retrieveNightN(n: nightNumber - 1).then((json) => json.match(
-              (json) => json['nightOfRightChoiceOfKane'] == (nightNumber - 1),
-              (_) => false,
-            ));
-
-    if (wasKaneChoiceRightLastNight)
-      await isar.updatePlayer(
-        playerName: allPlayers[roleNames[RoleName.kane]]!,
-        heart: 0,
-      );
 
     final newAndOldDeadPlayersDiff = newDeadPlayers.players
         .mapToNames()

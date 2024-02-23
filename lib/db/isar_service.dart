@@ -175,7 +175,8 @@ class CurrentPlayers extends _$CurrentPlayers {
             case MyStrings.nightPage:
               final players = await isar
                   .retrievePlayer(
-                    criteria: (player) => player.nightDone == false,
+                    criteria: (player) =>
+                        player.nightDone == false && player.heart != 0,
                   )
                   .then((value) => value.players);
               return players;
