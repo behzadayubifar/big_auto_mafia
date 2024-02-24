@@ -37,7 +37,7 @@ class MainApp extends ConsumerWidget {
     final isar = ref.watch(isarServiceProvider.future);
 
     return MaterialApp.router(
-      title: 'Auto Mafia',
+      title: 'Auto Mafia', backButtonDispatcher: RootBackButtonDispatcher(),
       routerConfig: router,
       theme: _theme,
       // darkTheme: ThemeData(brightness: Brightness.dark),

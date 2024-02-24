@@ -1,6 +1,8 @@
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
+import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/load_game_logics.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
@@ -14,9 +16,11 @@ import 'package:auto_mafia/ui/statements/nights_results.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 final routerProvider = Provider<GoRouter>((_) => _router);
+final _container = ProviderContainer();
 
 final _router = GoRouter(
   debugLogDiagnostics: true,
@@ -26,11 +30,12 @@ final _router = GoRouter(
   // initialLocation: '/night-role-panel',
   // initialLocation: '/night_timer',
   // last was this :
-  initialLocation: '/name_list',
+  // initialLocation: '/name_list',
   // initialLocation: '/nights_results',
   // initialLocation: '/day',
   // initialLocation: '/x-page',
   // initialLocation: '/chaos',
+  initialLocation: '/',
 
   routes: <RouteBase>[
     GoRoute(
@@ -72,7 +77,19 @@ final _router = GoRouter(
     GoRoute(
       name: 'home',
       path: '/',
-      builder: (context, state) => const HomePage(),
+      builder: (_, __) => HomePage(),
+      redirect: (context, state) async {
+        final isar = await _container.read(isarServiceProvider.future);
+        final isFinished = await isar
+            .retrieveGameStatusN(n: await isar.getDayNumber())
+            .then((status) => status?.isFinished);
+        if (isFinished == true) {
+          context.go('/name_list');
+          return null;
+        } else {
+          return null;
+        }
+      },
     ),
     GoRoute(
       name: 'name-list',
@@ -132,6 +149,7 @@ final _router = GoRouter(
           isHandCuffed: isHandCuffed,
           isOneOfMafiaDead: isOneOfMafiaDead,
           hasMafiaBuyedOnce: hasMafiaBuyedOnce,
+          isRenight: isRenight,
         );
       },
     ),

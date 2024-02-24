@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:auto_mafia/constants/my_strings.dart';
+import 'package:auto_mafia/db/entities/night_results.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -362,6 +363,7 @@ class IsarService {
           PlayerSchema,
           NightSchema,
           GameStatusSchema,
+          ResultsSchema,
         ],
         inspector: true,
         directory: dir.path,
@@ -839,6 +841,60 @@ class IsarService {
       result[player.playerName!] = player.code!;
     }
     return result;
+  }
+
+  // ------- night results -------
+  Future<Results> putNightResults({
+    int? night,
+    String? bornPlayer,
+    String? disclosured,
+    String? slaughtered,
+    List<String>? tonightDeads,
+    int? nightCode,
+    List<String>? allDeadPlayers,
+    int? remainedChancesForNightEnquiry,
+  }) async {
+    final tonight = night ?? await getNightNumber();
+    final wantedNightResults =
+        await isar.results.filter().nightNumberEqualTo(tonight).findFirst();
+    if (wantedNightResults != null) {
+      final newResults = wantedNightResults.copy(
+        nightNumber: night,
+        bornPlayer: bornPlayer,
+        disclosured: disclosured,
+        slaughtered: slaughtered,
+        tonightDeads: tonightDeads,
+        nightCode: nightCode,
+        allDeadPlayers: allDeadPlayers,
+        remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
+      );
+      await isar.writeTxn(() => isar.results.put(newResults));
+      return newResults;
+    } else {
+      final newResults = Results()
+        ..nightNumber = night
+        ..bornPlayer = bornPlayer
+        ..disclosured = disclosured
+        ..slaughtered = slaughtered
+        ..tonightDeads = tonightDeads
+        ..nightCode = nightCode
+        ..allDeadPlayers = allDeadPlayers
+        ..remainedChancesForNightEnquiry = remainedChancesForNightEnquiry;
+      return newResults;
+    }
+  }
+
+  /// a method to retrieve night results
+  Future<Results?> retrieveNightResults(int night) async {
+    final nightResults =
+        await isar.results.filter().nightNumberEqualTo(night).findFirst();
+    if (nightResults != null) {
+      log('night results found : ${nightResults.toString()}',
+          name: 'retrieveNightResults');
+      return nightResults;
+    }
+    log('night results not found', name: 'retrieveNightResults');
+    return null;
   }
 }
 // how to manage which player has done his/her night job

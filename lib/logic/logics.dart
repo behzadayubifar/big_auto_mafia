@@ -430,6 +430,18 @@ Future<Map<String, dynamic>?> god(
     // await _container
     //     .read(currentPlayersProvider.notifier)
     //     .action(MyStrings.dayPage);
+
+    // insert tonight's results into db
+    await isar.putNightResults(
+      allDeadPlayers: allDeadPlayers,
+      bornPlayer: bornPlayer,
+      disclosured: disclosuredPlayerOfTonight,
+      nightCode: nightCode,
+      night: nightNumber,
+      remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
+      slaughtered: slaughteredPlayerOfTonight,
+      tonightDeads: newDeadPlayers.players.mapToNames(),
+    );
     return info;
     // context.goNamed('nights-results', extra: info);
 

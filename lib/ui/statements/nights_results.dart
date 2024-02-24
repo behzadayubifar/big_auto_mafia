@@ -215,6 +215,10 @@ class NightsResuls extends HookConsumerWidget {
                                         dayNumber: dayNumber);
 
                                     if (winner != null) {
+                                      await isar.putGameStatus(
+                                        dayNumber: dayNumber,
+                                        isFinished: true,
+                                      );
                                       context.go('/game_over/$winner');
                                       return;
                                     }
