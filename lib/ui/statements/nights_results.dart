@@ -215,7 +215,7 @@ class NightsResuls extends HookConsumerWidget {
                                         dayNumber: dayNumber);
 
                                     if (winner != null) {
-                                      context.go('/game-over/$winner');
+                                      context.go('/game_over/$winner');
                                       return;
                                     }
 

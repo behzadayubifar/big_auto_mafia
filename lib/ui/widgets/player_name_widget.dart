@@ -162,6 +162,12 @@ class PlayerNameWidget extends HookConsumerWidget {
                         ?.isNotEmpty,
                     (r) => null));
 
+            final isReNight = await isar
+                .retrieveGameStatusN(
+                  n: tonight,
+                )
+                .then((status) => status!.isReNight);
+
             final info = {
               'name': playerName,
               'role': role,
@@ -174,6 +180,7 @@ class PlayerNameWidget extends HookConsumerWidget {
               'isHandCuffed': isHandCuffed,
               'isOneOfMafiaDead': isOneOfMafiaDead,
               'hasMafiaBuyedOnce': hasMafiaBuyedOnce,
+              'isRenight': isReNight,
             };
 
             print('from GoRouter: $info');

@@ -250,7 +250,8 @@ class NightPage extends HookConsumerWidget {
                                             isDay: false,
                                             isReNight: true,
                                             nightCode: null,
-                                            remainedMafiasBullets: 1,
+                                            // no more shoot for mafias in this night
+                                            remainedMafiasBullets: 0,
                                           );
                                           // pop the dialog
                                           Navigator.of(nightContext).pop();

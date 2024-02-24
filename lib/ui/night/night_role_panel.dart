@@ -33,6 +33,7 @@ class NightRolePanel extends HookConsumerWidget {
     this.isOneOfMafiaDead,
     this.hasMafiaBuyedOnce,
     this.night,
+    this.isRenight,
     Key? key,
   }) : super(key: key);
 
@@ -46,6 +47,7 @@ class NightRolePanel extends HookConsumerWidget {
   final int? night;
   final bool? isOneOfMafiaDead;
   final bool? hasMafiaBuyedOnce;
+  final bool? isRenight;
 
   final CountDownController timerController = CountDownController();
 
@@ -64,8 +66,10 @@ class NightRolePanel extends HookConsumerWidget {
     //
     final choice = useState('');
     final nostradamousChoices = useState(<String>[]);
-    final shootOrSlaughter =
-        useState((role == MyStrings.godfather && isHandCuffed) ? 'shoot' : '');
+    final shootOrSlaughter = useState(
+        (role == MyStrings.godfather && isHandCuffed && isRenight != true)
+            ? 'shoot'
+            : '');
     final guessedRole = useState('');
 
     final mafiaShotInabsenceOfGodfather = useState('');
@@ -282,7 +286,8 @@ class NightRolePanel extends HookConsumerWidget {
               // shoot or slaughter
               if (role == MyStrings.godfather &&
                   shootOrSlaughter.value == '' &&
-                  night != 0)
+                  night != 0 &&
+                  isRenight != true)
                 Positioned(
                   bottom: _height / 4.8,
                   child: Column(
