@@ -34,6 +34,8 @@ class MyStrings {
   static const String dayPage = 'day-page';
   static const String nightResultsPage = 'night-results-page';
   static const String reNight = 're-night';
+  static const String gameOver = 'game-over';
+  static const String chaos = 'chaos';
 
   // show-role-page situations
   static const String beforeShowingRole = 'before-showing-role';
@@ -103,7 +105,7 @@ class MyStrings {
   static const String nightCode = ' کد شب :  ';
   static const String allDeads = 'همۀ رفتگان';
   static const String nextNight = 'شب بعد';
-  static const String nextDAy = 'روز بعد';
+  static const String nextDay = 'روز بعد';
   static const String returnedToGame = 'به بازی برگشت';
   static const String isMafia = 'مافیاست';
   static const String isSlaughtered = 'سلاخی شد';

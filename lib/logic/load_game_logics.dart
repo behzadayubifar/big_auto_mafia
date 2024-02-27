@@ -4,7 +4,7 @@ import 'package:auto_mafia/db/entities/game_status.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
-import 'package:auto_mafia/ui/statements/nights_results.dart';
+import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

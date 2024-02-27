@@ -65,6 +65,14 @@ class CurrentPlayers extends _$CurrentPlayers {
           .retrieveGameStatusN(n: await isar.getDayNumber())
           .then((status) => status?.situation); */
       // Set the state to loading
+      final tonight = await isar.getNightNumber();
+      List<String> playersWhoSawTheirRole = [];
+      if (tonight == -1) {
+        playersWhoSawTheirRole = await isar
+            .retrieveGameStatusN(n: 0)
+            .then((status) => status!.playersWhoSawTheirRole);
+      }
+
       state = const AsyncValue.loading();
       await Future.delayed(Duration(seconds: 1));
       // Retrieve the players baesed on the situation
@@ -73,11 +81,32 @@ class CurrentPlayers extends _$CurrentPlayers {
           switch (situation) {
             // situations that need all the alive players
             case MyStrings.nightPage:
-            case MyStrings.showRoles:
+              return await isar
+                  .retrievePlayer(
+                criteria: (player) =>
+                    player.nightDone == false && player.heart != 0,
+              )
+                  .then((value) {
+                for (var player in value.players) {
+                  print(player.playerToString(false));
+                }
+                return value.players;
+              });
+
             case MyStrings.dayPage:
               return await isar
                   .retrievePlayer(isAlive: true)
                   .then((record) => record.players);
+
+            case MyStrings.showRoles:
+
+              // players who have not seen their roles
+              return await isar
+                  .retrievePlayer(
+                    criteria: (player) =>
+                        !playersWhoSawTheirRole.contains(player.playerName),
+                  )
+                  .then((value) => value.players);
 
             case MyStrings.leonPage:
               return await isar
@@ -150,9 +179,12 @@ class CurrentPlayers extends _$CurrentPlayers {
     state = const AsyncValue.loading();
     final isar = await ref.watch(isarServiceProvider.future);
     final tonight = await isar.getNightNumber();
-    final playersWhoSawTheirRole = await isar
-        .retrieveGameStatusN(n: 0)
-        .then((status) => status?.playersWhoSawTheirRole);
+    List<String>? playersWhoSawTheirRole;
+    if (tonight == -1) {
+      playersWhoSawTheirRole = await isar
+          .retrieveGameStatusN(n: 0)
+          .then((status) => status!.playersWhoSawTheirRole);
+    }
     //
     final Player? konstantin = await isar.getPlayerByRole(RoleName.konstantin);
     final Player? kane = await isar.getPlayerByRole(RoleName.kane);
@@ -174,13 +206,12 @@ class CurrentPlayers extends _$CurrentPlayers {
         if (situation != MyStrings.predictPage) {
           switch (situation) {
             case MyStrings.nightPage:
-              final players = await isar
+              return await isar
                   .retrievePlayer(
                     criteria: (player) =>
                         player.nightDone == false && player.heart != 0,
                   )
                   .then((value) => value.players);
-              return players;
 
             case MyStrings.showRoles:
               return await isar

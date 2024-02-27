@@ -17,6 +17,7 @@ List<String> _listOfPlayersNames = [];
 
 class NamingPage extends HookConsumerWidget {
   NamingPage({Key? key}) : super(key: key);
+
 /* 
   List<TextEditingController> controllers = [];
   int playersNumber = 7;
@@ -74,7 +75,9 @@ class NamingPage extends HookConsumerWidget {
       (index) {
         final String inititalText =
             index < initialNames.length ? initialNames[index] : '';
-        return TextEditingController(text: inititalText);
+        return useTextEditingController(
+          text: inititalText,
+        );
       },
     );
 
@@ -157,8 +160,7 @@ class NamingPage extends HookConsumerWidget {
                                 situation: MyStrings.showRoles,
                               ));
 
-                          context.pushReplacementNamed('night',
-                              extra: Info.showRoles);
+                          context.pushNamed('night', extra: Info.showRoles);
                           break;
                       }
                     },

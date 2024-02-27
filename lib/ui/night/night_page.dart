@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
+import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
@@ -18,19 +19,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-// class NightPage extends StatefulHookConsumerWidget {
-//   const NightPage({super.key});
-
-//   @override
-//   ConsumerState<ConsumerStatefulWidget> createState() => _NightPageState();
-// }
-// class _NightPageState extends ConsumerState<NightPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }
-
 class NightPage extends HookConsumerWidget {
   NightPage({
     required this.info,
@@ -41,6 +29,7 @@ class NightPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext nightContext, WidgetRef ref) {
+    print('this is night');
     //
     String nightNumber = '';
     //
@@ -48,11 +37,7 @@ class NightPage extends HookConsumerWidget {
     final width = MediaQuery.sizeOf(nightContext).width;
     //
     final asyncPlayers = ref.watch(currentPlayersProvider);
-    //
-    /*   final scrollController = useScrollController(
-      initialScrollOffset: 0,
-      keepScrollOffset: true,
-    ); */
+
     // -for saul-
     final bool mafiaBuyed =
         (info['saulChoice'] != null && info['saulChoice'] != "");
@@ -65,7 +50,6 @@ class NightPage extends HookConsumerWidget {
       backgroundColor: AppColors.backGround,
       body: switch (asyncPlayers) {
         AsyncData(:final value) => SafeArea(
-            // maintainBottomViewPadding: true,
             minimum: EdgeInsets.only(top: height / 15),
             child: Center(
               child: Column(
@@ -86,30 +70,34 @@ class NightPage extends HookConsumerWidget {
                         shrinkWrap: true,
                         cacheExtent: height / 1.64,
                         restorationId: 'night-page',
-                        // addAutomaticKeepAlives: true,
-                        // key: _pageStorageKey,
                         clipBehavior: Clip.antiAlias,
                         // shrinkWrap: true,
                         // physics: RangeMaintainingScrollPhysics(),
                         itemCount: value.length,
-                        itemBuilder: (context, index) {
+                        itemBuilder: (_, index) {
+                          print(
+                              'object --------------------------------------------------------');
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              PlayerNameWidget(
-                                playerName: value[index].playerName!,
-                                height: height,
-                                situation: info['situation']!,
-                                nightContext: nightContext,
-                              ),
-                              SizedBox(
-                                height: height / 64,
-                              ),
+                              if (value.elementAt(index).nightDone != true)
+                                PlayerNameWidget(
+                                  playerName: value[index].playerName!,
+                                  height: height,
+                                  situation: info['situation']!,
+                                  nightContext: nightContext,
+                                ),
+                              if (value.elementAt(index).nightDone != true)
+                                SizedBox(
+                                  height: height / 64,
+                                ),
                             ],
                           );
                         },
                         separatorBuilder: (BuildContext context, int index) {
-                          return SizedBox(height: height / 48);
+                          if (value.elementAt(index).nightDone != true)
+                            return SizedBox(height: height / 48);
+                          return SizedBox();
                         },
                       ),
                     ),
@@ -126,6 +114,12 @@ class NightPage extends HookConsumerWidget {
                               await ref.read(isarServiceProvider.future);
 
                           final yesterday = await isar.getDayNumber();
+
+                          await isar.putGameStatus(
+                            dayNumber: yesterday,
+                            isDay: true,
+                            situation: MyStrings.dayPage,
+                          );
 
                           await ref
                               .read(currentPlayersProvider.notifier)
@@ -311,7 +305,8 @@ class NightPage extends HookConsumerWidget {
               ),
             ),
           ),
-        _ => defaultLoading,
+        AsyncError() => const Text('Oops, something unexpected happened'),
+        _ => defaultLoading(),
       },
     );
   }

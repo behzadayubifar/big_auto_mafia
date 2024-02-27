@@ -71,6 +71,12 @@ class ShowRolePage extends HookConsumerWidget {
               await ref
                   .read(currentPlayersProvider.notifier)
                   .action(MyStrings.nightPage);
+
+              await isar.putGameStatus(
+                dayNumber: dayNumber,
+                isDay: true,
+                situation: MyStrings.dayPage,
+              );
               context.pushReplacementNamed(
                 'day',
                 pathParameters: {'dayNumber': dayNumber.toString()},

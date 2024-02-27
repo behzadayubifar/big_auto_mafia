@@ -38,7 +38,7 @@ class GameStatus {
   List<String>? timeLeft = ['', '0'];
 
   // who saw their role
-  List<String>? playersWhoSawTheirRole = [];
+  List<String> playersWhoSawTheirRole = [];
 
   // status of game
   String? statusOfGame = '';

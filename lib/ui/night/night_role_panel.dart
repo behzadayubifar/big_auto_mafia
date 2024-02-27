@@ -339,7 +339,7 @@ class NightRolePanel extends HookConsumerWidget {
                                     playersList: playersList,
                                   );
                           },
-                          loading: () => Center(child: defaultLoading),
+                          loading: () => Center(child: defaultLoading()),
                           error: (error, stackTrace) => Text(
                             'Error: $error',
                             // style: MyTextStyles.error,

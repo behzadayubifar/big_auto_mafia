@@ -1,8 +1,9 @@
+import 'dart:developer';
+
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
-import 'package:auto_mafia/logic/load_game_logics.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
@@ -12,15 +13,13 @@ import 'package:auto_mafia/ui/night/night_role_panel.dart';
 import 'package:auto_mafia/ui/show_roles/show_role_page.dart';
 import 'package:auto_mafia/ui/statements/chaos_page.dart';
 import 'package:auto_mafia/ui/statements/game_over_page.dart';
-import 'package:auto_mafia/ui/statements/nights_results.dart';
+import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 final routerProvider = Provider<GoRouter>((_) => _router);
-final _container = ProviderContainer();
 
 final _router = GoRouter(
   debugLogDiagnostics: true,
@@ -31,34 +30,17 @@ final _router = GoRouter(
   // initialLocation: '/night_timer',
   // last was this :
   // initialLocation: '/name_list',
+  initialLocation: '/',
   // initialLocation: '/nights_results',
   // initialLocation: '/day',
   // initialLocation: '/x-page',
   // initialLocation: '/chaos',
-  initialLocation: '/',
 
   routes: <RouteBase>[
     GoRoute(
       name: 'nights-results',
       path: '/nights_results',
       builder: (context, state) {
-        // final Map<String, dynamic> info = {
-        //   'tonight': '1',
-        //   'bornPlayer': 'بازیکن 7',
-        //   'disclosured': 'علی موسوی',
-        //   'slaughtered': 'ماتادور',
-        //   'tonightDeads': ['بازیکن 3', 'بازیکن 4'],
-        //   'nightCode': 1,
-        //   'allDeadPlayers': [
-        //     'بازیکن 1',
-        //     'بازیکن 2',
-        //     'بازیکن 3',
-        //     'بازیکن 4',
-        //     'بازیکن 5',
-        //     'بازیکن 6',
-        //     'بازیکن 7'
-        //   ],};
-
         final info = state.extra as Map<String, dynamic>;
 
         return NightsResuls(
@@ -78,18 +60,19 @@ final _router = GoRouter(
       name: 'home',
       path: '/',
       builder: (_, __) => HomePage(),
-      redirect: (context, state) async {
-        final isar = await _container.read(isarServiceProvider.future);
-        final isFinished = await isar
-            .retrieveGameStatusN(n: await isar.getDayNumber())
-            .then((status) => status?.isFinished);
-        if (isFinished == true) {
-          context.go('/name_list');
-          return null;
-        } else {
-          return null;
-        }
-      },
+      // redirect: (context, state) async {
+      //   final isar = await _container.read(isarServiceProvider.future);
+      //   final isFinished = await isar
+      //       .retrieveGameStatusN(n: await isar.getDayNumber())
+      //       .then((status) => status?.isFinished);
+      //   if (isFinished == false) {
+      //     context.go('/name_list');
+      //   } else {
+      //     context.go('/');
+
+      //     return;
+      //   }
+      // },
     ),
     GoRoute(
       name: 'name-list',
@@ -109,7 +92,9 @@ final _router = GoRouter(
       name: 'night',
       path: '/night',
       builder: (context, state) {
+        print('here going to night');
         final info = state.extra as Map<String, dynamic>;
+        log('info: $info', name: 'night-info');
         return NightPage(info: info);
       },
     ),
@@ -135,7 +120,6 @@ final _router = GoRouter(
         final bool isHandCuffed = info['isHandCuffed']!;
         final bool isOneOfMafiaDead = info['isOneOfMafiaDead'];
         final bool hasMafiaBuyedOnce = info['hasMafiaBuyedOnce'];
-        final bool? isRenight = info['isRenight']!;
 
         return NightRolePanel(
           name: name,
@@ -149,7 +133,6 @@ final _router = GoRouter(
           isHandCuffed: isHandCuffed,
           isOneOfMafiaDead: isOneOfMafiaDead,
           hasMafiaBuyedOnce: hasMafiaBuyedOnce,
-          isRenight: isRenight,
         );
       },
     ),

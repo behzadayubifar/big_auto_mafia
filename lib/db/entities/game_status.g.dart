@@ -118,16 +118,11 @@ int _gameStatusEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.playersWhoSawTheirRole.length * 3;
   {
-    final list = object.playersWhoSawTheirRole;
-    if (list != null) {
-      bytesCount += 3 + list.length * 3;
-      {
-        for (var i = 0; i < list.length; i++) {
-          final value = list[i];
-          bytesCount += value.length * 3;
-        }
-      }
+    for (var i = 0; i < object.playersWhoSawTheirRole.length; i++) {
+      final value = object.playersWhoSawTheirRole[i];
+      bytesCount += value.length * 3;
     }
   }
   {
@@ -215,7 +210,7 @@ GameStatus _gameStatusDeserialize(
   object.isFinished = reader.readBoolOrNull(offsets[4]);
   object.isReNight = reader.readBoolOrNull(offsets[5]);
   object.nightCode = reader.readLongOrNull(offsets[6]);
-  object.playersWhoSawTheirRole = reader.readStringList(offsets[7]);
+  object.playersWhoSawTheirRole = reader.readStringList(offsets[7]) ?? [];
   object.remainedChancesForNightEnquiry = reader.readLongOrNull(offsets[8]);
   object.remainedMafiasBullets = reader.readLongOrNull(offsets[9]);
   object.situation = reader.readStringOrNull(offsets[10]);
@@ -249,7 +244,7 @@ P _gameStatusDeserializeProp<P>(
     case 6:
       return (reader.readLongOrNull(offset)) as P;
     case 7:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 8:
       return (reader.readLongOrNull(offset)) as P;
     case 9:
@@ -700,24 +695,6 @@ extension GameStatusQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      playersWhoSawTheirRoleIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'playersWhoSawTheirRole',
-      ));
-    });
-  }
-
-  QueryBuilder<GameStatus, GameStatus, QAfterFilterCondition>
-      playersWhoSawTheirRoleIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'playersWhoSawTheirRole',
       ));
     });
   }
@@ -2633,7 +2610,7 @@ extension GameStatusQueryProperty
     });
   }
 
-  QueryBuilder<GameStatus, List<String>?, QQueryOperations>
+  QueryBuilder<GameStatus, List<String>, QQueryOperations>
       playersWhoSawTheirRoleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'playersWhoSawTheirRole');

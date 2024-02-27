@@ -314,7 +314,7 @@ Future<Map<String, dynamic>?> god(
     if (mafiaShot != null) await _mafiaShoot(mafiaShot);
 
     // godfather choice for slaughter
-    if (godFatherChoice != null)
+    if (godFatherChoice != null && isGodfathersGuessRight == true)
       await _godfatherSlaughter(godFatherChoice.playerName!);
 
     // leon choice for shooting
