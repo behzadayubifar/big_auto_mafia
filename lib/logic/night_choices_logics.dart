@@ -3,6 +3,7 @@ import 'package:auto_mafia/db/entities/game_status.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
+import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/statements/statement_overlay_screen.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
 import 'package:flutter/material.dart';
@@ -92,10 +93,7 @@ Future<bool?> buttonLogicExecuter({
 }) async {
   final isar = await _container.read(isarServiceProvider.future);
   await isar.putGameStatus(dayNumber: night, situation: MyStrings.nightPage);
-  final roleEnum = roleNames.keys.firstWhere(
-    (key) => roleNames[key] == currentPlayerRole,
-    orElse: () => throw Exception('role not found'),
-  );
+
   // doesn't work when palyer is Citizen becausee it always retruns first Citizen player
   // so we need to change the logic and get the player by its name
   final playerWhoHasDoneHisJob = await isar.getPlayerByName(currentPlayerName);
@@ -139,6 +137,7 @@ Future<bool?> buttonLogicExecuter({
           'night',
           extra: await Info.night(),
         );
+        _container.read(loadingProvider.notifier).toggle();
       },
       mafia: resultOfPrediction.mafiaPlayersCount,
       citizen: resultOfPrediction.citizen,

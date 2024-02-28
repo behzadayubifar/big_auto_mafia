@@ -81,14 +81,15 @@ class CurrentPlayers extends _$CurrentPlayers {
           switch (situation) {
             // situations that need all the alive players
             case MyStrings.nightPage:
-              return await isar
-                  .retrievePlayer(
-                criteria: (player) =>
-                    player.nightDone == false && player.heart != 0,
-              )
-                  .then((value) {
+              return await isar.retrievePlayer(
+                criteria: (player) {
+                  'mio'.log();
+                  print(player.playerToString(true));
+                  return player.nightDone == false && player.heart != 0;
+                },
+              ).then((value) {
                 for (var player in value.players) {
-                  print(player.playerToString(false));
+                  print(player.playerToString(true));
                 }
                 return value.players;
               });
@@ -201,17 +202,23 @@ class CurrentPlayers extends _$CurrentPlayers {
     List<Player>? extraList = [];
     state = await AsyncValue.guard(
       () async {
-        log('here in action');
+        log('here in action : $situation', name: 'CurrentPlayers action');
 
         if (situation != MyStrings.predictPage) {
           switch (situation) {
             case MyStrings.nightPage:
-              return await isar
-                  .retrievePlayer(
-                    criteria: (player) =>
-                        player.nightDone == false && player.heart != 0,
-                  )
-                  .then((value) => value.players);
+              return await isar.retrievePlayer(
+                criteria: (player) {
+                  'mio'.log();
+                  print(player.playerToString(true));
+                  return player.nightDone == false && player.heart != 0;
+                },
+              ).then((value) {
+                for (var player in value.players) {
+                  print(player.playerToString(true));
+                }
+                return value.players;
+              });
 
             case MyStrings.showRoles:
               return await isar
@@ -885,11 +892,12 @@ class IsarService {
     List<String>? allDeadPlayers,
     int? remainedChancesForNightEnquiry,
   }) async {
+    late Results newResults;
     final tonight = night ?? await getNightNumber();
     final wantedNightResults =
         await isar.results.filter().nightNumberEqualTo(tonight).findFirst();
     if (wantedNightResults != null) {
-      final newResults = wantedNightResults.copy(
+      newResults = wantedNightResults.copy(
         nightNumber: night,
         bornPlayer: bornPlayer,
         disclosured: disclosured,
@@ -899,10 +907,8 @@ class IsarService {
         allDeadPlayers: allDeadPlayers,
         remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
       );
-      await isar.writeTxn(() => isar.results.put(newResults));
-      return newResults;
     } else {
-      final newResults = Results()
+      newResults = Results()
         ..nightNumber = night
         ..bornPlayer = bornPlayer
         ..disclosured = disclosured
@@ -911,8 +917,9 @@ class IsarService {
         ..nightCode = nightCode
         ..allDeadPlayers = allDeadPlayers
         ..remainedChancesForNightEnquiry = remainedChancesForNightEnquiry;
-      return newResults;
     }
+    await isar.writeTxn(() => isar.results.put(newResults));
+    return newResults;
   }
 
   /// a method to retrieve night results

@@ -4,8 +4,8 @@ import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
-import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
+import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/ui_utils/calculate_text_layout_size.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+final _container = ProviderContainer();
 
 class PlayerNameWidget extends HookConsumerWidget {
   PlayerNameWidget({
@@ -37,18 +37,19 @@ class PlayerNameWidget extends HookConsumerWidget {
 
     final _textSize = calculateTextSize(
       text: playerName,
-      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+      style: Theme.of(nightContext).textTheme.headlineSmall!.copyWith(
             color: Colors.white,
             overflow: TextOverflow.fade,
           ),
-      context: context,
+      context: nightContext,
     );
 
     //
     return InkWell(
       // autofocus: true,
       onLongPress: () async {
-        log('on long press', name: 'player_name_widget.dart');
+        ref.read(loadingProvider.notifier).state = true;
+        log('on long press', name: 'player_name_dart');
         ['situation in player_name_widget', situation].log();
         if (_isPlayerNotSelected.value == true) {
           _isPlayerNotSelected.value = false;
@@ -66,16 +67,19 @@ class PlayerNameWidget extends HookConsumerWidget {
             // go to
             await ref.read(currentPlayersProvider.notifier).action(situation);
 
+            if (!nightContext.mounted) return;
+            ref.read(loadingProvider.notifier).state = false;
+
           case MyStrings.showRoles:
             // go to show-roles
             final playersWhoSawTheirRole =
                 (await isar.retrieveGameStatusN(n: 0))!
                     .playersWhoSawTheirRole
-                    ?.toList();
+                    .toList();
 
             print(playersWhoSawTheirRole);
 
-            playersWhoSawTheirRole!.add(playerName);
+            playersWhoSawTheirRole.add(playerName);
 
             print(playersWhoSawTheirRole);
 
@@ -83,15 +87,17 @@ class PlayerNameWidget extends HookConsumerWidget {
               dayNumber: 0,
               playersWhoSawTheirRole: playersWhoSawTheirRole,
             );
-
-            context.pushReplacementNamed(
-              'show-roles',
-              pathParameters: {'role': role},
-            );
+            // if (!nightContext.mounted) return;
+            ref.read(loadingProvider.notifier).state = false;
 
             await ref
                 .read(currentPlayersProvider.notifier)
                 .action(situation, playerName);
+
+            nightContext.pushReplacementNamed(
+              'show-roles',
+              pathParameters: {'role': role},
+            );
 
           case MyStrings.nightPage:
             late final bool mafiaHasBullet;
@@ -185,13 +191,12 @@ class PlayerNameWidget extends HookConsumerWidget {
 
             print('from GoRouter: $info');
 
+            // if (nightContext.mounted)
+
             nightContext.goNamed(
               'night_role_panel',
               extra: info,
             );
-
-          case MyStrings.godfatherPage:
-            print('godfatherPage is in action now');
         }
       },
       child: AnimatedContainer(
@@ -239,7 +244,7 @@ class PlayerNameWidget extends HookConsumerWidget {
               // content of the widget
               Text(
                 playerName,
-                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                style: Theme.of(nightContext).textTheme.headlineSmall!.copyWith(
                       color: _isPlayerNotSelected.value
                           ? Colors.white
                           : AppColors.backGround.withOpacity(0.9),
@@ -253,3 +258,20 @@ class PlayerNameWidget extends HookConsumerWidget {
     );
   }
 }
+
+
+
+// class PlayerNameWidget extends StatefulHookConsumerWidget {
+//   const PlayerNameWidget({super.key});
+
+//   @override
+//   ConsumerState<ConsumerStatefulWidget> createState() =>
+//       _PlayerNameWidgetState();
+// }
+
+// class _PlayerNameWidgetState extends ConsumerState<PlayerNameWidget> {
+//   @override
+//   Widget build(BuildnightContext nightContext) {
+//     return Container();
+//   }
+// }

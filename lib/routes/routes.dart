@@ -4,6 +4,7 @@ import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
@@ -20,6 +21,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final routerProvider = Provider<GoRouter>((_) => _router);
+final _container = ProviderContainer();
 
 final _router = GoRouter(
   debugLogDiagnostics: true,
@@ -162,7 +164,7 @@ final _router = GoRouter(
       path: '/day/:dayNumber',
       builder: (context, state) {
         final dayNumber = int.parse(state.pathParameters['dayNumber']!);
-        print('dayNumber: $dayNumber');
+        print('dayNumber ...: $dayNumber');
         return Day(
           dayNumber: dayNumber,
         );

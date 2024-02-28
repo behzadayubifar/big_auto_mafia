@@ -46,7 +46,6 @@ class MyButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final buttonState = ref.watch(myButtonControllerProvider(state!));
     final localstate = useState(
       'default',
     );
