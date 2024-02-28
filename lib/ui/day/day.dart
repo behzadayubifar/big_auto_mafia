@@ -26,6 +26,14 @@ class Day extends StatefulHookConsumerWidget {
 
 class _DayState extends ConsumerState<Day> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(loadingProvider.notifier).end();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     print('here in day page ...');
     final _height = MediaQuery.of(context).size.height;
@@ -152,8 +160,6 @@ class _DayState extends ConsumerState<Day> {
 
                         context.go(
                             '/last_move/$lastMove/$playerWithCardName/$playerWithCardRoleName');
-
-                        ref.read(loadingProvider.notifier).toggle();
                       }),
                 ),
               ),

@@ -20,6 +20,8 @@ class loading extends _$loading {
   }
 
   void toggle() => state = !state;
+
+  void end() => state = false;
 }
 
 class GlobalLoading extends HookConsumerWidget {

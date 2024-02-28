@@ -67,7 +67,7 @@ class PlayerNameWidget extends HookConsumerWidget {
             // go to
             await ref.read(currentPlayersProvider.notifier).action(situation);
 
-            if (!nightContext.mounted) return;
+          // if (!nightContext.mounted) return;
 
           case MyStrings.showRoles:
             // go to show-roles
@@ -197,8 +197,7 @@ class PlayerNameWidget extends HookConsumerWidget {
               extra: info,
             );
         }
-        _container.read(loadingProvider.notifier).toggle();
-        _container.read(loadingProvider.notifier).toggle();
+        // _container.read(loadingProvider.notifier).toggle();
       },
       child: AnimatedContainer(
         height: height / 12,

@@ -61,7 +61,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(loadingProvider.notifier).toggle();
+      ref.read(loadingProvider.notifier).end();
     });
   }
 
@@ -153,9 +153,61 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
       }
     }
 
+    onExti() async {
+      ref.read(loadingProvider.notifier).toggle();
+      widget.timerController.pause();
+      print('finisher');
+      print('choice : ${choice.value}');
+      // it works BUT must be a more handle on loding states
+      await buttonLogicExecuter(
+        context: context,
+        currentPlayerName: widget.name,
+        currentPlayerRole: widget.role,
+        night: await nightFuture,
+        selectedPlayer: choice.value,
+        nostradamousChoices: nostradamousChoices.value,
+        shootOrSlaughter: shootOrSlaughter.value,
+        guessedRole: guessedRole.value,
+        mafiaShotInabsenceOfGodfather: mafiaShotInabsenceOfGodfather.value,
+      );
+
+      // for saul - Have mafia done buying ?-
+      final isar = await ref.read(isarServiceProvider.future);
+      final String? saulChoice = await isar
+          .retrieveNightN(n: await nightFuture)
+          .then(((result) => result.match(
+              (json) => json
+                  .filterWithKey((key, value) => key == 'saulChoice')
+                  .values
+                  .singleOrNull,
+              (_) => null)));
+      //
+      // final toNight = await isar.getNightNumber();
+      Map<String, String?> info = {'saulChoice': saulChoice}
+        ..addAll(await Info.night());
+      //
+
+      await ref
+          .read(currentPlayersProvider.notifier)
+          .action(MyStrings.nightPage);
+
+      if (!(widget.role == MyStrings.nostradamous &&
+          widget.night == 0 &&
+          nostradamousChoices.value.isNotEmpty)) {
+        context.goNamed(
+          'night',
+          extra: info,
+        );
+        ref.read(loadingProvider.notifier).toggle();
+      }
+    }
+
     //
     final finisher = () async {
-      widget.timerController.pause();
+      /*  final isPlayerMafia = (widget.role == MyStrings.mafia ||
+          widget.role == MyStrings.saul ||
+          widget.role == MyStrings.godfather ||
+          widget.role == MyStrings.matador); */
       final tonight = await nightFuture;
       if (tonight != 0)
         AwesomeDialog(
@@ -164,59 +216,20 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
           animType: AnimType.SCALE,
           body: Text(
             'کد شما: ${widget.code}',
-            style: MyTextStyles.bodyMD.copyWith(height: 1.2),
+            style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
           ),
           dismissOnBackKeyPress: false,
           isDense: false,
           btnOkOnPress: () async {
-            ref.read(loadingProvider.notifier).toggle();
-            print('finisher');
-            print('choice : ${choice.value}');
-            // it works BUT must be a more handle on loding states
-            await buttonLogicExecuter(
-              context: context,
-              currentPlayerName: widget.name,
-              currentPlayerRole: widget.role,
-              night: await nightFuture,
-              selectedPlayer: choice.value,
-              nostradamousChoices: nostradamousChoices.value,
-              shootOrSlaughter: shootOrSlaughter.value,
-              guessedRole: guessedRole.value,
-              mafiaShotInabsenceOfGodfather:
-                  mafiaShotInabsenceOfGodfather.value,
-            );
-
-            // for saul - Have mafia done buying ?-
-            final isar = await ref.read(isarServiceProvider.future);
-            final String? saulChoice = await isar
-                .retrieveNightN(n: await nightFuture)
-                .then(((result) => result.match(
-                    (json) => json
-                        .filterWithKey((key, value) => key == 'saulChoice')
-                        .values
-                        .singleOrNull,
-                    (_) => null)));
-            //
-            // final toNight = await isar.getNightNumber();
-            Map<String, String?> info = {'saulChoice': saulChoice}
-              ..addAll(await Info.night());
-            //
-
-            await ref
-                .read(currentPlayersProvider.notifier)
-                .action(MyStrings.nightPage);
-
-            if (!(widget.role == MyStrings.nostradamous &&
-                widget.night == 0 &&
-                nostradamousChoices.value.isNotEmpty)) {
-              context.goNamed(
-                'night',
-                extra: info,
-              );
-              ref.read(loadingProvider.notifier).toggle();
-            }
+            await onExti();
           },
         )..show();
+      if (tonight == 0) {
+        await onExti();
+        if (widget.role == MyStrings.nostradamous)
+          ref.read(loadingProvider.notifier).toggle();
+      }
+      ;
     };
     //
     return GlobalLoading(

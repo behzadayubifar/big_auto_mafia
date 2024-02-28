@@ -303,7 +303,6 @@ class NightPage extends HookConsumerWidget {
                               pathParameters: {'dayNumber': '$dayNumber'},
                             );
                           }
-                          _container.read(loadingProvider.notifier).toggle();
                         },
                       ),
 

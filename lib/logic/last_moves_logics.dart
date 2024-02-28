@@ -30,6 +30,7 @@ Future<List<Player?>> faceOff({
   final newOtherPlayer = otherPlayer.copy(
     playerName: playerWithCardName,
     heart: 0,
+    isReversible: false,
   );
 
   return await isar.updatePlayers([newPlayerWithCard, newOtherPlayer]);

@@ -141,7 +141,6 @@ Future<bool?> buttonLogicExecuter({
       mafia: resultOfPrediction.mafiaPlayersCount,
       citizen: resultOfPrediction.citizen,
     );
-    _container.read(loadingProvider.notifier).toggle();
   }
 
   // others
