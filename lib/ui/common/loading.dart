@@ -45,7 +45,7 @@ class GlobalLoading extends HookConsumerWidget {
           _entries.value.add(OverlayEntry(
               builder: (_) => Center(
                       child: LoadingAnimationWidget.inkDrop(
-                    color: AppColors.secondaries[1],
+                    color: AppColors.primaries[1],
                     size: 160,
                   ))));
           Overlay.of(context).insertAll(Iterable.generate(

@@ -19,6 +19,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+final _container = ProviderContainer();
+
 class NightPage extends HookConsumerWidget {
   NightPage({
     required this.info,
@@ -29,7 +31,7 @@ class NightPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext nightContext, WidgetRef ref) {
-    final _isLoading = useState(false);
+    // final _isLoading = useState(false);
     print('this is night');
     //
     String nightNumber = '';
@@ -280,6 +282,7 @@ class NightPage extends HookConsumerWidget {
                                 'nights-results',
                                 extra: info,
                               );
+                              ref.read(loadingProvider.notifier).toggle();
                             }
                           } else {
                             int dayNumber = await isar.getDayNumber();
@@ -300,7 +303,7 @@ class NightPage extends HookConsumerWidget {
                               pathParameters: {'dayNumber': '$dayNumber'},
                             );
                           }
-                          ref.read(loadingProvider.notifier).toggle();
+                          _container.read(loadingProvider.notifier).toggle();
                         },
                       ),
 

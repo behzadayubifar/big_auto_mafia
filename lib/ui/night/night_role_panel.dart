@@ -14,6 +14,7 @@ import 'package:auto_mafia/ui/night/list_of_night_players_widget.dart';
 import 'package:auto_mafia/ui/night/roles_names_list_widget.dart';
 
 import 'package:auto_mafia/ui/ui_utils/get_criteria_for_night_role_panel.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -154,52 +155,68 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
 
     //
     final finisher = () async {
-      ref.read(loadingProvider.notifier).toggle();
       widget.timerController.pause();
-      print('finisher');
-      print('choice : ${choice.value}');
-      // it works BUT must be a more handle on loding states
-      await buttonLogicExecuter(
-        context: context,
-        currentPlayerName: widget.name,
-        currentPlayerRole: widget.role,
-        night: await nightFuture,
-        selectedPlayer: choice.value,
-        nostradamousChoices: nostradamousChoices.value,
-        shootOrSlaughter: shootOrSlaughter.value,
-        guessedRole: guessedRole.value,
-        mafiaShotInabsenceOfGodfather: mafiaShotInabsenceOfGodfather.value,
-      );
+      final tonight = await nightFuture;
+      if (tonight != 0)
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.WARNING,
+          animType: AnimType.SCALE,
+          body: Text(
+            'کد شما: ${widget.code}',
+            style: MyTextStyles.bodyMD.copyWith(height: 1.2),
+          ),
+          dismissOnBackKeyPress: false,
+          isDense: false,
+          btnOkOnPress: () async {
+            ref.read(loadingProvider.notifier).toggle();
+            print('finisher');
+            print('choice : ${choice.value}');
+            // it works BUT must be a more handle on loding states
+            await buttonLogicExecuter(
+              context: context,
+              currentPlayerName: widget.name,
+              currentPlayerRole: widget.role,
+              night: await nightFuture,
+              selectedPlayer: choice.value,
+              nostradamousChoices: nostradamousChoices.value,
+              shootOrSlaughter: shootOrSlaughter.value,
+              guessedRole: guessedRole.value,
+              mafiaShotInabsenceOfGodfather:
+                  mafiaShotInabsenceOfGodfather.value,
+            );
 
-      // for saul - Have mafia done buying ?-
-      final isar = await ref.read(isarServiceProvider.future);
-      final String? saulChoice = await isar
-          .retrieveNightN(n: await nightFuture)
-          .then(((result) => result.match(
-              (json) => json
-                  .filterWithKey((key, value) => key == 'saulChoice')
-                  .values
-                  .singleOrNull,
-              (_) => null)));
-      //
-      // final toNight = await isar.getNightNumber();
-      Map<String, String?> info = {'saulChoice': saulChoice}
-        ..addAll(await Info.night());
-      //
+            // for saul - Have mafia done buying ?-
+            final isar = await ref.read(isarServiceProvider.future);
+            final String? saulChoice = await isar
+                .retrieveNightN(n: await nightFuture)
+                .then(((result) => result.match(
+                    (json) => json
+                        .filterWithKey((key, value) => key == 'saulChoice')
+                        .values
+                        .singleOrNull,
+                    (_) => null)));
+            //
+            // final toNight = await isar.getNightNumber();
+            Map<String, String?> info = {'saulChoice': saulChoice}
+              ..addAll(await Info.night());
+            //
 
-      await ref
-          .read(currentPlayersProvider.notifier)
-          .action(MyStrings.nightPage);
+            await ref
+                .read(currentPlayersProvider.notifier)
+                .action(MyStrings.nightPage);
 
-      if (!(widget.role == MyStrings.nostradamous &&
-          widget.night == 0 &&
-          nostradamousChoices.value.isNotEmpty)) {
-        context.goNamed(
-          'night',
-          extra: info,
-        );
-        ref.read(loadingProvider.notifier).toggle();
-      }
+            if (!(widget.role == MyStrings.nostradamous &&
+                widget.night == 0 &&
+                nostradamousChoices.value.isNotEmpty)) {
+              context.goNamed(
+                'night',
+                extra: info,
+              );
+              ref.read(loadingProvider.notifier).toggle();
+            }
+          },
+        )..show();
     };
     //
     return GlobalLoading(

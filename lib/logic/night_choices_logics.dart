@@ -137,11 +137,11 @@ Future<bool?> buttonLogicExecuter({
           'night',
           extra: await Info.night(),
         );
-        _container.read(loadingProvider.notifier).toggle();
       },
       mafia: resultOfPrediction.mafiaPlayersCount,
       citizen: resultOfPrediction.citizen,
     );
+    _container.read(loadingProvider.notifier).toggle();
   }
 
   // others

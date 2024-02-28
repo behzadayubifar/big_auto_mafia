@@ -48,7 +48,7 @@ class PlayerNameWidget extends HookConsumerWidget {
     return InkWell(
       // autofocus: true,
       onLongPress: () async {
-        ref.read(loadingProvider.notifier).state = true;
+        ref.read(loadingProvider.notifier).toggle();
         log('on long press', name: 'player_name_dart');
         ['situation in player_name_widget', situation].log();
         if (_isPlayerNotSelected.value == true) {
@@ -68,7 +68,6 @@ class PlayerNameWidget extends HookConsumerWidget {
             await ref.read(currentPlayersProvider.notifier).action(situation);
 
             if (!nightContext.mounted) return;
-            ref.read(loadingProvider.notifier).state = false;
 
           case MyStrings.showRoles:
             // go to show-roles
@@ -88,7 +87,7 @@ class PlayerNameWidget extends HookConsumerWidget {
               playersWhoSawTheirRole: playersWhoSawTheirRole,
             );
             // if (!nightContext.mounted) return;
-            ref.read(loadingProvider.notifier).state = false;
+            // ref.read(loadingProvider.notifier).toggle();
 
             await ref
                 .read(currentPlayersProvider.notifier)
@@ -198,6 +197,8 @@ class PlayerNameWidget extends HookConsumerWidget {
               extra: info,
             );
         }
+        _container.read(loadingProvider.notifier).toggle();
+        _container.read(loadingProvider.notifier).toggle();
       },
       child: AnimatedContainer(
         height: height / 12,
