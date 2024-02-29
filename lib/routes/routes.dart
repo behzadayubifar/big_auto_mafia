@@ -21,7 +21,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final routerProvider = Provider<GoRouter>((_) => _router);
-final _container = ProviderContainer();
 
 final _router = GoRouter(
   debugLogDiagnostics: true,
@@ -122,6 +121,7 @@ final _router = GoRouter(
         final bool isHandCuffed = info['isHandCuffed']!;
         final bool isOneOfMafiaDead = info['isOneOfMafiaDead'];
         final bool hasMafiaBuyedOnce = info['hasMafiaBuyedOnce'];
+        final List<Player>? otherMafias = info['otherMafias'];
 
         return NightRolePanel(
           name: name,
@@ -135,6 +135,7 @@ final _router = GoRouter(
           isHandCuffed: isHandCuffed,
           isOneOfMafiaDead: isOneOfMafiaDead,
           hasMafiaBuyedOnce: hasMafiaBuyedOnce,
+          otherMafias: otherMafias,
         );
       },
     ),

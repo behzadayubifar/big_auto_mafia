@@ -4,6 +4,7 @@ import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/ui_utils/calculate_text_layout_size.dart';
@@ -173,12 +174,23 @@ class PlayerNameWidget extends HookConsumerWidget {
                 )
                 .then((status) => status!.isReNight);
 
+            List<Player>? otherMafias;
+            if (isMafia(role))
+              otherMafias = await isar
+                  .retrievePlayer(
+                    criteria: (player) =>
+                        player.type == RoleType.mafia &&
+                        player.playerName != playerName,
+                  )
+                  .then((rec) => rec.players);
+
             final info = {
               'name': playerName,
               'role': role,
               'code': code.toString(),
               'isGodfatherAlive': isGodfatherIsAlive,
               'mafiaHasBullet': mafiaHasBullet,
+              'otherMafias': otherMafias,
               'night': tonight,
               'playersListForShootInAbsenceOfGodfather':
                   playersListForShootInAbsenceOfGodfather,

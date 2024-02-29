@@ -4,6 +4,7 @@ import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
@@ -33,6 +34,7 @@ class NightRolePanel extends StatefulHookConsumerWidget {
     this.mafiaHasBullet,
     this.isOneOfMafiaDead,
     this.hasMafiaBuyedOnce,
+    this.otherMafias,
     this.night,
     this.isRenight,
     Key? key,
@@ -49,6 +51,7 @@ class NightRolePanel extends StatefulHookConsumerWidget {
   final bool? isOneOfMafiaDead;
   final bool? hasMafiaBuyedOnce;
   final bool? isRenight;
+  final List<Player>? otherMafias;
 
   final CountDownController timerController = CountDownController();
 
@@ -204,27 +207,49 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
 
     //
     final finisher = () async {
-      /*  final isPlayerMafia = (widget.role == MyStrings.mafia ||
-          widget.role == MyStrings.saul ||
-          widget.role == MyStrings.godfather ||
-          widget.role == MyStrings.matador); */
+      final isPlayerMafia = isMafia(widget.role);
       final tonight = await nightFuture;
-      if (tonight != 0)
+      if (tonight != 0 ||
+          (isPlayerMafia && widget.otherMafias != null && tonight == 0))
         AwesomeDialog(
           context: context,
           dialogType: DialogType.WARNING,
           animType: AnimType.SCALE,
-          body: Text(
-            'کد شما: ${widget.code}',
-            style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
-          ),
-          dismissOnBackKeyPress: false,
+          body: isPlayerMafia
+              ? Column(
+                  children: [
+                    Text(
+                      'هم تیمی های شما:',
+                      style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
+                    ),
+                    for (String name in widget.otherMafias!.mapToNames())
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: _height / 48,
+                          ),
+                          Text(
+                            '$name',
+                            style: MyTextStyles.headlineSmall.copyWith(
+                              height: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                )
+              : Text(
+                  'کد شما: ${widget.code}',
+                  style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
+                ),
+          dismissOnBackKeyPress: true,
           isDense: false,
           btnOkOnPress: () async {
             await onExti();
           },
         )..show();
-      if (tonight == 0) {
+      if (tonight == 0 &&
+          !(isPlayerMafia && widget.otherMafias != null && tonight == 0)) {
         await onExti();
         if (widget.role == MyStrings.nostradamous)
           ref.read(loadingProvider.notifier).toggle();

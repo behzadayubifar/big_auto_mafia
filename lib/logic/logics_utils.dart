@@ -1,6 +1,7 @@
 import 'dart:developer' show log;
 import 'dart:math' show Random;
 
+import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/models/last_moves_dataset.dart';
@@ -232,3 +233,9 @@ Future<String> winnerOfChaod(List<String> handShakenPlayers) async {
   );
   return winner;
 }
+
+bool isMafia(String roleName) =>
+    roleName == MyStrings.mafia ||
+    roleName == MyStrings.saul ||
+    roleName == MyStrings.godfather ||
+    roleName == MyStrings.matador;
