@@ -97,7 +97,7 @@ class _DayState extends ConsumerState<Day> {
             ),
 
             // MyButton(title: 'قرعۀ مرگ')
-            if ({widget.dayNumber} != 0)
+            if (widget.dayNumber != 0)
               Positioned(
                 bottom: _height / 4,
                 left: _width / 16,
@@ -116,7 +116,7 @@ class _DayState extends ConsumerState<Day> {
               ),
 
             // buttons for death and lastMove
-            if ({widget.dayNumber} != 0)
+            if (widget.dayNumber != 0)
               AnimatedPositioned(
                 bottom: _height / 4,
                 right: selectedPlayers.value.length == 1

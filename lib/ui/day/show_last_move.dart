@@ -9,7 +9,9 @@ import 'package:auto_mafia/logic/last_moves_logics.dart';
 import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
+import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/day/grid_list_of_players.dart';
+import 'package:auto_mafia/ui/day/list_of_players_for_last_moves.dart';
 import 'package:auto_mafia/ui/dialogs/last_move_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,7 +19,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:page_flip_builder/page_flip_builder.dart';
 import 'package:go_router/go_router.dart';
 
-class ShowLastMove extends HookConsumerWidget {
+class ShowLastMove extends StatefulHookConsumerWidget {
   ShowLastMove({
     super.key,
     required this.lastMoveName,
@@ -32,17 +34,30 @@ class ShowLastMove extends HookConsumerWidget {
   final pageFlipKeyb1 = GlobalKey<PageFlipBuilderState>();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ShowLastMove> createState() => _ShowLastMoveState();
+}
+
+class _ShowLastMoveState extends ConsumerState<ShowLastMove> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(loadingProvider.notifier).end();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final scrollController = useScrollController(
       initialScrollOffset: 0,
       keepScrollOffset: true,
     );
     //
     final beautifulMindForNostradamous =
-        lastMoveName == MyStrings.beautifulMind &&
-            playerWithCardRoleName == MyStrings.nostradamous;
+        widget.lastMoveName == MyStrings.beautifulMind &&
+            widget.playerWithCardRoleName == MyStrings.nostradamous;
     //
-    final titleOfButton = switch (lastMoveName) {
+    final titleOfButton = switch (widget.lastMoveName) {
       MyStrings.faceOff => 'تعویض نقش',
       MyStrings.beautifulMind => 'نوستراداموس است',
       MyStrings.silenceOfSheep => 'اهدای سکوت',
@@ -65,23 +80,23 @@ class ShowLastMove extends HookConsumerWidget {
             child: GestureDetector(
               onTap: () {
                 print('on tap');
-                pageFlipKeyb1.currentState?.flip();
+                widget.pageFlipKeyb1.currentState?.flip();
               },
               child: Image.asset(
-                MyAssets.getCardByLastMoveName(lastMoveName),
+                MyAssets.getCardByLastMoveName(widget.lastMoveName),
                 width: width,
               ),
             ),
           );
         },
         backBuilder: (_) {
-          return lastMoveName == MyStrings.roleReveal
+          return widget.lastMoveName == MyStrings.roleReveal
               ? Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '$playerWithCardName، $playerWithCardRoleName بود',
+                        '${widget.playerWithCardName}، ${widget.playerWithCardRoleName} بود',
                         style: MyTextStyles.bodyLarge
                             .copyWith(color: AppColors.lighterGrey),
                       ),
@@ -93,7 +108,7 @@ class ShowLastMove extends HookConsumerWidget {
                               await ref.read(isarServiceProvider.future);
 
                           await isar.updatePlayer(
-                            playerName: playerWithCardName,
+                            playerName: widget.playerWithCardName,
                             disclosured: true,
                             heart: 0,
                           );
@@ -111,7 +126,7 @@ class ShowLastMove extends HookConsumerWidget {
                       child: Column(
                         children: [
                           Text(
-                            '$playerWithCardName و در بازی می‌ماند نوستراداموس است',
+                            '${widget.playerWithCardName} و در بازی می‌ماند نوستراداموس است',
                           ),
                           SizedBox(height: height / 32),
                           MyButton(
@@ -120,7 +135,7 @@ class ShowLastMove extends HookConsumerWidget {
                               final isar =
                                   await ref.read(isarServiceProvider.future);
                               await isar.updatePlayer(
-                                playerName: playerWithCardName,
+                                playerName: widget.playerWithCardName,
                                 disclosured: true,
                                 heart: 1,
                               );
@@ -143,7 +158,8 @@ class ShowLastMove extends HookConsumerWidget {
                             width,
                             selectedPlayers,
                             scrollController,
-                            playerWithCardRoleName,
+                            widget.playerWithCardRoleName,
+                            widget.lastMoveName,
                           ),
                           SizedBox(height: height / 16),
                           // button
@@ -151,9 +167,10 @@ class ShowLastMove extends HookConsumerWidget {
                             title: titleOfButton,
                             onPressed: () => showLastMoveDialog(
                               context: context,
-                              lastMoveName: lastMoveName,
-                              playerWithCardName: playerWithCardName,
-                              playerWithCardRoleName: playerWithCardRoleName,
+                              lastMoveName: widget.lastMoveName,
+                              playerWithCardName: widget.playerWithCardName,
+                              playerWithCardRoleName:
+                                  widget.playerWithCardRoleName,
                               selectedPlayers: selectedPlayers.value,
                             ),
                           ),
@@ -163,43 +180,5 @@ class ShowLastMove extends HookConsumerWidget {
         },
       ),
     );
-  }
-
-  Widget listOfPlayersForLastMoves(
-    AsyncValue<List<Player>> asyncAlivePlayers,
-    double height,
-    double width,
-    ValueNotifier<List<String>> selectedPlayers,
-    ScrollController scrollController,
-    String playerWithCardRoleName,
-  ) {
-    Widget widget = SizedBox();
-    switch (lastMoveName) {
-      case MyStrings.faceOff:
-      case MyStrings.handCuff:
-      case MyStrings.silenceOfSheep:
-      case MyStrings.beautifulMind:
-        widget = GridOfPlayers(
-          asyncAlivePlayers: asyncAlivePlayers,
-          height: height,
-          width: width,
-          selectedPlayers: selectedPlayers,
-          scrollController: scrollController,
-          axix: Axis.vertical,
-        );
-        break;
-      case MyStrings.roleReveal:
-        widget = Center(
-          child: Text(
-            'نقش شما: $playerWithCardRoleName',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-        break;
-    }
-    return widget;
   }
 }
