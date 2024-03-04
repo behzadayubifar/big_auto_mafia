@@ -144,6 +144,7 @@ _godfatherSlaughter(String chosenPlayerName) async {
   await isar.updatePlayer(
     playerName: chosenPlayerName,
     hasBeenSlaughtered: true,
+    isReversible: false,
     heart: 0,
   );
   //

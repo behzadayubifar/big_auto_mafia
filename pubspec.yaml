@@ -59,6 +59,7 @@ dependencies:
   awesome_dialog: 2.0.0
   photo_view: ^0.14.0
   flutter_launcher_icons: ^0.13.1
+  just_audio: ^0.9.36
 
 dev_dependencies:
   flutter_test:

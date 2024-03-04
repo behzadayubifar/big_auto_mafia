@@ -1,4 +1,3 @@
-import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
@@ -14,7 +13,6 @@ import 'package:auto_mafia/ui/night/control_panel.dart';
 import 'package:auto_mafia/ui/night/list_of_night_players_widget.dart';
 import 'package:auto_mafia/ui/night/roles_names_list_widget.dart';
 
-import 'package:auto_mafia/ui/ui_utils/get_criteria_for_night_role_panel.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
@@ -209,8 +207,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
     final finisher = () async {
       final isPlayerMafia = isMafia(widget.role);
       final tonight = await nightFuture;
-      if (tonight != 0 ||
-          (isPlayerMafia && widget.otherMafias != null && tonight == 0))
+      if (isPlayerMafia && widget.otherMafias != null && tonight == 0)
         AwesomeDialog(
           context: context,
           dialogType: DialogType.WARNING,
@@ -222,14 +219,14 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                       'هم تیمی های شما:',
                       style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
                     ),
-                    for (String name in widget.otherMafias!.mapToNames())
+                    for (Player player in widget.otherMafias!)
                       Column(
                         children: [
                           SizedBox(
                             height: _height / 48,
                           ),
                           Text(
-                            '$name',
+                            '${player.playerName} : ${player.roleName}}',
                             style: MyTextStyles.headlineSmall.copyWith(
                               height: 1.2,
                             ),
@@ -407,7 +404,21 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                                       width: _width,
                                       choice: choice,
                                       nostradamousChoices:
-                                          nostradamousChoices.value,
+                                          nostradamousChoices.value.isEmpty
+                                              ? () {
+                                                  final randomPlayers =
+                                                      getRandomPlayersNamesFromList(
+                                                    playersList.mapToNames(),
+                                                    playersList.length ~/ 3,
+                                                  );
+                                                  for (String player
+                                                      in randomPlayers) {
+                                                    putChoiceLocally(
+                                                        newChoice: player);
+                                                  }
+                                                  return randomPlayers;
+                                                }()
+                                              : nostradamousChoices.value,
                                       role: widget.role,
                                       nightFuture: nightFuture,
                                       putChoiceLocally: putChoiceLocally,

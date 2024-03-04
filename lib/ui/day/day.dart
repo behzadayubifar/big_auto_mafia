@@ -10,7 +10,9 @@ import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/day/grid_list_of_players.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -102,15 +104,38 @@ class _DayState extends ConsumerState<Day> {
                 bottom: _height / 4,
                 left: _width / 16,
                 child: AnimatedOpacity(
-                  opacity: selectedPlayers.value.length <= 1 ? 0 : 1,
+                  opacity: selectedPlayers.value.length >= 1 ? 1 : 0,
                   duration: Duration(milliseconds: 400),
                   child: MyButton(
-                    title: 'قرعۀ مرگ',
-                    onPressed: () {
-                      selectedPlayers.value = [
-                        getARandomPlayer(selectedPlayers.value)
-                      ];
-                    },
+                    title: selectedPlayers.value.length == 1
+                        ? 'کد فراموشی'
+                        : 'قرعۀ مرگ',
+                    onPressed: selectedPlayers.value.length == 1
+                        ? () async {
+                            final code = await ref
+                                .read(isarServiceProvider.future)
+                                .then((isar) => isar.getPlayerByName(
+                                    selectedPlayers.value.single))
+                                .then((player) => player?.code);
+                            AwesomeDialog(
+                              autoHide: Duration(seconds: 4),
+                              context: context,
+                              padding: EdgeInsets.all(16),
+                              title: code.toString(),
+                              dialogBackgroundColor: AppColors.lightestGrey,
+                              btnOk: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('باشه'),
+                              ),
+                            ).show();
+                          }
+                        : () {
+                            selectedPlayers.value = [
+                              getARandomPlayer(selectedPlayers.value)
+                            ];
+                          },
                   ),
                 ),
               ),
@@ -119,16 +144,14 @@ class _DayState extends ConsumerState<Day> {
             if (widget.dayNumber != 0)
               AnimatedPositioned(
                 bottom: _height / 4,
-                right: selectedPlayers.value.length == 1
-                    ? _width / 3.5
-                    : _width / 20,
+                right: _width / 20,
                 duration: Duration(milliseconds: 400),
                 child: AnimatedOpacity(
                   opacity: selectedPlayers.value.isEmpty ? 0 : 1,
                   duration: Duration(milliseconds: 400),
                   child: MyButton(
                       title: 'حرکت آخر',
-                      onPressed: () async {
+                      onLongPress: () async {
                         ref.read(loadingProvider.notifier).toggle();
 
                         final isar = await ref.read(isarServiceProvider.future);

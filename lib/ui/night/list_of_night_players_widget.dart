@@ -76,10 +76,10 @@ class ListOfNightPlayersWidget extends StatelessWidget {
                         return MyButton(
                           title: selectedPlayer.playerName!,
                           player: selectedPlayer,
-                          selected: nostradamousChoices!.isEmpty
+                          selected: nostradamousChoices.isEmpty
                               ? selectedPlayer.playerName == choice.value
                               : nostradamousChoices
-                                  ?.contains(selectedPlayer.playerName!),
+                                  .contains(selectedPlayer.playerName!),
                           place: MyStrings.nightPlayer,
 
                           // criteria: ,

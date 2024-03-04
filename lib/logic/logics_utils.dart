@@ -239,3 +239,14 @@ bool isMafia(String roleName) =>
     roleName == MyStrings.saul ||
     roleName == MyStrings.godfather ||
     roleName == MyStrings.matador;
+
+List<String> getRandomPlayersNamesFromList(
+  List<String> playerNames,
+  int count,
+) {
+  final shuffledPlayerNames = playerNames..shuffle();
+  final randomPlayerNames = shuffledPlayerNames.sublist(0, count);
+  log('randomPlayerNames: $randomPlayerNames',
+      name: 'getRandomPlayersNamesFromList');
+  return randomPlayerNames;
+}
