@@ -8,6 +8,7 @@ import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
+import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
 
 import 'package:auto_mafia/ui/night/control_panel.dart';
 import 'package:auto_mafia/ui/night/list_of_night_players_widget.dart';
@@ -404,7 +405,9 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                                       width: _width,
                                       choice: choice,
                                       nostradamousChoices:
-                                          nostradamousChoices.value.isEmpty
+                                          nostradamousChoices.value.isEmpty &&
+                                                  widget.role ==
+                                                      MyStrings.nostradamous
                                               ? () {
                                                   final randomPlayers =
                                                       getRandomPlayersNamesFromList(

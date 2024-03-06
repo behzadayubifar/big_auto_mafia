@@ -1,11 +1,7 @@
 import 'package:auto_mafia/constants/app_colors.dart';
-import 'package:auto_mafia/constants/info_strings.dart';
-import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/load_logics.dart';
-import 'package:auto_mafia/logic/logics.dart';
-import 'package:auto_mafia/main.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +16,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GlobalLoading(
       child: Scaffold(
-          backgroundColor: Color.fromARGB(255, 122, 122, 158),
+          backgroundColor: AppColors.black,
           body: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

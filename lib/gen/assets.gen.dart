@@ -11,6 +11,31 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
 
+class $AssetsAudioGen {
+  const $AssetsAudioGen();
+
+  /// File path: assets/audio/Pedar_Khandeh_128.mp3
+  String get pedarKhandeh128 => 'assets/audio/Pedar_Khandeh_128.mp3';
+
+  /// File path: assets/audio/a-kitchen-timer.mp3
+  String get aKitchenTimer => 'assets/audio/a-kitchen-timer.mp3';
+
+  /// File path: assets/audio/old-mechanic-alarm-clockmp3.mp3
+  String get oldMechanicAlarmClockmp3 =>
+      'assets/audio/old-mechanic-alarm-clockmp3.mp3';
+
+  /// File path: assets/audio/ticking-stopwatch-dry.mp3
+  String get tickingStopwatchDry => 'assets/audio/ticking-stopwatch-dry.mp3';
+
+  /// List of all assets
+  List<String> get values => [
+        pedarKhandeh128,
+        aKitchenTimer,
+        oldMechanicAlarmClockmp3,
+        tickingStopwatchDry
+      ];
+}
+
 class $AssetsCardsGen {
   const $AssetsCardsGen();
 
@@ -144,6 +169,10 @@ class $AssetsCharactersSpecificGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/adaptive_icon.png
+  AssetGenImage get adaptiveIcon =>
+      const AssetGenImage('assets/icons/adaptive_icon.png');
+
   /// File path: assets/icons/back_icon.png
   AssetGenImage get backIcon =>
       const AssetGenImage('assets/icons/back_icon.png');
@@ -167,8 +196,15 @@ class $AssetsIconsGen {
       const SvgGenImage('assets/icons/number_holder.svg');
 
   /// List of all assets
-  List<dynamic> get values =>
-      [backIcon, dayIcon, killingIcon, likeHandTumbUpIcon, more, numberHolder];
+  List<dynamic> get values => [
+        adaptiveIcon,
+        backIcon,
+        dayIcon,
+        killingIcon,
+        likeHandTumbUpIcon,
+        more,
+        numberHolder
+      ];
 }
 
 class $AssetsImagesGen {
@@ -469,6 +505,7 @@ class $AssetsCardsLastMovesPicsGen {
 class Assets {
   Assets._();
 
+  static const $AssetsAudioGen audio = $AssetsAudioGen();
   static const $AssetsCardsGen cards = $AssetsCardsGen();
   static const $AssetsCharactersSpecificGen charactersSpecific =
       $AssetsCharactersSpecificGen();

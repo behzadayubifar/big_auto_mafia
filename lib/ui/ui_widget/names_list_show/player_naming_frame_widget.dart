@@ -30,6 +30,9 @@ class PlayerNamingFrameWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    //
     final _focusNode = useFocusNode(
       canRequestFocus: true,
       descendantsAreFocusable: true,
@@ -38,6 +41,7 @@ class PlayerNamingFrameWidget extends HookConsumerWidget {
     final _textStyle = Theme.of(context).textTheme.headlineSmall!.copyWith(
           color: Colors.white,
           overflow: TextOverflow.fade,
+          height: 0,
         );
 
     final ValueNotifier<Size> _textSize = useState(Size.zero);
@@ -95,6 +99,7 @@ class PlayerNamingFrameWidget extends HookConsumerWidget {
                 // a text field
                 SizedBox(
                   width: max(_textSize.value.width + 20, 380),
+                  // height: height / 12,
                   child: TextField(
                     onSubmitted: (String playerName) {
                       _focusNode.unfocus();
@@ -120,12 +125,13 @@ class PlayerNamingFrameWidget extends HookConsumerWidget {
                       border: InputBorder.none,
                       prefixIcon: NumberHolder(
                           number: _number, isNotFocused: _isNotSelected.value),
-                      contentPadding: EdgeInsets.only(top: 36, left: 64),
+                      contentPadding: EdgeInsets.only(left: 64),
                       counterText: '',
                       hintText: _playerName.value,
                       hintStyle:
                           Theme.of(context).textTheme.headlineSmall!.copyWith(
                                 color: Colors.white,
+                                height: 2,
                               ),
                     ),
                     style: _textStyle,

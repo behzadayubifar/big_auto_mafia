@@ -11,30 +11,34 @@ class NightTimer extends HookWidget {
     required this.height,
     this.onComplete,
     this.timerController,
+    this.duration = 3000,
   });
 
   final double width;
   final double height;
   final void Function()? onComplete;
   final CountDownController? timerController;
+  final int duration;
 
   @override
   Widget build(BuildContext context) {
     Color ringColor = AppColors.darkText;
     Color backgroundColor = AppColors.primaries[4];
+    final remained2 = useState(duration);
     var fillCollor = useState(AppColors.lighterGrey);
     return Center(
       child: CircularCountDownTimer(
+        autoStart: false,
         controller: timerController,
         width: width,
         height: height,
         // later must read this from db (the user can change it)
-        duration: 3000,
+        duration: duration,
         onChange: (remained) {
           // print(double.tryParse(remained));
           // print(remained);
-          if (double.tryParse(remained)! < 10)
-            fillCollor.value = AppColors.secondaries[3];
+          // if (double.tryParse(remained)! < 10 && !context.debugDoingBuild)
+          //   remained2.value = double.tryParse(remained)!.toInt();
         },
         onComplete: onComplete,
         backgroundColor: backgroundColor,

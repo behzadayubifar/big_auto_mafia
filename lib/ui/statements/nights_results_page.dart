@@ -237,7 +237,7 @@ class NightsResuls extends HookConsumerWidget {
                                         );
                                         ref
                                             .read(loadingProvider.notifier)
-                                            .toggle();
+                                            .end();
 
                                         context.go('/game_over/$winner');
                                         return;

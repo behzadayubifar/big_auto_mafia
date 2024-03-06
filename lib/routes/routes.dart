@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
@@ -8,6 +9,8 @@ import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
+import 'package:auto_mafia/ui/dialogs/dialog_page_widget.dart';
+import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
 import 'package:auto_mafia/ui/home/home_page.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
 import 'package:auto_mafia/ui/night/night_role_panel.dart';
@@ -17,6 +20,7 @@ import 'package:auto_mafia/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/ui/x_page.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -92,10 +96,35 @@ final _router = GoRouter(
     GoRoute(
       name: 'night',
       path: '/night',
+      // pageBuilder: (context, state) {
+      //   print('here going to night');
+      //   final info = state.extra as Map<String, dynamic>;
+      //   log('info: $info', name: 'night-info');
+
+      //   if (info['situation'] == MyStrings.nightPage) {
+      //     if (int.tryParse(info['nightNumber'])! >= 1)
+      //       Overlay.of(context).insert(timerOverlay);
+      //     return DialogPage(
+      //       builder: (_) => Material(
+      //         color: Colors.transparent,
+      //         elevation: 16,
+      //         shadowColor: AppColors.black50,
+      //         child: TimerDialog(),
+      //       ),
+      //       child: NightPage(info: info),
+      //     );
+      //   }
+      //   return MaterialPage(child: NightPage(info: info));
+      // },
       builder: (context, state) {
-        print('here going to night');
         final info = state.extra as Map<String, dynamic>;
         log('info: $info', name: 'night-info');
+        if (info['situation'] == MyStrings.nightPage) {
+          WidgetsBinding.instance.scheduleFrameCallback((timeStamp) {
+            if (int.tryParse(info['nightNumber'])! >= 1)
+              Overlay.of(context).insert(timerOverlay);
+          });
+        }
         return NightPage(info: info);
       },
     ),

@@ -11,9 +11,11 @@ import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
+import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
 import 'package:auto_mafia/ui/statements/statement_overlay_screen.dart';
 import 'package:auto_mafia/ui/widgets/player_name_widget.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -28,6 +30,8 @@ class NightPage extends HookConsumerWidget {
   }) : super(key: key);
 
   final Map<String, dynamic> info;
+
+  final CountDownController _controller = CountDownController();
 
   @override
   Widget build(BuildContext nightContext, WidgetRef ref) {
@@ -52,7 +56,12 @@ class NightPage extends HookConsumerWidget {
     return GlobalLoading(
       child: Scaffold(
         backgroundColor: AppColors.backGround,
-        body: switch (asyncPlayers) {
+        body: /*  true
+            ? TimerDialog(
+                // timerController: _controller,
+                )
+            :  */
+            switch (asyncPlayers) {
           AsyncData(:final List<Player> value) => SafeArea(
               minimum: EdgeInsets.only(top: height / 15),
               child: Center(
