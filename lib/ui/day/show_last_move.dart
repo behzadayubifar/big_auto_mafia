@@ -160,6 +160,9 @@ class _ShowLastMoveState extends ConsumerState<ShowLastMove> {
                             scrollController,
                             widget.playerWithCardRoleName,
                             widget.lastMoveName,
+                            widget.lastMoveName == MyStrings.silenceOfSheep
+                                ? true
+                                : false,
                           ),
                           SizedBox(height: height / 16),
                           // button

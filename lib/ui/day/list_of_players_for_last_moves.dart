@@ -12,6 +12,7 @@ Widget listOfPlayersForLastMoves(
   ScrollController scrollController,
   String playerWithCardRoleName,
   String lastMoveName,
+  bool multiSelect,
 ) {
   Widget widget = SizedBox();
   switch (lastMoveName) {
@@ -26,6 +27,7 @@ Widget listOfPlayersForLastMoves(
         selectedPlayers: selectedPlayers,
         scrollController: scrollController,
         axix: Axis.vertical,
+        multiSelect: multiSelect,
       );
       break;
     case MyStrings.roleReveal:

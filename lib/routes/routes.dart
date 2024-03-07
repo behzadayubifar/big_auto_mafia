@@ -12,6 +12,7 @@ import 'package:auto_mafia/ui/day/show_last_move.dart';
 import 'package:auto_mafia/ui/dialogs/dialog_page_widget.dart';
 import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
 import 'package:auto_mafia/ui/home/home_page.dart';
+import 'package:auto_mafia/ui/home/splash_screen.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
 import 'package:auto_mafia/ui/night/night_role_panel.dart';
 import 'package:auto_mafia/ui/show_roles/show_role_page.dart';
@@ -35,13 +36,18 @@ final _router = GoRouter(
   // initialLocation: '/night_timer',
   // last was this :
   // initialLocation: '/name_list',
-  initialLocation: '/',
+  // initialLocation: '/',
+  initialLocation: '/splash',
   // initialLocation: '/nights_results',
   // initialLocation: '/day',
   // initialLocation: '/x-page',
   // initialLocation: '/chaos',
 
   routes: <RouteBase>[
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => SplashScreen(),
+    ),
     GoRoute(
       name: 'nights-results',
       path: '/nights_results',
@@ -121,7 +127,8 @@ final _router = GoRouter(
         log('info: $info', name: 'night-info');
         if (info['situation'] == MyStrings.nightPage) {
           WidgetsBinding.instance.scheduleFrameCallback((timeStamp) {
-            if (int.tryParse(info['nightNumber'])! >= 1)
+            if (int.tryParse(info['nightNumber'])! >= 1 &&
+                info['isAnyoneDoneNightJob'] == 'false')
               Overlay.of(context).insert(timerOverlay);
           });
         }

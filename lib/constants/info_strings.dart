@@ -49,6 +49,12 @@ class Info {
         'situation': MyStrings.nightPage,
         'nightNumber':
             (await _isar.then((isar) => isar.getNightNumber())).toString(),
+        'isAnyoneDoneNightJob': (await _isar
+                .then((isar) => isar.retrievePlayer())
+                .then((players) => players.players.any(
+                      (player) => player.nightDone == true,
+                    )))
+            .toString(),
       };
 
   static Map<String, String> nightRolePanel({

@@ -166,6 +166,17 @@ class $AssetsCharactersSpecificGen {
       ];
 }
 
+class $AssetsGifsGen {
+  const $AssetsGifsGen();
+
+  /// File path: assets/gifs/splash_auto_mafia.gif
+  AssetGenImage get splashAutoMafia =>
+      const AssetGenImage('assets/gifs/splash_auto_mafia.gif');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [splashAutoMafia];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -195,6 +206,9 @@ class $AssetsIconsGen {
   SvgGenImage get numberHolder =>
       const SvgGenImage('assets/icons/number_holder.svg');
 
+  /// File path: assets/icons/splash.jpg
+  AssetGenImage get splash => const AssetGenImage('assets/icons/splash.jpg');
+
   /// List of all assets
   List<dynamic> get values => [
         adaptiveIcon,
@@ -203,7 +217,8 @@ class $AssetsIconsGen {
         killingIcon,
         likeHandTumbUpIcon,
         more,
-        numberHolder
+        numberHolder,
+        splash
       ];
 }
 
@@ -232,6 +247,19 @@ class $AssetsImagesGen {
   /// List of all assets
   List<AssetGenImage> get values =>
       [dayBg, mysteriousGangsterCharacter, nightBg];
+}
+
+class $AssetsLottiesGen {
+  const $AssetsLottiesGen();
+
+  /// File path: assets/lotties/Polite Chicky.json
+  String get politeChicky => 'assets/lotties/Polite Chicky.json';
+
+  /// File path: assets/lotties/Splash-Auto_mafia.json
+  String get splashAutoMafia => 'assets/lotties/Splash-Auto_mafia.json';
+
+  /// List of all assets
+  List<String> get values => [politeChicky, splashAutoMafia];
 }
 
 class $AssetsOverlaysGen {
@@ -509,8 +537,10 @@ class Assets {
   static const $AssetsCardsGen cards = $AssetsCardsGen();
   static const $AssetsCharactersSpecificGen charactersSpecific =
       $AssetsCharactersSpecificGen();
+  static const $AssetsGifsGen gifs = $AssetsGifsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
   static const $AssetsOverlaysGen overlays = $AssetsOverlaysGen();
 }
 

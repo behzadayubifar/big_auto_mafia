@@ -95,6 +95,7 @@ class _DayState extends ConsumerState<Day> {
                 width: _width,
                 selectedPlayers: selectedPlayers,
                 scrollController: scrollController,
+                multiSelect: true,
               ),
             ),
 

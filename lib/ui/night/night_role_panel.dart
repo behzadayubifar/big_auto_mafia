@@ -1,3 +1,4 @@
+import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
@@ -69,6 +70,8 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
 
   @override
   Widget build(BuildContext context) {
+    //
+    print(widget.otherMafias);
     //
     bool? saulCanBuy = false;
     if (widget.isOneOfMafiaDead == true &&
@@ -206,46 +209,59 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
 
     //
     final finisher = () async {
+      print('تموم');
       final isPlayerMafia = isMafia(widget.role);
+      print("isPlayerMafia: $isPlayerMafia");
       final tonight = await nightFuture;
-      if (isPlayerMafia && widget.otherMafias != null && tonight == 0)
-        AwesomeDialog(
-          context: context,
-          dialogType: DialogType.WARNING,
-          animType: AnimType.SCALE,
-          body: isPlayerMafia
-              ? Column(
-                  children: [
-                    Text(
-                      'هم تیمی های شما:',
-                      style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
+      final criteria =
+          isPlayerMafia && widget.otherMafias != null && tonight == 0;
+      print('citeria: $criteria');
+
+      AwesomeDialog(
+        // width: _width / .9,
+        context: context,
+        dialogType: DialogType.WARNING,
+        animType: AnimType.SCALE,
+        body: (isPlayerMafia && tonight == 0)
+            ? Column(
+                children: [
+                  Text(
+                    'هم تیمی های شما:',
+                    style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
+                  ),
+                  for (Player player in widget.otherMafias!)
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: _height / 48,
+                        ),
+                        Text(
+                          '${player.playerName} : { ${player.roleName} }',
+                          style: MyTextStyles.headlineSmall.copyWith(
+                            fontSize: 16,
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
                     ),
-                    for (Player player in widget.otherMafias!)
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: _height / 48,
-                          ),
-                          Text(
-                            '${player.playerName} : ${player.roleName}}',
-                            style: MyTextStyles.headlineSmall.copyWith(
-                              height: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
-                )
-              : Text(
-                  'کد شما: ${widget.code}',
-                  style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
-                ),
-          dismissOnBackKeyPress: true,
-          isDense: false,
-          btnOkOnPress: () async {
-            await onExti();
-          },
-        )..show();
+                ],
+              )
+            : (tonight >= 1)
+                ? Text(
+                    'کد شما: ${widget.code}',
+                    style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
+                  )
+                : null,
+        dismissOnBackKeyPress: true,
+        isDense: false,
+        btnOk: AnimatedButton(
+            pressEvent: () async => await onExti(),
+            color: AppColors.primaries[2],
+            text: 'متوجه شدم',
+            buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+              color: AppColors.white,
+            )),
+      )..show();
       if (tonight == 0 &&
           !(isPlayerMafia && widget.otherMafias != null && tonight == 0)) {
         await onExti();
@@ -393,9 +409,9 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                             saulCanBuy)
                           asyncPlayers.when(
                             data: (playersList) {
-                              (playersList.forEach((player) {
-                                print(player.playerToString(true));
-                              }));
+                              // (playersList.forEach((player) {
+                              //   print(player.playerToString(true));
+                              // }));
                               return playersList.isEmpty
                                   ? SizedBox()
                                   : ListOfNightPlayersWidget(

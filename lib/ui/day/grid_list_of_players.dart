@@ -10,6 +10,7 @@ Widget GridOfPlayers({
   required double width,
   required ValueNotifier<List<String>>? selectedPlayers,
   required ScrollController scrollController,
+  bool multiSelect = false,
   Axis axix = Axis.horizontal,
 }) {
   return Center(
@@ -32,17 +33,26 @@ Widget GridOfPlayers({
                 children: [
                   MyButton(
                     onPressed: () {
-                      if (selectedPlayers.value
-                          .contains(value[index].playerName!)) {
-                        selectedPlayers.value = selectedPlayers.value
-                            .where((element) =>
+                      if (multiSelect) {
+                        if (selectedPlayers.value
+                            .contains(value[index].playerName!)) {
+                          selectedPlayers.value = [
+                            ...selectedPlayers.value.where((element) =>
                                 element != value[index].playerName!)
-                            .toList();
+                          ];
+                        } else {
+                          selectedPlayers.value = [
+                            ...selectedPlayers.value,
+                            value[index].playerName!
+                          ];
+                        }
                       } else {
-                        selectedPlayers.value = [
-                          ...selectedPlayers.value,
-                          value[index].playerName!
-                        ];
+                        if (!selectedPlayers.value
+                            .contains(value[index].playerName!)) {
+                          selectedPlayers.value = [value[index].playerName!];
+                        } else {
+                          selectedPlayers.value = [];
+                        }
                       }
                     },
                     title: value[index].playerName!,
