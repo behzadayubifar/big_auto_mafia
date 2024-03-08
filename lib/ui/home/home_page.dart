@@ -8,52 +8,51 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-final _container = ProviderContainer();
-
 class HomePage extends ConsumerWidget {
-  HomePage({super.key});
+  HomePage({required this.isFinished, super.key});
+  // HomePage({super.key});
+
+  // final bool isFinished = true;
+  final bool isFinished;
+  //
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GlobalLoading(
-      child: Scaffold(
-          backgroundColor: AppColors.black,
-          body: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                MyButton(
-                  title: 'جدید',
-                  textStyle: MyTextStyles.bodyLarge.copyWith(
-                    color: AppColors.white,
-                  ),
-                  onDoubleTap: () {
-                    context.go('/name_list');
-                  },
+    print(isFinished);
+    return Scaffold(
+        backgroundColor: AppColors.backGround,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              MyButton(
+                title: 'شروع بازی جدید',
+                place: 'home',
+                onLongPress: () {
+                  context.go('/name_list');
+                },
+              ),
+              //
+              if (!isFinished)
+                SizedBox(
+                  height: 48,
                 ),
+              //
+              if (!isFinished)
                 MyButton(
-                  title: 'شروع بازی',
-                  textStyle: MyTextStyles.bodyLarge.copyWith(
-                    color: AppColors.white,
-                  ),
-                  onDoubleTap: () async {
+                  title: 'ادامه بازی قبلی',
+                  place: 'home',
+                  onLongPress: () async {
+                    print('objec   t');
                     ref.read(loadingProvider.notifier).toggle();
                     Future.delayed(Duration(seconds: 1));
-                    final isar =
-                        await _container.read(isarServiceProvider.future);
-                    final isFinished = await isar
-                        .retrieveGameStatusN(n: await isar.getDayNumber())
-                        .then((status) => status?.isFinished);
-                    if (isFinished == true) {
-                      context.go('/name_list');
-                    } else {
-                      await loadGame(context);
-                    }
+
+                    await loadGame(context);
+
                     ref.read(loadingProvider.notifier).toggle();
                   },
                 ),
-              ],
-            ),
-          )),
-    );
+            ],
+          ),
+        ));
   }
 }

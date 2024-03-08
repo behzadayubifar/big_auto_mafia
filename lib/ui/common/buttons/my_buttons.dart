@@ -46,14 +46,16 @@ class MyButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final style = buttonStyleBasedOnPlace(place);
+
     final localstate = useState(
       'default',
     );
-    final stateController = useMaterialStatesController(
-      values: {
-        MaterialState.disabled,
-      },
-    );
+    // final stateController = useMaterialStatesController(
+    //   values: {
+    //     MaterialState.disabled,
+    //   },
+    // );
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -67,83 +69,7 @@ class MyButton extends HookConsumerWidget {
               }
             : null,
         child: ElevatedButton(
-          // statesController: stateController,
-          style: (selected ?? false)
-              ? ElevatedButton.styleFrom(
-                  shadowColor: AppColors.lightText,
-                  elevation: 9,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  minimumSize: const Size(48, 48),
-                )
-              : ElevatedButton.styleFrom(
-                  shadowColor: AppColors.lightText,
-                  elevation: 9,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                  backgroundColor: AppColors.tintsOfBlack[3],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  minimumSize: const Size(48, 48),
-                ),
-
-          // if(buttonState)
-          //   //
-          //   MyStrings.disabledButton => ElevatedButton.styleFrom(
-          //       enableFeedback: true,
-          //       shadowColor: AppColors.lighterGrey,
-          //       elevation: 18,
-          //       alignment: Alignment.center,
-          //       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          //       backgroundColor: AppColors.primaries[4],
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(16),
-          //       ),
-          //       minimumSize: const Size(64, 48),
-          //     ),
-
-          //
-          /* MyStrings.longPressedButton => ElevatedButton.styleFrom(
-                shadowColor: AppColors.secondaries[4],
-                elevation: 18,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                backgroundColor: AppColors.secondaries[3],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                minimumSize: const Size(64, 48),
-              ),
-            //
-            MyStrings.nightSpecificButton => ElevatedButton.styleFrom(
-                shadowColor: AppColors.lightText,
-                elevation: 9,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                backgroundColor: AppColors.tintsOfBlack[3],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                minimumSize: const Size(48, 48),
-              ),
-            //
-            _ => ElevatedButton.styleFrom(
-                shadowColor: AppColors.lightText,
-                elevation: 9,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                minimumSize: const Size(48, 48),
-              ),
-          }, */
+          style: (selected == true) ? style.selected : style.normal,
           child: Text(
             title,
             style: textStyle ??
@@ -152,41 +78,7 @@ class MyButton extends HookConsumerWidget {
                       fontSize: fontSize,
                     ),
           ),
-          onLongPress: switch (place) {
-            MyStrings.nightPlayer => onLongPress,
-            _ => onLongPress,
-          }
-
-          // onLongPress != null && ((criteria ?? true) == true)
-          // ? () async {
-          //         if (onLongPress != null) {
-          //           'here 1'.log();
-          //           final isar = await ref.read(isarServiceProvider.future);
-          //           final day = await isar.getDayNumber();
-          //           final String? situation = await isar
-          //               .retrieveGameStatusN(n: day)
-          //               .then((gameStatus) => gameStatus?.situation);
-
-          //           // --- //
-
-          //           // ---- //
-          //           // if (situation == MyStrings.nightDoneJob) {
-
-          //           // } else {
-          //           //   await ref
-          //           //       .read(currentPlayersProvider.notifier)
-          //           //       .action(MyStrings.nightDoneJob);
-          //           // }
-          //           // await ref
-          //           //     .read(currentPlayersProvider.notifier)
-          //           //     .action(MyStrings.nightDoneJob);
-
-          //           // Timer(Duration(milliseconds: 400), () => onLongPress!());
-          //         }
-
-          // based on role and the passed selected player uses logic's methods
-
-          ,
+          onLongPress: onLongPress,
           onPressed: onPressed,
         ),
       ),

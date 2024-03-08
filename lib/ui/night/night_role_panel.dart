@@ -213,62 +213,65 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
       final isPlayerMafia = isMafia(widget.role);
       print("isPlayerMafia: $isPlayerMafia");
       final tonight = await nightFuture;
+      print('tonight = $tonight');
       final criteria =
           isPlayerMafia && widget.otherMafias != null && tonight == 0;
       print('citeria: $criteria');
 
-      AwesomeDialog(
-        // width: _width / .9,
-        context: context,
-        dialogType: DialogType.WARNING,
-        animType: AnimType.SCALE,
-        body: (isPlayerMafia && tonight == 0)
-            ? Column(
-                children: [
-                  Text(
-                    'هم تیمی های شما:',
-                    style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
-                  ),
-                  for (Player player in widget.otherMafias!)
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: _height / 48,
-                        ),
-                        Text(
-                          '${player.playerName} : { ${player.roleName} }',
-                          style: MyTextStyles.headlineSmall.copyWith(
-                            fontSize: 16,
-                            height: 1.2,
-                          ),
-                        ),
-                      ],
+      if ((isPlayerMafia && tonight == 0) || (tonight >= 1 && !isPlayerMafia))
+        AwesomeDialog(
+          // width: _width / .9,
+          context: context,
+          dialogType: DialogType.WARNING,
+          animType: AnimType.SCALE,
+          body: (isPlayerMafia && tonight == 0)
+              ? Column(
+                  children: [
+                    Text(
+                      'هم تیمی های شما:',
+                      style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
                     ),
-                ],
-              )
-            : (tonight >= 1)
-                ? Text(
-                    'کد شما: ${widget.code}',
-                    style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
-                  )
-                : null,
-        dismissOnBackKeyPress: true,
-        isDense: false,
-        btnOk: AnimatedButton(
-            pressEvent: () async => await onExti(),
-            color: AppColors.primaries[2],
-            text: 'متوجه شدم',
-            buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
-              color: AppColors.white,
-            )),
-      )..show();
+                    for (Player player in widget.otherMafias!)
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: _height / 48,
+                          ),
+                          Text(
+                            '${player.playerName} : { ${player.roleName} }',
+                            style: MyTextStyles.headlineSmall.copyWith(
+                              fontSize: 16,
+                              height: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                )
+              : (tonight >= 1)
+                  ? Text(
+                      'کد شما: ${widget.code}',
+                      style: MyTextStyles.headlineSmall.copyWith(height: 1.2),
+                    )
+                  : null,
+          dismissOnBackKeyPress: true,
+          isDense: false,
+          btnOk: AnimatedButton(
+              pressEvent: () async => await onExti(),
+              color: AppColors.primaries[2],
+              text: 'متوجه شدم',
+              buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+                color: AppColors.white,
+              )),
+        )..show();
+
       if (tonight == 0 &&
           !(isPlayerMafia && widget.otherMafias != null && tonight == 0)) {
         await onExti();
         if (widget.role == MyStrings.nostradamous)
           ref.read(loadingProvider.notifier).toggle();
       }
-      ;
+      if (tonight >= 1 && isPlayerMafia) await onExti();
     };
     //
     return GlobalLoading(

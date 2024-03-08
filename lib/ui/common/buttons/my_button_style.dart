@@ -1,4 +1,75 @@
+import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+
+// --------------------------------------------------------------------------------------------------------------------------
+
+@immutable
+class MyButtonStyle {
+  const MyButtonStyle._();
+
+  static final defaultStyle = (
+    normal: ElevatedButton.styleFrom(
+      shadowColor: AppColors.lightText,
+      elevation: 9,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      backgroundColor: AppColors.tintsOfBlack[3],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      minimumSize: const Size(48, 48),
+    ),
+    selected: ElevatedButton.styleFrom(
+      shadowColor: AppColors.lightText,
+      elevation: 9,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      backgroundColor: AppColors.primary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      minimumSize: const Size(48, 48),
+    ),
+  );
+  // --------------------------------------------------------------------------------------------------------------------------
+  static final ({ButtonStyle normal, ButtonStyle selected}) homeButton = (
+    normal: ElevatedButton.styleFrom(
+      shadowColor: AppColors.lightText,
+      elevation: 9,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      backgroundColor: AppColors.primaries[2],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      minimumSize: const Size(48, 48),
+    ),
+    selected: ElevatedButton.styleFrom(
+      shadowColor: AppColors.lightText,
+      elevation: 9,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      backgroundColor: AppColors.primaries[0],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      minimumSize: const Size(48, 48),
+    ),
+  );
+}
+
+({ButtonStyle? normal, ButtonStyle? selected}) buttonStyleBasedOnPlace(
+  String? place,
+) {
+  switch (place) {
+    case 'home':
+      return MyButtonStyle.homeButton;
+    default:
+      return MyButtonStyle.defaultStyle;
+  }
+}
+
+// --------------------------------------------------------------------------------------------------------------------------
 
 @immutable
 class TextButtonDefaultOverlay extends MaterialStateProperty<Color?> {

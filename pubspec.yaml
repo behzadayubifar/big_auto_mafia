@@ -62,6 +62,7 @@ dependencies:
   just_audio: ^0.9.36
   lottie: ^3.1.0
   flutter_native_splash: ^2.3.10
+  animated_background: ^2.0.0
 
 dev_dependencies:
   flutter_test:

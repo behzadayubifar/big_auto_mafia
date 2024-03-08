@@ -69,21 +69,14 @@ final _router = GoRouter(
     ),
     GoRoute(
       name: 'home',
-      path: '/',
-      builder: (_, __) => HomePage(),
-      // redirect: (context, state) async {
-      //   final isar = await _container.read(isarServiceProvider.future);
-      //   final isFinished = await isar
-      //       .retrieveGameStatusN(n: await isar.getDayNumber())
-      //       .then((status) => status?.isFinished);
-      //   if (isFinished == false) {
-      //     context.go('/name_list');
-      //   } else {
-      //     context.go('/');
-
-      //     return;
-      //   }
-      // },
+      // path: '/:isFinished',
+      path: '/home/:isFinished',
+      builder: (_, GoRouterState state) {
+        final isFinished = state.pathParameters['isFinished'] == 'true';
+        print('goroter: isFinished -> ${state.pathParameters['isFinished']}');
+        return HomePage(isFinished: isFinished);
+        // return HomePage();
+      },
     ),
     GoRoute(
       name: 'name-list',
@@ -102,26 +95,6 @@ final _router = GoRouter(
     GoRoute(
       name: 'night',
       path: '/night',
-      // pageBuilder: (context, state) {
-      //   print('here going to night');
-      //   final info = state.extra as Map<String, dynamic>;
-      //   log('info: $info', name: 'night-info');
-
-      //   if (info['situation'] == MyStrings.nightPage) {
-      //     if (int.tryParse(info['nightNumber'])! >= 1)
-      //       Overlay.of(context).insert(timerOverlay);
-      //     return DialogPage(
-      //       builder: (_) => Material(
-      //         color: Colors.transparent,
-      //         elevation: 16,
-      //         shadowColor: AppColors.black50,
-      //         child: TimerDialog(),
-      //       ),
-      //       child: NightPage(info: info),
-      //     );
-      //   }
-      //   return MaterialPage(child: NightPage(info: info));
-      // },
       builder: (context, state) {
         final info = state.extra as Map<String, dynamic>;
         log('info: $info', name: 'night-info');

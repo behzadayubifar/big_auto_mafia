@@ -19,35 +19,6 @@ List<String> _listOfPlayersNames = [];
 class NamingPage extends HookConsumerWidget {
   NamingPage({Key? key}) : super(key: key);
 
-/* 
-  List<TextEditingController> controllers = [];
-  int playersNumber = 7;
-
-  List<String> initialNames = [
-    'فاطمه',
-    'بهزاد',
-    'مرتضی',
-    'زهرا',
-    'مامان',
-    'مریم',
-    'محسن',
-    'مرضیه',
-    'حمید',
-    'علی',
-    'محبوبه',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    // initialNames.shuffle();
-    controllers = List.generate(playersNumber, (index) {
-      final String inititalText =
-          index < initialNames.length ? initialNames[index] : '';
-      return TextEditingController(text: inititalText);
-    });
-  } */
-
   final List<String> initialNames = [
     'فاطمه',
     'بهزاد',
