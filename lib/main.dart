@@ -17,7 +17,7 @@ void main() async {
       child: MainApp(),
     ),
   );
-  await playSound(AppAudios.pedarKhandeh, isLoop: true);
+  // await playSound(AppAudios.pedarKhandeh, isLoop: true);
   // final isar = await createContainer().read(isarServiceProvider.future);
   // await isar.clearAll();
   // await isar.putGameStatus(dayNumber: 0);

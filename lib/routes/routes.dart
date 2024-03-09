@@ -11,6 +11,7 @@ import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
 import 'package:auto_mafia/ui/dialogs/dialog_page_widget.dart';
 import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
+import 'package:auto_mafia/ui/guide/guide_screen.dart';
 import 'package:auto_mafia/ui/home/home_page.dart';
 import 'package:auto_mafia/ui/home/splash_screen.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
@@ -178,6 +179,13 @@ final _router = GoRouter(
         return Day(
           dayNumber: dayNumber,
         );
+      },
+    ),
+    GoRoute(
+      name: 'guide',
+      path: '/guide',
+      builder: (context, state) {
+        return GuideScreen();
       },
     ),
     GoRoute(

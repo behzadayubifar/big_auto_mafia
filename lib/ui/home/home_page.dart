@@ -28,9 +28,14 @@ class HomePage extends ConsumerWidget {
                 title: 'راهنما',
                 place: 'home',
                 onLongPress: () {
-                  context.go('/name_list');
+                  context.push('/guide');
                 },
               ),
+              //
+              SizedBox(
+                height: 48,
+              ),
+              //
               MyButton(
                 title: 'شروع بازی جدید',
                 place: 'home',
