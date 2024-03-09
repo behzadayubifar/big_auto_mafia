@@ -154,7 +154,11 @@ final _router = GoRouter(
       path: '/game_over/:winner',
       builder: (context, state) {
         final winner = state.pathParameters['winner']!;
-        return GameOverPage(winner: winner);
+        final players = state.extra as List<Player>;
+        return GameOverPage(
+          winner: winner,
+          players: players,
+        );
       },
     ),
     GoRoute(

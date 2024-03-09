@@ -7,6 +7,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class Chaos extends HookConsumerWidget {
   const Chaos({required this.playersNames, super.key});
@@ -106,6 +107,14 @@ class Chaos extends HookConsumerWidget {
                       dayNumber: await isar.getDayNumber(),
                       isFinished: true,
                       winner: winner.value,
+                    );
+                    final allPlayers = await isar.getAllPlayers();
+                    Future.delayed(
+                      Duration(seconds: 8),
+                      () => context.go(
+                        '/game_over/${winner.value}',
+                        extra: allPlayers,
+                      ),
                     );
                   },
                 )
