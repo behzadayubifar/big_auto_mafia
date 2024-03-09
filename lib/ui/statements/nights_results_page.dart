@@ -213,6 +213,8 @@ class NightsResuls extends HookConsumerWidget {
                                     title: MyStrings.enquiryResults,
                                     context: context,
                                     callback: () async {
+                                      statementInstance.hide();
+
                                       ref
                                           .read(loadingProvider.notifier)
                                           .toggle();
@@ -224,7 +226,7 @@ class NightsResuls extends HookConsumerWidget {
 
                                       final winner = await determineWinner(
                                           dayNumber: dayNumber);
-
+//
                                       if (winner != null) {
                                         ref
                                             .read(loadingProvider.notifier)
@@ -241,42 +243,40 @@ class NightsResuls extends HookConsumerWidget {
 
                                         context.go('/game_over/$winner');
                                         return;
+                                      } else {
+                                        final alivePlayers =
+                                            await isar.retrievePlayer();
+                                        if (alivePlayers.count == 3) {
+                                          await isar.putGameStatus(
+                                            situation: MyStrings.chaos,
+                                            isChaos: true,
+                                            dayNumber: dayNumber,
+                                          );
+                                          context.go(
+                                            '/chaos',
+                                            extra: alivePlayers.players
+                                                .mapToNames(),
+                                          );
+                                          return;
+                                        } else {
+                                          print(
+                                              "MUST NOT BE EXECUTED IF GAME IS OVER OR CHAOS");
+
+                                          await isar.putGameStatus(
+                                            situation: MyStrings.dayPage,
+                                            dayNumber: dayNumber,
+                                            remainedChancesForNightEnquiry:
+                                                remainedChancesForNightEnquiry -
+                                                    1,
+                                          );
+
+                                          context.go('/day/$dayNumber');
+                                          ref
+                                              .read(loadingProvider.notifier)
+                                              .toggle();
+                                        }
                                       }
-
-                                      final alivePlayers =
-                                          await isar.retrievePlayer();
-
-                                      if (alivePlayers.count == 3) {
-                                        await isar.putGameStatus(
-                                          situation: MyStrings.chaos,
-                                          isChaos: true,
-                                          dayNumber: dayNumber,
-                                        );
-
-                                        context.go(
-                                          '/chaos',
-                                          extra:
-                                              alivePlayers.players.mapToNames(),
-                                        );
-                                        return;
-                                      }
-
-                                      print(
-                                          "MUST NOT BE EXECUTED IF GAME IS OVER OR CHAOS");
-
-                                      await isar.putGameStatus(
-                                        situation: MyStrings.dayPage,
-                                        dayNumber: dayNumber,
-                                        remainedChancesForNightEnquiry:
-                                            remainedChancesForNightEnquiry - 1,
-                                      );
-
-                                      statementInstance.hide();
-
-                                      context.go('/day/$dayNumber');
-                                      ref
-                                          .read(loadingProvider.notifier)
-                                          .toggle();
+                                      //
                                     },
                                   );
                                 }),
@@ -299,8 +299,42 @@ class NightsResuls extends HookConsumerWidget {
                                 .read(currentPlayersProvider.notifier)
                                 .action(MyStrings.dayPage);
 
-                            context.go('/day/$dayNumber');
-                            ref.read(loadingProvider.notifier).toggle();
+                            final winner =
+                                await determineWinner(dayNumber: dayNumber);
+
+                            if (winner != null) {
+                              ref.read(loadingProvider.notifier).toggle();
+
+                              await isar.putGameStatus(
+                                situation: MyStrings.gameOver,
+                                dayNumber: dayNumber,
+                                isFinished: true,
+                              );
+                              ref.read(loadingProvider.notifier).end();
+
+                              context.go('/game_over/$winner');
+                              return;
+                            } else {
+                              final alivePlayers = await isar.retrievePlayer();
+                              if (alivePlayers.count == 3) {
+                                await isar.putGameStatus(
+                                  situation: MyStrings.chaos,
+                                  isChaos: true,
+                                  dayNumber: dayNumber,
+                                );
+                                context.go(
+                                  '/chaos',
+                                  extra: alivePlayers.players.mapToNames(),
+                                );
+                                return;
+                              } else {
+                                print(
+                                    "MUST NOT BE EXECUTED IF GAME IS OVER OR CHAOS");
+
+                                context.go('/day/$dayNumber');
+                                ref.read(loadingProvider.notifier).toggle();
+                              }
+                            }
                           }),
                     ],
                   ),

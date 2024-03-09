@@ -25,6 +25,13 @@ class HomePage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               MyButton(
+                title: 'راهنما',
+                place: 'home',
+                onLongPress: () {
+                  context.go('/name_list');
+                },
+              ),
+              MyButton(
                 title: 'شروع بازی جدید',
                 place: 'home',
                 onLongPress: () {

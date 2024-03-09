@@ -133,7 +133,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
               .toList();
         } else if (nostradamousChoices.value.length >= maxOfChoices) {
           // remove last element and add new one
-          nostradamousChoices.value.removeLast();
+          nostradamousChoices.value.removeAt(0);
           nostradamousChoices.value = [...nostradamousChoices.value, newChoice];
         } else {
           nostradamousChoices.value = [...nostradamousChoices.value, newChoice];
