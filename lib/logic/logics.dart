@@ -478,15 +478,21 @@ Future<Map<String, dynamic>?> god(
       situation: MyStrings.nightPage,
     );
 
-    final allPlayers = await isar
+    final allAlivePlayers = await isar
         .retrievePlayer()
         .then((record) => record.players.mapToNames());
 
+    final allDeadPlayers = await isar
+        .retrievePlayer(isAlive: false)
+        .then((record) => record.players.mapToNames());
+
+    final realAllPlayers = allAlivePlayers + allDeadPlayers;
+
     // assign new random codes to players
-    final Map<String, int> newAssignedCodes = assignRandomCode(allPlayers);
+    final Map<String, int> newAssignedCodes = assignRandomCode(realAllPlayers);
 
     // now put the generated code in db and handle the exposinf the night code in ui
-    for (String player in allPlayers) {
+    for (String player in realAllPlayers) {
       await isar.updatePlayer(
         playerName: player,
         nightDone: false,

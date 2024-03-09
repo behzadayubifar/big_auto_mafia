@@ -100,7 +100,7 @@ class Chaos extends HookConsumerWidget {
                       ? AppColors.green
                       : AppColors.tintsOfBlack[2],
                   pressEvent: () async {
-                    winner.value = await winnerOfChaod(handShakenPlayers.value);
+                    winner.value = await winnerOfChaos(handShakenPlayers.value);
                     final isar = await ref.read(isarServiceProvider.future);
                     await isar.putGameStatus(
                       dayNumber: await isar.getDayNumber(),

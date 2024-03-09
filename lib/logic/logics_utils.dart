@@ -98,9 +98,9 @@ Future<String?> determineWinner({required int dayNumber}) async {
   if (isGameOver) {
     if (citizenPlayersCount == 0 ||
         (mafiaPlayersCount >= otherThanMafiaPlayersCount)) {
-      winner = 'mafias';
+      winner = 'مافیا ها';
     } else {
-      winner = 'citizens';
+      winner = 'شهروندان';
     }
 
     log('winner: $winner', name: 'determineWinner');
@@ -210,7 +210,7 @@ extension PlayersListConversion on Iterable<Player> {
       ).toList();
 }
 
-Future<String> winnerOfChaod(List<String> handShakenPlayers) async {
+Future<String> winnerOfChaos(List<String> handShakenPlayers) async {
   final isar = await _container.read(isarServiceProvider.future);
   final dayNumber = await isar.getDayNumber();
   String winner = '';

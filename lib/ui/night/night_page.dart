@@ -7,6 +7,7 @@ import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
+import 'package:auto_mafia/ui/common/buttons/floating_action_button.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
@@ -55,13 +56,10 @@ class NightPage extends HookConsumerWidget {
 
     return GlobalLoading(
       child: Scaffold(
+        floatingActionButton:
+            buildfloatingActionButton(context: nightContext, name: 'guide'),
         backgroundColor: AppColors.backGround,
-        body: /*  true
-            ? TimerDialog(
-                // timerController: _controller,
-                )
-            :  */
-            switch (asyncPlayers) {
+        body: switch (asyncPlayers) {
           AsyncData(:final List<Player> value) => SafeArea(
               minimum: EdgeInsets.only(top: height / 15),
               child: Center(

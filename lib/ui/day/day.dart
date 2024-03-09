@@ -7,10 +7,12 @@ import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/my_assets.dart';
+import 'package:auto_mafia/ui/common/buttons/floating_action_button.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/day/grid_list_of_players.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -58,6 +60,8 @@ class _DayState extends ConsumerState<Day> {
 
     return GlobalLoading(
       child: Scaffold(
+        floatingActionButton:
+            buildfloatingActionButton(context: context, name: 'guide'),
         body: Stack(
           children: [
             // background

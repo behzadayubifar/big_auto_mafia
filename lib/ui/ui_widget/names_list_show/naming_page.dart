@@ -3,6 +3,7 @@ import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/metrics.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/ui/common/buttons/floating_action_button.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/player_count_dropdown.dart';
@@ -54,6 +55,8 @@ class NamingPage extends HookConsumerWidget {
     );
 
     return Scaffold(
+      floatingActionButton:
+          buildfloatingActionButton(context: context, name: 'guide'),
       backgroundColor: AppColors.backGround,
       body: GlobalLoading(
         child: SafeArea(

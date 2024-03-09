@@ -6,4 +6,5 @@ class Lotties {
   static String splash = Assets.lotties.splashAutoMafia;
   static String chicken = Assets.lotties.politeChicky;
   static final splashGif = Assets.gifs.splashAutoMafia;
+  static final celebrate = Assets.lotties.celebrate;
 }

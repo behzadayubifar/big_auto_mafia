@@ -234,6 +234,10 @@ class $AssetsImagesGen {
   $AssetsImagesDaysGen get days => const $AssetsImagesDaysGen();
   $AssetsImagesFramesGen get frames => const $AssetsImagesFramesGen();
 
+  /// File path: assets/images/mafia_launcher.png
+  AssetGenImage get mafiaLauncher =>
+      const AssetGenImage('assets/images/mafia_launcher.png');
+
   /// File path: assets/images/mysterious-gangster-character.jpg
   AssetGenImage get mysteriousGangsterCharacter =>
       const AssetGenImage('assets/images/mysterious-gangster-character.jpg');
@@ -246,7 +250,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values =>
-      [dayBg, mysteriousGangsterCharacter, nightBg];
+      [dayBg, mafiaLauncher, mysteriousGangsterCharacter, nightBg];
 }
 
 class $AssetsLottiesGen {
@@ -258,8 +262,11 @@ class $AssetsLottiesGen {
   /// File path: assets/lotties/Splash-Auto_mafia.json
   String get splashAutoMafia => 'assets/lotties/Splash-Auto_mafia.json';
 
+  /// File path: assets/lotties/celebrate.json
+  String get celebrate => 'assets/lotties/celebrate.json';
+
   /// List of all assets
-  List<String> get values => [politeChicky, splashAutoMafia];
+  List<String> get values => [politeChicky, splashAutoMafia, celebrate];
 }
 
 class $AssetsOverlaysGen {
