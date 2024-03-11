@@ -117,6 +117,14 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
     final asyncPlayers = ref.watch(currentPlayersProvider);
     //
     // final criteria = ref.watch(buttonCriteriaControllerProvider);
+
+    //
+    void revertShootOrSlaughter() {
+      shootOrSlaughter.value == 'shoot'
+          ? shootOrSlaughter.value = 'slaughter'
+          : shootOrSlaughter.value = 'shoot';
+    }
+
     //
     Future<void> putChoiceLocally({required String newChoice}) async {
       final int numberOfPlayers = await ref
@@ -363,13 +371,24 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
 
                 // control panel
                 Positioned(
-                  top: _height / 2.8,
+                  top: _height / 2.4,
                   // right: _width / 3.2,
                   child: ControlPanel(
                     width: _width,
                     height: _height,
                     finisher: finisher,
                     timerController: widget.timerController,
+                    child: (widget.role == MyStrings.godfather &&
+                            shootOrSlaughter.value != '')
+                        ?
+                        // shoot or slaughter - switch to another option
+                        MyButton(
+                            title: shootOrSlaughter.value == 'shoot'
+                                ? 'تغییر به سلاخی'
+                                : 'تغییر به شلیک',
+                            onPressed: revertShootOrSlaughter,
+                          )
+                        : null,
                   ),
                 ),
 
@@ -386,6 +405,9 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                         MyButton(
                           title: 'شلیک',
                           onPressed: () => shootOrSlaughter.value = 'shoot',
+                        ),
+                        SizedBox(
+                          height: _height / 24,
                         ),
                         MyButton(
                           title: 'سلاخی',

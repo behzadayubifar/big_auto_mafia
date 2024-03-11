@@ -4,33 +4,39 @@ import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 
+@immutable
 class ControlPanel extends StatelessWidget {
-  const ControlPanel({
+  ControlPanel({
     super.key,
     required double width,
     required double height,
     required this.finisher,
     this.timerController,
+    this.child,
   })  : _width = width,
         _height = height;
 
   final double _width;
   final double _height;
+  Widget? child;
   final Future<Null> Function() finisher;
   final CountDownController? timerController;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: child == null
+          ? MainAxisAlignment.center
+          : MainAxisAlignment.spaceAround,
       children: [
-        NightTimer(
+        /*  NightTimer(
           width: _width / 4.8,
           height: _height / 4.8,
           onComplete: finisher,
           timerController: timerController,
-        ),
-        SizedBox(width: _width / 8),
+        ), */
+        child ?? Container(),
+        if (child != null) SizedBox(width: _width / 8),
         MyButton(
           title: MyStrings.finish,
           onLongPress: finisher,
