@@ -33,6 +33,8 @@ class MainApp extends ConsumerWidget {
     // final isar = ref.watch(isarServiceProvider.future);
 
     return MaterialApp.router(
+      // handle back button for quitting the app and showing a dialog
+
       title: 'Auto Mafia',
       /* backButtonDispatcher: RootBackButtonDispatcher(), */
       routerConfig: router,
@@ -43,6 +45,7 @@ class MainApp extends ConsumerWidget {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: <Locale>[
         Locale('fa', 'IR'),
+        Locale('en', 'US'),
       ],
       // builder: (context, child) {},
     );

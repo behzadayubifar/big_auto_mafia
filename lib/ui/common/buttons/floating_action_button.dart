@@ -50,4 +50,11 @@ Map<String, MyFloatingActionButtonModel> floatingButtonsStashes = {
     backgroundColor: AppColors.darkerGrey,
     tooltip: 'راهنما',
   ),
+  //
+  'kick': MyFloatingActionButtonModel(
+    path: '/kick',
+    icon: CupertinoIcons.arrow_left_circle_fill,
+    backgroundColor: AppColors.darkerGrey,
+    tooltip: 'اخراج بازیکن',
+  ),
 };

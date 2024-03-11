@@ -20,7 +20,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     super.initState();
 
     Future.delayed(
-      Duration(milliseconds: 4800),
+      Duration(milliseconds: 4900),
       () async {
         final isar = await ref.read(isarServiceProvider.future);
         final int n = await isar.getDayNumber();

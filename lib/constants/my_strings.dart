@@ -125,4 +125,8 @@ class MyStrings {
   static const String handCuff = 'handCuff';
   static const String silenceOfSheep = 'silenceOfSheep';
   static const String roleReveal = 'roleReveal';
+
+  // dialogs
+  static const String areYouShureToQuitTheApp = 'شما در حال خروج از بازی هستید';
+  static const String exitFromApp = 'خروج از بازی';
 }
