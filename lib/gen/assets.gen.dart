@@ -268,18 +268,9 @@ class $AssetsLottiesGen {
   /// File path: assets/lotties/celebrate.json
   String get celebrate => 'assets/lotties/celebrate.json';
 
-  /// File path: assets/lotties/mafia_dont_know_what_to_do.json
-  String get mafiaDontKnowWhatToDo =>
-      'assets/lotties/mafia_dont_know_what_to_do.json';
-
   /// List of all assets
-  List<String> get values => [
-        politeChicky,
-        splashAutoMafia,
-        bgLottie,
-        celebrate,
-        mafiaDontKnowWhatToDo
-      ];
+  List<String> get values =>
+      [politeChicky, splashAutoMafia, bgLottie, celebrate];
 }
 
 class $AssetsOverlaysGen {
