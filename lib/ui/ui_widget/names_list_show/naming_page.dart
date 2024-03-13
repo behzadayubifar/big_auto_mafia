@@ -56,7 +56,7 @@ class NamingPage extends HookConsumerWidget {
 
     return Scaffold(
       floatingActionButton:
-          buildfloatingActionButton(context: context, name: 'guide'),
+          buildFloatingActionButton(context: context, name: 'guide'),
       backgroundColor: AppColors.backGround,
       body: GlobalLoading(
         child: SafeArea(

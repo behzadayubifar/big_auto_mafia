@@ -61,7 +61,7 @@ class _DayState extends ConsumerState<Day> {
     return GlobalLoading(
       child: Scaffold(
         floatingActionButton:
-            buildfloatingActionButton(context: context, name: 'guide'),
+            buildFloatingActionButton(context: context, name: 'guide'),
         body: Stack(
           children: [
             // background

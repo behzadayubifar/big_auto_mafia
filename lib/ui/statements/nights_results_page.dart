@@ -265,6 +265,9 @@ class NightsResuls extends HookConsumerWidget {
                                             extra: alivePlayers.players
                                                 .mapToNames(),
                                           );
+                                          ref
+                                              .read(loadingProvider.notifier)
+                                              .end();
                                           return;
                                         } else {
                                           print(

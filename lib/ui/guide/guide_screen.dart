@@ -1,6 +1,7 @@
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/models/guide_datasets.dart';
+import 'package:auto_mafia/ui/common/buttons/floating_action_button.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
 import 'package:auto_mafia/ui/guide/guide_utils.dart';
 import 'package:expandable/expandable.dart';
@@ -18,17 +19,10 @@ class GuideScreen extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       // back button
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.pop();
-        },
-        child: const Icon(
-          CupertinoIcons.arrow_left,
-          color: AppColors.white,
-        ),
-        tooltip: 'بازگشت',
-        elevation: 16.0,
-        backgroundColor: AppColors.black50,
+      floatingActionButton: buildFloatingActionButton(
+        context: context,
+        name: 'back',
+        onPressed: () => Navigator.of(context).pop(),
       ),
       backgroundColor: AppColors.backGround,
       body: SafeArea(

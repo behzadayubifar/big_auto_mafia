@@ -1,10 +1,10 @@
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class MyTextStyles {
   ///display1
-  static TextStyle displayLarge = GoogleFonts.lemonada(
+  static TextStyle displayLarge = TextStyle(
+    fontFamily: 'lemonada',
     color: const Color(0xFF070E25),
     fontSize: 64,
     fontWeight: FontWeight.w600,
@@ -12,7 +12,8 @@ class MyTextStyles {
   );
 
   ///display2
-  static TextStyle displayMedium = GoogleFonts.lemonada(
+  static TextStyle displayMedium = TextStyle(
+    fontFamily: 'lemonada',
     color: const Color(0xFF070E25),
     fontSize: 56,
     fontWeight: FontWeight.w600,
@@ -20,7 +21,8 @@ class MyTextStyles {
   );
 
   ///H1
-  static TextStyle displaySmall = GoogleFonts.lemonada(
+  static TextStyle displaySmall = TextStyle(
+    fontFamily: 'lemonada',
     color: const Color(0xFF070E25),
     fontSize: 44,
     fontWeight: FontWeight.w600,
@@ -28,7 +30,8 @@ class MyTextStyles {
   );
 
   ///H2
-  static TextStyle headlineLarge = GoogleFonts.lemonada(
+  static TextStyle headlineLarge = TextStyle(
+    fontFamily: 'lemonada',
     color: const Color(0xFF070E25),
     fontSize: 40,
     fontWeight: FontWeight.w600,
@@ -36,7 +39,8 @@ class MyTextStyles {
   );
 
   ///H3
-  static TextStyle headlineMedium = GoogleFonts.lemonada(
+  static TextStyle headlineMedium = TextStyle(
+    fontFamily: 'lemonada',
     color: const Color(0xFF070E25),
     fontSize: 32,
     fontWeight: FontWeight.w600,
@@ -44,7 +48,8 @@ class MyTextStyles {
   );
 
   ///H4
-  static TextStyle headlineSmall = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle headlineSmall = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xFF070E25),
     fontSize: 24,
     fontWeight: FontWeight.w600,
@@ -52,7 +57,8 @@ class MyTextStyles {
   );
 
   ///H5
-  static TextStyle titleLarge = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle titleLarge = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xFF070E25),
     fontSize: 20,
     fontWeight: FontWeight.w600,
@@ -60,7 +66,8 @@ class MyTextStyles {
   );
 
   ///H6
-  static TextStyle titleMedium = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle titleMedium = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xFF070E25),
     fontSize: 16,
     fontWeight: FontWeight.w600,
@@ -68,7 +75,8 @@ class MyTextStyles {
   );
 
   ///Body - XL
-  static TextStyle bodyLarge = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle bodyLarge = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xB2070E25),
     fontSize: 20,
     fontWeight: FontWeight.w400,
@@ -76,7 +84,8 @@ class MyTextStyles {
   );
 
   ///Body - LG
-  static TextStyle bodyMedium = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle bodyMedium = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xB2070E25),
     fontSize: 18,
     fontWeight: FontWeight.w300,
@@ -84,7 +93,8 @@ class MyTextStyles {
   );
 
   ///Body - MD
-  static TextStyle bodyMD = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle bodyMD = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xB2070E25),
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -92,7 +102,8 @@ class MyTextStyles {
   );
 
   ///Body - SM
-  static TextStyle bodySmall = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle bodySmall = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xB2070E25),
     fontSize: 14,
     fontWeight: FontWeight.w300,
@@ -100,7 +111,8 @@ class MyTextStyles {
   );
 
   ///Body - XS
-  static TextStyle bodyXS = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle bodyXS = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xB2070E25),
     fontSize: 12,
     fontWeight: FontWeight.w300,
@@ -108,7 +120,8 @@ class MyTextStyles {
   );
 
   ///Caption - md
-  static TextStyle titleSmall = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle titleSmall = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xB2070E25),
     fontSize: 12,
     fontWeight: FontWeight.w500,
@@ -116,7 +129,8 @@ class MyTextStyles {
   );
 
   ///Button - LG
-  static TextStyle labelLarge = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle labelLarge = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xFF070E25),
     fontSize: 16,
     fontWeight: FontWeight.w500,
@@ -124,7 +138,8 @@ class MyTextStyles {
   );
 
   ///Button - SM
-  static TextStyle labelMedium = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle labelMedium = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xFF070E25),
     fontSize: 14,
     fontWeight: FontWeight.w500,
@@ -132,7 +147,8 @@ class MyTextStyles {
   );
 
   ///Overline - LG
-  static TextStyle labelSmall = GoogleFonts.ibmPlexSansArabic(
+  static TextStyle labelSmall = TextStyle(
+    fontFamily: 'ibm_plex_sans_arabic',
     color: const Color(0xFF5A38FF),
     fontSize: 14,
     fontWeight: FontWeight.w500,

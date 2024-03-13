@@ -6,20 +6,76 @@ import 'package:auto_mafia/logic/load_logics.dart';
 import 'package:auto_mafia/lotties_assets.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends StatefulHookConsumerWidget {
   HomePage({required this.isFinished, super.key});
   // HomePage({super.key});
 
   // final bool isFinished = true;
-  final bool isFinished;
+  final bool? isFinished;
   //
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.NO_HEADER,
+        animType: AnimType.BOTTOMSLIDE,
+        dismissOnTouchOutside: false,
+        dismissOnBackKeyPress: false,
+        body: SizedBox(
+          height: 320,
+          child: ListView(
+            padding: EdgeInsets.all(8),
+            children: [
+              Text('تذکر مهم در مورد دکمه ها',
+                  style: MyTextStyles.bodyLarge.copyWith(
+                    color: AppColors.secondaries[1],
+                    height: 1.5,
+                  )),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                'اکثر مواقع برای اجرا شدن دکمه ها نیاز به نگه داشتن آنها برای 2 ثانیه دارید تا از اشتباهی اجرا شدن عملیات ها بر اثر تصادف جلوگیری شود برای اطلاعات بیشتر حتما به راهنما یه سری بزنید لطفا (:)',
+                style: MyTextStyles.bodyMD.copyWith(
+                  color: AppColors.primaries[3],
+                  height: 1.5,
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              AnimatedButton(
+                color: AppColors.primaries[1],
+                width: 120,
+                buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+                  color: AppColors.white,
+                ),
+                text: 'فهمیدم',
+                pressEvent: () => Navigator.of(context).pop(),
+              )
+            ],
+          ),
+        ),
+      ).show();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     //
@@ -37,12 +93,12 @@ class HomePage extends ConsumerWidget {
               ),
               Center(
                 child: Padding(
-                  padding: EdgeInsets.only(top: height / 64),
+                  padding: EdgeInsets.only(top: height / 64, right: width / 32),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           AnimatedTextKit(
                             animatedTexts: [
@@ -109,12 +165,16 @@ class HomePage extends ConsumerWidget {
                       ),
                       //
 
-                      if (!isFinished)
+                      if ((widget.isFinished == null &&
+                              widget.isFinished != true) ||
+                          widget.isFinished == null)
                         SizedBox(
                           height: 48,
                         ),
                       //
-                      if (!isFinished)
+                      if ((widget.isFinished == null &&
+                              widget.isFinished != true) ||
+                          widget.isFinished == null)
                         MyButton(
                           title: 'ادامه بازی قبلی',
                           place: 'home',
@@ -140,6 +200,17 @@ class HomePage extends ConsumerWidget {
                         },
                       ),
                       //
+                      SizedBox(
+                        height: 48,
+                      ),
+                      //
+                      MyButton(
+                        title: 'درباره ما',
+                        place: 'home',
+                        onPressed: () {
+                          context.push('/about');
+                        },
+                      ),
                     ],
                   ),
                 ),

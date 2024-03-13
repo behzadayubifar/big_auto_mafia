@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:auto_mafia/audio/audio_assets.dart';
 import 'package:auto_mafia/audio/audio_service.dart';
 import 'package:auto_mafia/db/isar_service.dart';
@@ -11,6 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final _container = ProviderContainer();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // find the current platform
+
   runApp(
     const ProviderScope(
       overrides: [],
@@ -47,7 +52,53 @@ class MainApp extends ConsumerWidget {
         Locale('fa', 'IR'),
         Locale('en', 'US'),
       ],
-      // builder: (context, child) {},
+      // builder: (context, child) {
+      //   // manage the back button
+      //   return PopScope(
+      //     child: child!,
+      //     // check if the previous route is empty or not if it is empty then it means that the app is going to be closed so show a dialog
+      //     // get the previous route and check if it is null then show a dialog
+      //     onPop: (route, previousRoute) async {
+      //       if (previousRoute == null) {
+      //         // print(previousRoute);
+      //         // log('didPop: ${route.settings.name}', name: 'navigator-observer');
+      //         await showDialog(
+      //           context: route.navigator!.context,
+      //           builder: (context) {
+      //             return AlertDialog(
+      //               title: const Text('خروج از برنامه'),
+      //               content: const Text('آیا می خواهید از برنامه خارج شوید؟'),
+      //               actions: <Widget>[
+      //                 TextButton(
+      //                   onPressed: () {
+      //                     Navigator.of(context).pop();
+      //                   },
+      //                   child: const Text('خیر'),
+      //                 ),
+      //                 TextButton(
+      //                   onPressed: () {
+      //                     if (Platform.isAndroid) {
+      //                       AndroidIntent intent = AndroidIntent(
+      //                         action: 'android.intent.action.MAIN',
+      //                         category: 'android.intent.category.HOME',
+      //                       );
+      //                       intent.launch();
+      //                     }
+      //                     // exit(0);
+      //                   },
+      //                   child: const Text('بله'),
+      //                 ),
+      //               ],
+      //             );
+      //           },
+      //         );
+      //       } else {
+      //         // log('didPop: ${route.settings.name}', name: 'navigator-observer');
+      //         return true;
+      //       }
+      //     },
+      //   );
+      // },
     );
   }
 }

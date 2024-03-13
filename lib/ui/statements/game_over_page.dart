@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/lotties_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:go_router/go_router.dart';
 
 class GameOverPage extends StatelessWidget {
   const GameOverPage({
@@ -24,6 +28,8 @@ class GameOverPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backGround,
       appBar: AppBar(
+        backgroundColor:
+            winner == 'شهروندان' ? AppColors.green : AppColors.secondary,
         centerTitle: true,
         title: Text('اتمام بازی'),
       ),
@@ -38,7 +44,7 @@ class GameOverPage extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             SizedBox(
-              // width: width / 1.6,
+              height: height,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -51,7 +57,7 @@ class GameOverPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: height / 16,
+                    height: height / 24,
                   ),
                   Text(
                     "برنده شدند!",
@@ -61,12 +67,12 @@ class GameOverPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: height / 12,
+                    height: height / 24,
                   ),
                   // a 2 column table of players and their roles
                   Container(
-                    height: height / 3,
-                    width: width / 1.5,
+                    height: height / 2,
+                    width: width / 1.2,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -101,7 +107,7 @@ class GameOverPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '<=' * 3,
+                              '${FontAwesomeIcons.solidFaceSmile}',
                               style: MyTextStyles.bodyMedium.copyWith(
                                 color: AppColors.white60,
                                 height: 1.5,
@@ -118,6 +124,59 @@ class GameOverPage extends StatelessWidget {
                         );
                       },
                     ),
+                  ),
+
+                  // buttons to restart and exit
+
+                  SizedBox(
+                    height: height / 24,
+                  ),
+                  // for exit
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      // for restart
+                      ElevatedButton(
+                        onPressed: () => context.go('/name_list'),
+                        child: Text(
+                          'شروع مجدد',
+                          style: MyTextStyles.bodyLarge.copyWith(
+                            color: AppColors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          shadowColor: AppColors.lightText,
+                          elevation: 9,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                          backgroundColor: AppColors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          minimumSize: const Size(48, 48),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => exit(0),
+                        child: Text(
+                          'خروج',
+                          style: MyTextStyles.bodyLarge.copyWith(
+                            color: AppColors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          shadowColor: AppColors.lightText,
+                          elevation: 9,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                          backgroundColor: AppColors.secondary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          minimumSize: const Size(48, 48),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

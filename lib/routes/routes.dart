@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
@@ -12,6 +13,7 @@ import 'package:auto_mafia/ui/day/show_last_move.dart';
 import 'package:auto_mafia/ui/dialogs/dialog_page_widget.dart';
 import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
 import 'package:auto_mafia/ui/guide/guide_screen.dart';
+import 'package:auto_mafia/ui/home/about_us_screen.dart';
 import 'package:auto_mafia/ui/home/home_page.dart';
 import 'package:auto_mafia/ui/home/splash_screen.dart';
 import 'package:auto_mafia/ui/night/night_page.dart';
@@ -22,13 +24,50 @@ import 'package:auto_mafia/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/ui/x_page.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final routerProvider = Provider<GoRouter>((_) => _router);
 
+// class MyNavigatorOserver extends NavigatorObserver {
+//   // @override
+//   // void didPush(Route route, Route? previousRoute) {
+//   //   super.didPush(route, previousRoute);
+//   //   log('didPush: ${route.settings.name}', name: 'navigator-observer');
+//   // }
+
+//   @override
+//   void didPop(Route route, Route? previousRoute) {
+//     print(previousRoute);
+//     // check if the previous route is empty or not if it is empty then it means that the app is going to be closed so show a dialog
+//     if (previousRoute == null) {
+//       // print(previousRoute);
+//       log('didPop: ${route.settings.name}', name: 'navigator-observer');
+//       AwesomeDialog(
+//         context: route.navigator!.context,
+//         dialogType: DialogType.WARNING,
+//         animType: AnimType.SCALE,
+//         title: 'خروج از برنامه',
+//         desc: 'آیا می خواهید از برنامه خارج شوید؟',
+//         btnCancelOnPress: () {},
+//         btnOkOnPress: () {
+//           exit(0);
+//         },
+//       );
+//     } else {
+//       log('didPop: ${route.settings.name}', name: 'navigator-observer');
+//       super.didPop(route, previousRoute);
+//     }
+//   }
+
+//   @override
+//   void
+// }
+
 final _router = GoRouter(
+  // observers: [MyNavigatorOserver()],
   debugLogDiagnostics: true,
   // initialLocation: '/name_list/show-roles',
   // initialLocation: '/night',
@@ -190,6 +229,13 @@ final _router = GoRouter(
       path: '/guide',
       builder: (context, state) {
         return GuideScreen();
+      },
+    ),
+    GoRoute(
+      name: 'about',
+      path: '/about',
+      builder: (context, state) {
+        return AboutUsScreen();
       },
     ),
     GoRoute(

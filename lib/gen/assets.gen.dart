@@ -262,6 +262,9 @@ class $AssetsLottiesGen {
   /// File path: assets/lotties/Splash-Auto_mafia.json
   String get splashAutoMafia => 'assets/lotties/Splash-Auto_mafia.json';
 
+  /// File path: assets/lotties/about_us_2.json
+  String get aboutUs2 => 'assets/lotties/about_us_2.json';
+
   /// File path: assets/lotties/bg_lottie.json
   String get bgLottie => 'assets/lotties/bg_lottie.json';
 
@@ -270,7 +273,7 @@ class $AssetsLottiesGen {
 
   /// List of all assets
   List<String> get values =>
-      [politeChicky, splashAutoMafia, bgLottie, celebrate];
+      [politeChicky, splashAutoMafia, aboutUs2, bgLottie, celebrate];
 }
 
 class $AssetsOverlaysGen {

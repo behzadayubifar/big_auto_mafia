@@ -57,7 +57,7 @@ class NightPage extends HookConsumerWidget {
     return GlobalLoading(
       child: Scaffold(
         floatingActionButton:
-            buildfloatingActionButton(context: nightContext, name: 'guide'),
+            buildFloatingActionButton(context: nightContext, name: 'guide'),
         backgroundColor: AppColors.backGround,
         body: switch (asyncPlayers) {
           AsyncData(:final List<Player> value) => SafeArea(

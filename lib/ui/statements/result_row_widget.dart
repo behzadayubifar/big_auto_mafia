@@ -36,7 +36,7 @@ class ResultRow extends StatelessWidget {
         ),
 
         // space
-        SizedBox(width: width / 24),
+        SizedBox(width: width / 32),
 
         // name(s)
         Expanded(
@@ -47,6 +47,7 @@ class ResultRow extends StatelessWidget {
                 MyAssets.tornPaper,
                 color: color,
                 colorBlendMode: BlendMode.srcATop,
+                // scale: .5,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,

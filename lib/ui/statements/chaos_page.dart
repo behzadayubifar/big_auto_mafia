@@ -110,7 +110,7 @@ class Chaos extends HookConsumerWidget {
                     );
                     final allPlayers = await isar.getAllPlayers();
                     Future.delayed(
-                      Duration(seconds: 8),
+                      Duration(seconds: 3),
                       () => context.go(
                         '/game_over/${winner.value}',
                         extra: allPlayers,

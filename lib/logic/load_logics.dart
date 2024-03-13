@@ -66,6 +66,25 @@ loadGame(BuildContext context) async {
         extra: Info.showRoles,
       );
 
+    case MyStrings.chaos:
+      final alivePlayers = await isar.retrievePlayer();
+      context.goNamed(
+        'chaos',
+        extra: alivePlayers.players,
+      );
+
+    case MyStrings.gameOver:
+      final winner =
+          await isar.retrieveGameStatusN(n: dayNumber).then((status) {
+        return status!.winner!;
+      });
+      final allPlayers = await isar.getAllPlayers();
+      context.goNamed(
+        'game-over',
+        extra: allPlayers,
+        pathParameters: {'winner': winner},
+      );
+
     // create for chaos & game over & ALSO *LAST MOVE* chosen -----------------------------------
 
     default:

@@ -126,7 +126,7 @@ Future<bool?> buttonLogicExecuter({
       title: MyStrings.resultOfPrediction,
       callback: () async {
         statementInstance.hide();
-        // context.pop();
+        // context.pop();s
         print(nostradamousChoices);
         // below must be after the buttonLogicExecuter (certainly!!!)
         await _container
