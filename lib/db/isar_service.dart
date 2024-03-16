@@ -307,14 +307,16 @@ class CurrentPlayers extends _$CurrentPlayers {
                           (value) => value.match(
                               (l) => l['matadorChoice']!, (r) => 'not found'),
                         );
-                return await isar.retrievePlayer(
+                final result = await isar.retrievePlayer(
                   criteria: (player) {
                     final c1 = player.type != RoleType.mafia;
                     final c2 = player.playerName == matadorChoice &&
-                        lastNightOfBlockage == lastNight;
+                        lastNightOfBlockage == '$lastNight';
                     return c1 && !c2;
                   },
                 ).then((record) => record.players);
+
+                return result;
               }
               return [];
 

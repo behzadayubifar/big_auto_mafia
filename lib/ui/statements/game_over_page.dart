@@ -107,7 +107,8 @@ class GameOverPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '${FontAwesomeIcons.solidFaceSmile}',
+                              // '${FontAwesomeIcons.solidFaceSmile}',
+                              '>',
                               style: MyTextStyles.bodyMedium.copyWith(
                                 color: AppColors.white60,
                                 height: 1.5,

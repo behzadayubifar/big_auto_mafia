@@ -17,6 +17,7 @@ import 'package:auto_mafia/ui/statements/statement_overlay_screen.dart';
 import 'package:auto_mafia/ui/widgets/player_name_widget.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -74,42 +75,48 @@ class NightPage extends HookConsumerWidget {
                     ),
                     SizedBox(height: height / 24),
                     Expanded(
-                      child: SizedBox(
-                        width: width / 1.5,
-                        // height: height / 1.5,
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          cacheExtent: height / 1.64,
-                          restorationId: 'night-page',
-                          clipBehavior: Clip.antiAlias,
-                          // shrinkWrap: true,
-                          // physics: RangeMaintainingScrollPhysics(),
-                          itemCount: value.length,
-                          itemBuilder: (_, index) {
-                            print(value.elementAt(index).playerName!);
+                      child: Scrollbar(
+                        controller: ScrollController(),
+                        scrollbarOrientation: ScrollbarOrientation.right,
+                        child: SizedBox(
+                          width: width / 1.42,
+                          // height: height / 1.5,
+                          child: ListView.separated(
+                            padding: EdgeInsets.all(16),
+                            shrinkWrap: true,
+                            cacheExtent: height / 1.64,
+                            restorationId: 'night-page',
+                            clipBehavior: Clip.antiAlias,
+                            // shrinkWrap: true,
+                            // physics: RangeMaintainingScrollPhysics(),
+                            itemCount: value.length,
+                            itemBuilder: (_, index) {
+                              print(value.elementAt(index).playerName!);
 
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                if (value.elementAt(index).nightDone != true)
-                                  PlayerNameWidget(
-                                    playerName: value[index].playerName!,
-                                    height: height,
-                                    situation: info['situation']!,
-                                    nightContext: nightContext,
-                                  ),
-                                if (value.elementAt(index).nightDone != true)
-                                  SizedBox(
-                                    height: height / 64,
-                                  ),
-                              ],
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            if (value.elementAt(index).nightDone != true)
-                              return SizedBox(height: height / 48);
-                            return SizedBox();
-                          },
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  if (value.elementAt(index).nightDone != true)
+                                    PlayerNameWidget(
+                                      playerName: value[index].playerName!,
+                                      height: height,
+                                      situation: info['situation']!,
+                                      nightContext: nightContext,
+                                    ),
+                                  if (value.elementAt(index).nightDone != true)
+                                    SizedBox(
+                                      height: height / 64,
+                                    ),
+                                ],
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              if (value.elementAt(index).nightDone != true)
+                                return SizedBox(height: height / 48);
+                              return SizedBox();
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -119,7 +126,7 @@ class NightPage extends HookConsumerWidget {
 
                     if (info['situation'] == MyStrings.showRoles)
                       MyButton(
-                          title: 'go to day',
+                          title: 'برو روز',
                           onPressed: () async {
                             ref.read(loadingProvider.notifier).toggle();
 
@@ -150,167 +157,180 @@ class NightPage extends HookConsumerWidget {
                         title: info['button']!,
                         // criteria: value.length == 0,
                         // TODO: add a function to the button (show night's results)
-                        onLongPress: /* value.length != 0
+                        onLongPress: value.length != 0
                             ? null
-                            : */
-                            () async {
-                          ref.read(loadingProvider.notifier).toggle();
+                            : () async {
+                                ref.read(loadingProvider.notifier).toggle();
 
-                          final isar =
-                              await ref.read(isarServiceProvider.future);
-                          final tonight = await isar.getNightNumber();
+                                final isar =
+                                    await ref.read(isarServiceProvider.future);
+                                final tonight = await isar.getNightNumber();
 
-                          //
-                          final isReNight = await isar
-                              .retrieveGameStatusN(
-                                n: tonight,
-                              )
-                              .then((status) => status!.isReNight);
-                          if (mafiaBuyed &&
-                              value.length == 0 &&
-                              isReNight != true) await saul(info['saulChoice']);
-                          final nightCode = await isar
-                              .retrieveGameStatusN(
-                                n: await isar.getDayNumber(),
-                              )
-                              .then((status) => status?.nightCode);
+                                //
+                                final isReNight = await isar
+                                    .retrieveGameStatusN(
+                                      n: tonight,
+                                    )
+                                    .then((status) => status!.isReNight);
+                                if (mafiaBuyed &&
+                                    value.length == 0 &&
+                                    isReNight != true)
+                                  await saul(info['saulChoice']);
+                                final nightCode = await isar
+                                    .retrieveGameStatusN(
+                                      n: await isar.getDayNumber(),
+                                    )
+                                    .then((status) => status?.nightCode);
 
-                          // TODO: we must handle the loading
-                          if (tonight != 0) {
-                            if (mafiaBuyed &&
-                                value.length == 0 &&
-                                isReNight != true) {
-                              AwesomeDialog(
-                                  context: nightContext,
-                                  dialogType: DialogType.NO_HEADER,
-                                  animType: AnimType.BOTTOMSLIDE,
-                                  body: SizedBox(
-                                    // height: height / 2.5,
-                                    child: Column(
-                                      children: [
-                                        Text("خریداری!",
-                                            style: MyTextStyles.displaySmall
-                                                .copyWith(
-                                              height: 1,
-                                              color: AppColors.secondaries[2],
-                                            )),
-                                        SizedBox(height: height / 32),
-                                        Text(
-                                          "مافیا شب گذشته اقدام به خریداری کرد، بنابراین همۀ افراد مجددا با دانش به این قضیه باید وظیفۀ امشب خود را انجام دهند.",
-                                          style: MyTextStyles.bodyMD.copyWith(
-                                            height: 1.6,
+                                // TODO: we must handle the loading
+                                if (tonight != 0) {
+                                  if (mafiaBuyed &&
+                                      value.length == 0 &&
+                                      isReNight != true) {
+                                    AwesomeDialog(
+                                        context: nightContext,
+                                        dialogType: DialogType.NO_HEADER,
+                                        animType: AnimType.BOTTOMSLIDE,
+                                        body: SizedBox(
+                                          // height: height / 2.5,
+                                          child: Column(
+                                            children: [
+                                              Text("خریداری!",
+                                                  style: MyTextStyles
+                                                      .displaySmall
+                                                      .copyWith(
+                                                    height: 1,
+                                                    color: AppColors
+                                                        .secondaries[2],
+                                                  )),
+                                              SizedBox(height: height / 32),
+                                              Text(
+                                                "مافیا شب گذشته اقدام به خریداری کرد، بنابراین همۀ افراد مجددا با دانش به این قضیه باید وظیفۀ امشب خود را انجام دهند.",
+                                                style: MyTextStyles.bodyMD
+                                                    .copyWith(
+                                                  height: 1.6,
+                                                ),
+                                              ),
+                                              SizedBox(height: height / 48),
+                                              Text(
+                                                'کد خریداری : $nightCode',
+                                                style: MyTextStyles.bodyMD
+                                                    .copyWith(
+                                                  height: 1.6,
+                                                ),
+                                              ),
+                                              SizedBox(height: height / 64),
+                                              AnimatedButton(
+                                                text: "شروع مجدد شب",
+                                                width: width / 2.5,
+                                                color: AppColors.green,
+                                                pressEvent: () async {
+                                                  //
+                                                  final allPlayers = await isar
+                                                      .getAllPlayers();
+
+                                                  print(
+                                                      'allPlayers : $allPlayers');
+
+                                                  for (String playerName
+                                                      in allPlayers
+                                                          .mapToNames()) {
+                                                    await isar.updatePlayer(
+                                                      playerName: playerName,
+                                                      nightDone: false,
+                                                      // handCuffed: false,
+                                                      // isSaved: false,
+                                                      // hasBeenSlaughtered: false,
+                                                      // isBlocked: false,
+                                                    );
+                                                  }
+
+                                                  // clear tonight's choices
+                                                  await isar.putNight(
+                                                    night: tonight,
+                                                    godfatherChoice: '',
+                                                    saulChoice: '',
+                                                    watsonChoice: '',
+                                                    leonChoice: '',
+                                                    kaneChoice: '',
+                                                    konstantinChoice: '',
+                                                    mafiasShot: '',
+                                                    matadorChoice: '',
+                                                    nightOfBlockage: '',
+                                                    nightOfRightChoiceOfKane:
+                                                        '',
+                                                    nostradamousChoices: [],
+                                                    theRoleGuessedByGodfather:
+                                                        '',
+                                                  );
+
+                                                  //
+                                                  await ref
+                                                      .read(
+                                                          currentPlayersProvider
+                                                              .notifier)
+                                                      .action(
+                                                          MyStrings.nightPage);
+                                                  // update situtaion to re-nihgt !!
+                                                  await isar.putGameStatus(
+                                                    dayNumber: await isar
+                                                        .getDayNumber(),
+                                                    isDay: false,
+                                                    isReNight: true,
+                                                    nightCode: null,
+                                                    // no more shoot for mafias in this night
+                                                    remainedMafiasBullets: 0,
+                                                  );
+                                                  // pop the dialog
+                                                  Navigator.of(nightContext)
+                                                      .pop();
+                                                },
+                                              ),
+                                              SizedBox(height: height / 64),
+                                            ],
                                           ),
-                                        ),
-                                        SizedBox(height: height / 48),
-                                        Text(
-                                          'کد خریداری : $nightCode',
-                                          style: MyTextStyles.bodyMD.copyWith(
-                                            height: 1.6,
-                                          ),
-                                        ),
-                                        SizedBox(height: height / 64),
-                                        AnimatedButton(
-                                          text: "شروع مجدد شب",
-                                          width: width / 2.5,
-                                          color: AppColors.green,
-                                          pressEvent: () async {
-                                            //
-                                            final allPlayers =
-                                                await isar.getAllPlayers();
+                                        ))
+                                      ..show();
+                                  } else {
+                                    final nightResultJson =
+                                        await (isar.retrieveNightN(n: tonight))
+                                            .then(
+                                      (json) => json.match(
+                                        (json) => json,
+                                        (_) => null,
+                                      ),
+                                    );
 
-                                            print('allPlayers : $allPlayers');
+                                    log('json: $nightResultJson');
+                                    final info =
+                                        await god(json: nightResultJson);
 
-                                            for (String playerName
-                                                in allPlayers.mapToNames()) {
-                                              await isar.updatePlayer(
-                                                playerName: playerName,
-                                                nightDone: false,
-                                                // handCuffed: false,
-                                                // isSaved: false,
-                                                // hasBeenSlaughtered: false,
-                                                // isBlocked: false,
-                                              );
-                                            }
+                                    nightContext.goNamed(
+                                      'nights-results',
+                                      extra: info,
+                                    );
+                                    ref.read(loadingProvider.notifier).toggle();
+                                  }
+                                } else {
+                                  int dayNumber = await isar.getDayNumber();
+                                  await isar.putGameStatus(
+                                    dayNumber: dayNumber + 1,
+                                    isDay: true,
+                                    situation: MyStrings.dayPage,
+                                  );
 
-                                            // clear tonight's choices
-                                            await isar.putNight(
-                                              night: tonight,
-                                              godfatherChoice: '',
-                                              saulChoice: '',
-                                              watsonChoice: '',
-                                              leonChoice: '',
-                                              kaneChoice: '',
-                                              konstantinChoice: '',
-                                              mafiasShot: '',
-                                              matadorChoice: '',
-                                              nightOfBlockage: '',
-                                              nightOfRightChoiceOfKane: '',
-                                              nostradamousChoices: [],
-                                              theRoleGuessedByGodfather: '',
-                                            );
+                                  await ref
+                                      .read(currentPlayersProvider.notifier)
+                                      .action(MyStrings.dayPage);
 
-                                            //
-                                            await ref
-                                                .read(currentPlayersProvider
-                                                    .notifier)
-                                                .action(MyStrings.nightPage);
-                                            // update situtaion to re-nihgt !!
-                                            await isar.putGameStatus(
-                                              dayNumber:
-                                                  await isar.getDayNumber(),
-                                              isDay: false,
-                                              isReNight: true,
-                                              nightCode: null,
-                                              // no more shoot for mafias in this night
-                                              remainedMafiasBullets: 0,
-                                            );
-                                            // pop the dialog
-                                            Navigator.of(nightContext).pop();
-                                          },
-                                        ),
-                                        SizedBox(height: height / 64),
-                                      ],
-                                    ),
-                                  ))
-                                ..show();
-                            } else {
-                              final nightResultJson =
-                                  await (isar.retrieveNightN(n: tonight)).then(
-                                (json) => json.match(
-                                  (json) => json,
-                                  (_) => null,
-                                ),
-                              );
+                                  dayNumber = await isar.getDayNumber();
 
-                              log('json: $nightResultJson');
-                              final info = await god(json: nightResultJson);
-
-                              nightContext.goNamed(
-                                'nights-results',
-                                extra: info,
-                              );
-                              ref.read(loadingProvider.notifier).toggle();
-                            }
-                          } else {
-                            int dayNumber = await isar.getDayNumber();
-                            await isar.putGameStatus(
-                              dayNumber: dayNumber + 1,
-                              isDay: true,
-                              situation: MyStrings.dayPage,
-                            );
-
-                            await ref
-                                .read(currentPlayersProvider.notifier)
-                                .action(MyStrings.dayPage);
-
-                            dayNumber = await isar.getDayNumber();
-
-                            nightContext.goNamed(
-                              'day',
-                              pathParameters: {'dayNumber': '$dayNumber'},
-                            );
-                          }
-                        },
+                                  nightContext.goNamed(
+                                    'day',
+                                    pathParameters: {'dayNumber': '$dayNumber'},
+                                  );
+                                }
+                              },
                       ),
 
                     // spacer

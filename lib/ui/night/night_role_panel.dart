@@ -440,6 +440,17 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                               return playersList.isEmpty
                                   ? SizedBox()
                                   : ListOfNightPlayersWidget(
+                                      // purpose: () {
+                                      //   switch (widget.role) {
+                                      //     case MyStrings.matador:
+                                      //       return 'انتخاب ماتادور';
+
+                                      //     case MyStrings.saul:
+                                      //       return 'انتخاب ساول';
+                                      //     default:
+                                      //     '';
+                                      //   }
+                                      // }(),
                                       height: _height,
                                       scrollController:
                                           scrollControllerForListOfPlayers,

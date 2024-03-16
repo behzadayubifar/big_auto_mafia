@@ -165,16 +165,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                       //
 
-                      if ((widget.isFinished == null &&
-                              widget.isFinished != true) ||
-                          widget.isFinished == null)
+                      if (widget.isFinished != true)
                         SizedBox(
                           height: 48,
                         ),
                       //
-                      if ((widget.isFinished == null &&
-                              widget.isFinished != true) ||
-                          widget.isFinished == null)
+                      if (widget.isFinished != true)
                         MyButton(
                           title: 'ادامه بازی قبلی',
                           place: 'home',
