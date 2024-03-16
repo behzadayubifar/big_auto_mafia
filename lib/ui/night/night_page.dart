@@ -25,7 +25,7 @@ import 'package:go_router/go_router.dart';
 
 final _container = ProviderContainer();
 
-class NightPage extends HookConsumerWidget {
+class NightPage extends StatefulHookConsumerWidget {
   NightPage({
     required this.info,
     Key? key,
@@ -36,7 +36,25 @@ class NightPage extends HookConsumerWidget {
   final CountDownController _controller = CountDownController();
 
   @override
-  Widget build(BuildContext nightContext, WidgetRef ref) {
+  ConsumerState<NightPage> createState() => _NightPageState();
+}
+
+class _NightPageState extends ConsumerState<NightPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        await ref
+            .read(currentPlayersProvider.notifier)
+            .action(MyStrings.nightPage);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext nightContext) {
+    final scrollController = useScrollController();
     // final _isLoading = useState(false);
     print('this is night');
     //
@@ -49,10 +67,12 @@ class NightPage extends HookConsumerWidget {
 
     // -for saul-
     final bool mafiaBuyed =
-        (info['saulChoice'] != null && info['saulChoice'] != "");
-    final bool isNight = info['situation'] == MyStrings.nightPage;
+        (widget.info['saulChoice'] != null && widget.info['saulChoice'] != "");
+    final bool isNight = widget.info['situation'] == MyStrings.nightPage;
     if (isNight)
-      nightNumber = info['nightNumber'] == '0' ? "معارفه" : info['nightNumber'];
+      nightNumber = widget.info['nightNumber'] == '0'
+          ? "معارفه"
+          : widget.info['nightNumber'];
     //
 
     return GlobalLoading(
@@ -69,19 +89,21 @@ class NightPage extends HookConsumerWidget {
                   // mainAxisSize: MainAxisSize.min,
                   children: [
                     TiTleTile(
-                      title: info['nightNumber'] == '0'
+                      title: widget.info['nightNumber'] == '0'
                           ? nightNumber
-                          : info['title']! + ' $nightNumber',
+                          : widget.info['title']! + ' $nightNumber',
                     ),
                     SizedBox(height: height / 24),
                     Expanded(
                       child: Scrollbar(
-                        controller: ScrollController(),
+                        controller: scrollController,
                         scrollbarOrientation: ScrollbarOrientation.right,
                         child: SizedBox(
                           width: width / 1.42,
                           // height: height / 1.5,
                           child: ListView.separated(
+                            controller: scrollController,
+
                             padding: EdgeInsets.all(16),
                             shrinkWrap: true,
                             cacheExtent: height / 1.64,
@@ -100,7 +122,7 @@ class NightPage extends HookConsumerWidget {
                                     PlayerNameWidget(
                                       playerName: value[index].playerName!,
                                       height: height,
-                                      situation: info['situation']!,
+                                      situation: widget.info['situation']!,
                                       nightContext: nightContext,
                                     ),
                                   if (value.elementAt(index).nightDone != true)
@@ -122,9 +144,10 @@ class NightPage extends HookConsumerWidget {
                     ),
 
                     // spacer
-                    if (info['button'] != null) SizedBox(height: height / 24),
+                    if (widget.info['button'] != null)
+                      SizedBox(height: height / 24),
 
-                    if (info['situation'] == MyStrings.showRoles)
+                    if (widget.info['situation'] == MyStrings.showRoles)
                       MyButton(
                           title: 'برو روز',
                           onPressed: () async {
@@ -141,20 +164,20 @@ class NightPage extends HookConsumerWidget {
                               situation: MyStrings.dayPage,
                             );
 
-                            await ref
-                                .read(currentPlayersProvider.notifier)
-                                .action(MyStrings.dayPage);
+                            // await ref
+                            //     .read(currentPlayersProvider.notifier)
+                            //     .action(MyStrings.dayPage);
 
                             ref.read(loadingProvider.notifier).toggle();
                             nightContext.go('/day/$yesterday');
                           }),
 
                     // button
-                    if (info['button'] != null &&
-                        info['button'] == MyStrings.nightResults)
+                    if (widget.info['button'] != null &&
+                        widget.info['button'] == MyStrings.nightResults)
                       MyButton(
                         state: MyStrings.disabledButton,
-                        title: info['button']!,
+                        title: widget.info['button']!,
                         // criteria: value.length == 0,
                         // TODO: add a function to the button (show night's results)
                         onLongPress: value.length != 0
@@ -175,7 +198,7 @@ class NightPage extends HookConsumerWidget {
                                 if (mafiaBuyed &&
                                     value.length == 0 &&
                                     isReNight != true)
-                                  await saul(info['saulChoice']);
+                                  await saul(widget.info['saulChoice']);
                                 final nightCode = await isar
                                     .retrieveGameStatusN(
                                       n: await isar.getDayNumber(),
@@ -319,9 +342,9 @@ class NightPage extends HookConsumerWidget {
                                     situation: MyStrings.dayPage,
                                   );
 
-                                  await ref
-                                      .read(currentPlayersProvider.notifier)
-                                      .action(MyStrings.dayPage);
+                                  // await ref
+                                  //     .read(currentPlayersProvider.notifier)
+                                  //     .action(MyStrings.dayPage);
 
                                   dayNumber = await isar.getDayNumber();
 

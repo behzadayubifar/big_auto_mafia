@@ -99,9 +99,9 @@ void showLastMoveDialog({
     btnOk: MyButton(
       title: MyStrings.nextNight,
       onLongPress: () async {
-        await _container
-            .read(currentPlayersProvider.notifier)
-            .action(MyStrings.nightPage);
+        // await _container
+        //     .read(currentPlayersProvider.notifier)
+        //     .action(MyStrings.nightPage);
         // final today = await isar.getDayNumber();
         switch (lastMoveName) {
           case MyStrings.faceOff:

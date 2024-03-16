@@ -32,7 +32,8 @@ class _DayState extends ConsumerState<Day> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(currentPlayersProvider.notifier).action(MyStrings.dayPage);
       ref.read(loadingProvider.notifier).end();
     });
   }

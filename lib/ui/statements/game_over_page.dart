@@ -39,7 +39,7 @@ class GameOverPage extends StatelessWidget {
           children: [
             LottieBuilder.asset(
               Lotties.celebrate,
-              height: height / 1.5,
+              height: height / 1.24,
               width: width,
               fit: BoxFit.cover,
             ),
@@ -71,9 +71,18 @@ class GameOverPage extends StatelessWidget {
                   ),
                   // a 2 column table of players and their roles
                   Container(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
                     height: height / 2,
                     width: width / 1.2,
                     decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black50,
+                          blurRadius: 16,
+                          spreadRadius: 8,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
                       gradient: LinearGradient(
                         colors: [
                           AppColors.black20,
@@ -106,14 +115,14 @@ class GameOverPage extends StatelessWidget {
                                 height: 1.5,
                               ),
                             ),
-                            Text(
-                              // '${FontAwesomeIcons.solidFaceSmile}',
-                              '>',
-                              style: MyTextStyles.bodyMedium.copyWith(
-                                color: AppColors.white60,
-                                height: 1.5,
-                              ),
-                            ),
+                            // Text(
+                            //   // '${FontAwesomeIcons.solidFaceSmile}',
+                            //   '>',
+                            //   style: MyTextStyles.bodyMedium.copyWith(
+                            //     color: AppColors.white60,
+                            //     height: 1.5,
+                            //   ),
+                            // ),
                             Text(
                               player.roleName!,
                               style: MyTextStyles.bodyLarge.copyWith(

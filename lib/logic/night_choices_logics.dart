@@ -129,9 +129,9 @@ Future<bool?> buttonLogicExecuter({
         // context.pop();s
         print(nostradamousChoices);
         // below must be after the buttonLogicExecuter (certainly!!!)
-        await _container
-            .read(currentPlayersProvider.notifier)
-            .action(MyStrings.nightPage);
+        // await _container
+        //     .read(currentPlayersProvider.notifier)
+        //     .action(MyStrings.nightPage);
 
         context.goNamed(
           'night',

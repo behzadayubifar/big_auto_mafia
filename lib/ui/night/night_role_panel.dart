@@ -200,9 +200,9 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
         ..addAll(await Info.night());
       //
 
-      await ref
-          .read(currentPlayersProvider.notifier)
-          .action(MyStrings.nightPage);
+      // await ref
+      //     .read(currentPlayersProvider.notifier)
+      //     .action(MyStrings.nightPage);
 
       if (!(widget.role == MyStrings.nostradamous &&
           widget.night == 0 &&

@@ -147,7 +147,7 @@ class CurrentPlayers extends _$CurrentPlayers {
                 criteria: (player) {
                   final c1 = player.type != RoleType.mafia;
                   final c2 = matadorChoice == player.playerName &&
-                      lastNightOfBlockage == lastNight;
+                      lastNightOfBlockage == '$lastNight';
                   return c1 && !c2;
                 },
               ).then((record) => record.players);
@@ -341,8 +341,7 @@ class CurrentPlayers extends _$CurrentPlayers {
                     // watson
                     if (player.roleName == MyStrings.watson) {
                       final isNotSavedOnce = !player.isSavedOnce;
-                      final c1 = isNotSavedOnce;
-                      return c1;
+                      return isNotSavedOnce;
                     }
                     // other players
                     return true;

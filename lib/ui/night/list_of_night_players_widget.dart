@@ -45,6 +45,7 @@ class ListOfNightPlayersWidget extends StatelessWidget {
         child: SafeArea(
           minimum: EdgeInsets.only(top: _height / 15),
           child: Scrollbar(
+            scrollbarOrientation: ScrollbarOrientation.right,
             controller: scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,9 +64,10 @@ class ListOfNightPlayersWidget extends StatelessWidget {
                   ),
                 Expanded(
                   child: SizedBox(
-                    width: _width / 2,
+                    width: _width / 1.6,
                     height: _height / 1.64,
                     child: ListView.separated(
+                      padding: EdgeInsets.only(right: _width / 16),
                       controller: scrollController,
                       cacheExtent: _height / 1.64,
                       restorationId: 'night-page',

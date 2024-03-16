@@ -306,9 +306,9 @@ class NightsResuls extends HookConsumerWidget {
                               dayNumber: dayNumber,
                             );
 
-                            await ref
-                                .read(currentPlayersProvider.notifier)
-                                .action(MyStrings.dayPage);
+                            // await ref
+                            //     .read(currentPlayersProvider.notifier)
+                            //     .action(MyStrings.dayPage);
 
                             final winner =
                                 await determineWinner(dayNumber: dayNumber);
@@ -323,7 +323,10 @@ class NightsResuls extends HookConsumerWidget {
                               );
                               ref.read(loadingProvider.notifier).end();
 
-                              context.go('/game_over/$winner');
+                              final allPlayers = await isar.getAllPlayers();
+
+                              context.go('/game_over/$winner',
+                                  extra: allPlayers);
                               return;
                             } else {
                               final alivePlayers = await isar.retrievePlayer();
