@@ -1,4 +1,4 @@
-package com.example.auto_mafia
+package ir.bezidev.auto_mafia
 
 import io.flutter.embedding.android.FlutterActivity
 
