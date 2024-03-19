@@ -71,11 +71,12 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
   @override
   Widget build(BuildContext context) {
     //
+
     print(widget.otherMafias);
     //
-    bool? saulCanBuy = false;
+    bool saulCanBuy = false;
     if (widget.isOneOfMafiaDead == true &&
-        widget.hasMafiaBuyedOnce != true &&
+        widget.hasMafiaBuyedOnce == false &&
         widget.role == MyStrings.saul) saulCanBuy = true;
 
     //
@@ -90,6 +91,8 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
             widget.isRenight != true)
         ? 'shoot'
         : '');
+    // for sual when mafia has bullet and one of them is dead
+    final buyOrShoot = useState(saulCanBuy ? '' : 'shoot');
     final guessedRole = useState('');
 
     final mafiaShotInabsenceOfGodfather = useState('');
@@ -123,6 +126,13 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
       shootOrSlaughter.value == 'shoot'
           ? shootOrSlaughter.value = 'slaughter'
           : shootOrSlaughter.value = 'shoot';
+    }
+
+//
+    void reverseBuyOrShoot() {
+      buyOrShoot.value == 'buy'
+          ? buyOrShoot.value = 'shoot'
+          : buyOrShoot.value = 'buy';
     }
 
     //
@@ -282,6 +292,8 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
       if (tonight >= 1 && isPlayerMafia) await onExti();
     };
     //
+    //
+
     return GlobalLoading(
       child: PopScope(
         canPop: false,
@@ -372,7 +384,6 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                 // control panel
                 Positioned(
                   top: _height / 2.4,
-                  // right: _width / 3.2,
                   child: ControlPanel(
                     width: _width,
                     height: _height,
@@ -388,7 +399,16 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                                 : 'تغییر به شلیک',
                             onPressed: revertShootOrSlaughter,
                           )
-                        : null,
+                        : (widget.role == MyStrings.saul &&
+                                buyOrShoot.value != '' &&
+                                saulCanBuy)
+                            ? MyButton(
+                                title: buyOrShoot.value == 'shoot'
+                                    ? 'تغییر به خریداری'
+                                    : 'تغییر به شلیک',
+                                onPressed: reverseBuyOrShoot,
+                              )
+                            : null,
                   ),
                 ),
 
@@ -417,116 +437,135 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                     ),
                   ),
 
-                Positioned(
-                  top: shootOrSlaughter.value == ''
-                      ? _height / 2
-                      : _height / 2.1,
-                  child: SizedBox(
-                    height: _height / 1.6,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        if ((widget.role != MyStrings.godfather &&
-                                widget.role != MyStrings.saul) ||
-                            (shootOrSlaughter.value != '' &&
-                                widget.role != MyStrings.saul) ||
-                            saulCanBuy)
-                          asyncPlayers.when(
-                            data: (playersList) {
-                              // (playersList.forEach((player) {
-                              //   print(player.playerToString(true));
-                              // }));
-                              return playersList.isEmpty
-                                  ? SizedBox()
-                                  : ListOfNightPlayersWidget(
-                                      // purpose: () {
-                                      //   switch (widget.role) {
-                                      //     case MyStrings.matador:
-                                      //       return 'انتخاب ماتادور';
-
-                                      //     case MyStrings.saul:
-                                      //       return 'انتخاب ساول';
-                                      //     default:
-                                      //     '';
-                                      //   }
-                                      // }(),
-                                      height: _height,
-                                      scrollController:
-                                          scrollControllerForListOfPlayers,
-                                      width: _width,
-                                      choice: choice,
-                                      nostradamousChoices:
-                                          nostradamousChoices.value.isEmpty &&
-                                                  widget.role ==
-                                                      MyStrings.nostradamous
-                                              ? () {
-                                                  final randomPlayers =
-                                                      getRandomPlayersNamesFromList(
-                                                    playersList.mapToNames(),
-                                                    playersList.length ~/ 3,
-                                                  );
-                                                  for (String player
-                                                      in randomPlayers) {
-                                                    putChoiceLocally(
-                                                        newChoice: player);
-                                                  }
-                                                  return randomPlayers;
-                                                }()
-                                              : nostradamousChoices.value,
-                                      role: widget.role,
-                                      nightFuture: nightFuture,
-                                      putChoiceLocally: putChoiceLocally,
-                                      playersList: playersList,
-                                    );
-                            },
-                            loading: () => Center(child: defaultLoading()),
-                            error: (error, stackTrace) => Text(
-                              'Error: $error',
-                              // style: MyTextStyles.error,
-                            ),
-                          ),
-
-                        // show names for other mafias when godfather is dead and must check mafiaShot is empty
-                        if (widget.isGodfatherAlive == false &&
-                            widget.mafiaHasBullet == true &&
-                            (widget.role == MyStrings.matador ||
-                                widget.role == MyStrings.saul ||
-                                widget.role == MyStrings.mafia))
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // SizedBox(height: _height / 24),
-
-                              ListOfNightPlayersWidget(
-                                purpose: MyStrings.shootInPlaceOfGodfather,
-                                nostradamousChoices: [],
-                                height: _height,
-                                scrollController:
-                                    scrollControllerForShootInPlaceOfGodfather,
-                                width: _width,
-                                choice: mafiaShotInabsenceOfGodfather,
-                                role: widget.role,
-                                nightFuture: nightFuture,
-                                putChoiceLocally:
-                                    putShootInPlaceOfGodfatherLocally,
-                                playersList: widget
-                                    .playersListForShootInAbsenceOfGodfather!,
-                              ),
-                            ],
-                          ),
-                        // show role names
-                        if (shootOrSlaughter.value == 'slaughter')
-                          RoleNamesList(
-                            width: _width,
-                            height: _height,
-                            scrollController: scrollControllerForSlaughter,
-                            guessedRole: guessedRole,
-                          ),
+                // buy or shoot
+                if (widget.role == MyStrings.saul && buyOrShoot.value == '')
+                  Positioned(
+                    bottom: _height / 4.8,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        MyButton(
+                          title: 'شلیک',
+                          onPressed: () => buyOrShoot.value = 'shoot',
+                        ),
+                        SizedBox(
+                          height: _height / 24,
+                        ),
+                        MyButton(
+                          title: 'خریداری',
+                          onPressed: () => buyOrShoot.value = 'buy',
+                        ),
                       ],
                     ),
                   ),
-                )
+
+                if ((widget.role == MyStrings.saul &&
+                        // buyOrShoot.value == 'buy' &&
+                        saulCanBuy) ||
+                    widget.role != MyStrings.saul)
+                  Positioned(
+                    top: shootOrSlaughter.value == ''
+                        ? _height / 2
+                        : _height / 2.1,
+                    child: SizedBox(
+                      height: _height / 1.6,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          if ((widget.role != MyStrings.godfather &&
+                                  widget.role != MyStrings.saul) ||
+                              (shootOrSlaughter.value != '' &&
+                                  widget.role != MyStrings.saul) ||
+                              (saulCanBuy && buyOrShoot.value == 'buy'))
+                            asyncPlayers.when(
+                              data: (playersList) {
+                                // (playersList.forEach((player) {
+                                //   print(player.playerToString(true));
+                                // }));
+                                return playersList.isEmpty
+                                    ? SizedBox()
+                                    : ListOfNightPlayersWidget(
+                                        purpose: shootOrSlaughter.value ==
+                                                'slaughter'
+                                            ? ''
+                                            : widget.role,
+                                        height: _height,
+                                        scrollController:
+                                            scrollControllerForListOfPlayers,
+                                        width: _width,
+                                        choice: choice,
+                                        nostradamousChoices:
+                                            nostradamousChoices.value.isEmpty &&
+                                                    widget.role ==
+                                                        MyStrings.nostradamous
+                                                ? () {
+                                                    final randomPlayers =
+                                                        getRandomPlayersNamesFromList(
+                                                      playersList.mapToNames(),
+                                                      playersList.length ~/ 3,
+                                                    );
+                                                    for (String player
+                                                        in randomPlayers) {
+                                                      putChoiceLocally(
+                                                          newChoice: player);
+                                                    }
+                                                    return randomPlayers;
+                                                  }()
+                                                : nostradamousChoices.value,
+                                        role: widget.role,
+                                        nightFuture: nightFuture,
+                                        putChoiceLocally: putChoiceLocally,
+                                        playersList: playersList,
+                                      );
+                              },
+                              loading: () => Center(child: defaultLoading()),
+                              error: (error, stackTrace) => Text(
+                                'Error: $error',
+                                // style: MyTextStyles.error,
+                              ),
+                            ),
+
+                          // show names for other mafias when godfather is dead and must check mafiaShot is empty
+                          if (widget.isGodfatherAlive == false &&
+                              widget.mafiaHasBullet == true &&
+                              (widget.role == MyStrings.matador ||
+                                  (widget.role == MyStrings.saul &&
+                                      buyOrShoot.value == 'shoot') ||
+                                  widget.role == MyStrings.mafia))
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // SizedBox(height: _height / 24),
+                                ListOfNightPlayersWidget(
+                                  purpose: MyStrings.shootInPlaceOfGodfather,
+                                  nostradamousChoices: [],
+                                  height: _height,
+                                  scrollController:
+                                      scrollControllerForShootInPlaceOfGodfather,
+                                  width: _width,
+                                  choice: mafiaShotInabsenceOfGodfather,
+                                  role: widget.role,
+                                  nightFuture: nightFuture,
+                                  putChoiceLocally:
+                                      putShootInPlaceOfGodfatherLocally,
+                                  playersList: widget
+                                      .playersListForShootInAbsenceOfGodfather!,
+                                ),
+                              ],
+                            ),
+                          // show role names
+                          if (shootOrSlaughter.value == 'slaughter')
+                            RoleNamesList(
+                              width: _width,
+                              height: _height,
+                              scrollController: scrollControllerForSlaughter,
+                              guessedRole: guessedRole,
+                            ),
+                        ],
+                      ),
+                    ),
+                  )
               ],
             ),
           ),

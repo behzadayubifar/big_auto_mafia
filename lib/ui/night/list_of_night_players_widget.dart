@@ -40,34 +40,43 @@ class ListOfNightPlayersWidget extends StatelessWidget {
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: SizedBox(
-        // width: _width / 1.5,
+        width: _width / 2.1,
         height: _height / 1.8,
         child: SafeArea(
-          minimum: EdgeInsets.only(top: _height / 15),
-          child: Scrollbar(
-            scrollbarOrientation: ScrollbarOrientation.right,
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (purpose != null)
-                  Padding(
-                    padding: EdgeInsets.only(bottom: _height / 56),
-                    child: Text(
+          minimum: EdgeInsets.only(top: _height / 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                    bottom: purpose != '' ? _height / 32 : _height / 72),
+                child: Text(
+                  switch (purpose) {
+                    // TODO: Handle this case.
+                    // MyStrings.matador => MyStrings.,
+                    MyStrings.saul => MyStrings.buying,
+                    MyStrings.matador => MyStrings.defuse,
+                    MyStrings.godfather => MyStrings.shootInPlaceOfGodfather,
+                    MyStrings.shootInPlaceOfGodfather =>
                       MyStrings.shootInPlaceOfGodfather,
-                      style: MyTextStyles.bodyMD.copyWith(
-                        color: AppColors.secondaries[1],
-                      ),
-                    ),
+                    _ => '',
+                  },
+                  style: MyTextStyles.bodyMD.copyWith(
+                    color: AppColors.secondaries[1],
                   ),
-                Expanded(
-                  child: SizedBox(
-                    width: _width / 1.6,
-                    height: _height / 1.64,
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  width: _width / 1.6,
+                  height: _height / 1.64,
+                  child: Scrollbar(
+                    scrollbarOrientation: ScrollbarOrientation.right,
+                    controller: scrollController,
                     child: ListView.separated(
-                      padding: EdgeInsets.only(right: _width / 16),
+                      padding: EdgeInsets.only(right: _width / 48),
                       controller: scrollController,
                       cacheExtent: _height / 1.64,
                       restorationId: 'night-page',
@@ -106,9 +115,9 @@ class ListOfNightPlayersWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: _height / 8),
-              ],
-            ),
+              ),
+              SizedBox(height: _height / 8),
+            ],
           ),
         ),
       ),

@@ -124,6 +124,7 @@ class _ShowLastMoveState extends ConsumerState<ShowLastMove> {
               : beautifulMindForNostradamous
                   ? Center(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             '${widget.playerWithCardName} و در بازی می‌ماند نوستراداموس است',

@@ -169,7 +169,7 @@ final _router = GoRouter(
             info['playersListForShootInAbsenceOfGodfather']!;
         final bool isHandCuffed = info['isHandCuffed']!;
         final bool isOneOfMafiaDead = info['isOneOfMafiaDead'];
-        final bool hasMafiaBuyedOnce = info['hasMafiaBuyedOnce'];
+        final bool? hasMafiaBuyedOnce = info['hasMafiaBuyedOnce'];
         final List<Player>? otherMafias = info['otherMafias'];
 
         return NightRolePanel(

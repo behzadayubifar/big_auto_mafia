@@ -218,9 +218,11 @@ class TimerDialog extends HookConsumerWidget {
                                 await playSound(AppAudios.tickingStopwatch);
                                 await Future.delayed(
                                   Duration(seconds: 4),
-                                  () async =>
-                                      // await playSound(AppAudios.pedarKhandeh),
-                                      await playSound(AppAudios.kitchenTimer),
+                                  () async {
+                                    if (rightButtonTitle.value != 'ادامه' &&
+                                        context.mounted)
+                                      await playSound(AppAudios.kitchenTimer);
+                                  },
                                 );
                                 return;
                               }

@@ -167,6 +167,7 @@ Future<bool?> buttonLogicExecuter({
                 name: selectedPlayer,
                 guessedRole: guessedRole!,
               );
+        await isar.putGameStatus(dayNumber: night, remainedMafiasBullets: 0);
         break;
 
       case MyStrings.saul:

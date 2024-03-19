@@ -63,6 +63,8 @@ class GameStatus {
   // re-night is run
   bool? isReNight = false;
 
+  bool? hasMafiaBuyedOnce = false;
+
   // if konstantin choose someone to come back,
   // this will be set to that player's name
 
@@ -82,6 +84,7 @@ class GameStatus {
             "situation: $situation"
             "isChaos: $isChaos"
             "remainedMafiasBullets: $remainedMafiasBullets"
+            "hasMafiaBuyedOnce: $hasMafiaBuyedOnce"
             """;
 
   GameStatus copy({
@@ -100,6 +103,7 @@ class GameStatus {
     List<String?>? usedLastMoves,
     int? remainedChancesForNightEnquiry,
     bool? isReNight,
+    bool? hasMafiaBuyedOnce,
   }) {
     final newStatus = GameStatus()
       ..id = id
@@ -121,7 +125,8 @@ class GameStatus {
       ..remainedChancesForNightEnquiry =
           remainedChancesForNightEnquiry ?? this.remainedChancesForNightEnquiry
       ..isReNight = isReNight ?? this.isReNight
-      ..isChaos = isChaos ?? this.isChaos;
+      ..isChaos = isChaos ?? this.isChaos
+      ..hasMafiaBuyedOnce = hasMafiaBuyedOnce ?? this.hasMafiaBuyedOnce;
 
     //
     log('newStatus: ${newStatus.toString()} with id: ${newStatus.id}',
@@ -147,7 +152,8 @@ class GameStatus {
           listEquals(usedLastMoves, other.usedLastMoves) &&
           remainedChancesForNightEnquiry ==
               other.remainedChancesForNightEnquiry &&
-          isChaos == other.isChaos;
+          isChaos == other.isChaos &&
+          hasMafiaBuyedOnce == other.hasMafiaBuyedOnce;
 
   @override
   int get hashCode => Object.hash(
@@ -164,6 +170,7 @@ class GameStatus {
         remainedMafiasBullets,
         usedLastMoves,
         remainedChancesForNightEnquiry,
+        hasMafiaBuyedOnce,
       );
 }
 

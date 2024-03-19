@@ -190,6 +190,9 @@ saul(String chosenPlayerName) async {
 
   final Map<String, int> assignedCodes = await isar.retrieveAssignedCodes();
 
+  print(
+      "---------------isBuyable-----------------------------------$isBuyable--------------------------------------------------");
+
   if (isBuyable) {
     chosenPlayerCode = await isar
         .getPlayerByName(chosenPlayerName)
@@ -203,6 +206,8 @@ saul(String chosenPlayerName) async {
       heart: 1,
     );
   } else {
+    print(
+        "---------------isNOTBuyable-----------------------------------$isBuyable--------------------------------------------------");
     // get a random int number between 1 & 20 which is not in the assigned codes
     do {
       chosenPlayerCode = randomInt(1, 20).run();

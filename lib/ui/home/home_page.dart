@@ -69,10 +69,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                 text: 'فهمیدم',
                 pressEvent: () async {
                   final isUpdateAvailable = await checkForUpdate();
-                  print('$isUpdateAvailable' + 'ssss');
+                  print(isUpdateAvailable);
                   if (isUpdateAvailable != null) {
                     Navigator.of(context).pop();
-                    // checkUpdateDialog(context);
+                    checkUpdateDialog(context);
                     return;
                   }
                   Navigator.of(context).pop();

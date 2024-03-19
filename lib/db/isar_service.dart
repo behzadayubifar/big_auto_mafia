@@ -771,6 +771,7 @@ class IsarService {
     int? remainedChancesForNightEnquiry,
     List<String?>? usedLastMoves,
     bool? isReNight,
+    bool? hasMafiaBuyedOnce,
   }) async {
     // the only game status for all the game
     final alreadyExists = await isar.gameStatus.where().findFirst();
@@ -795,6 +796,7 @@ class IsarService {
         usedLastMoves: usedLastMoves,
         isReNight: isReNight,
         remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
+        hasMafiaBuyedOnce: hasMafiaBuyedOnce,
       );
 
       await isar.writeTxn(() => isar.gameStatus.put(newGameStatus));
@@ -818,6 +820,7 @@ class IsarService {
             usedLastMoves: usedLastMoves,
             isReNight: isReNight,
             remainedChancesForNightEnquiry: remainedChancesForNightEnquiry,
+            hasMafiaBuyedOnce: hasMafiaBuyedOnce,
           )));
 
       log('game status *updated* successfully', name: 'insertGameStatus');

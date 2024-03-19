@@ -26,7 +26,7 @@ class MainActivity : FlutterActivity() {
         mMyketHelper = MyketSupportHelper(this)
         mMyketHelper.startSetup(object : MyketSupportHelper.OnMyketSetupFinishedListener {
             override fun onMyketSetupFinished(result: MyketResult) {
-                // Handle setup finished
+                // Handle szetup finished
             }
         })
     }
