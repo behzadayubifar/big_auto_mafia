@@ -201,6 +201,7 @@ saul(String chosenPlayerName) async {
     await isar.updatePlayer(
       playerName: chosenPlayerName,
       side: RoleType.mafia,
+      type: RoleType.mafia,
       // set role name to mafia
       roleName: roleNames[RoleName.mafia],
       heart: 1,
@@ -223,6 +224,8 @@ saul(String chosenPlayerName) async {
   await isar.putGameStatus(
     dayNumber: await isar.getDayNumber(),
     nightCode: chosenPlayerCode,
+    hasMafiaBuyedOnce: true,
+    isReNight: true,
   );
 }
 

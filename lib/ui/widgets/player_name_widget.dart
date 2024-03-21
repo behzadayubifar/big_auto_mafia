@@ -132,9 +132,20 @@ class PlayerNameWidget extends HookConsumerWidget {
 
             print("tonight is $tonight");
 
-            mafiaHasBullet = await isar
-                .retrieveGameStatusN(n: dayNumber)
-                .then((gameStatus) => gameStatus!.remainedMafiasBullets! > 0);
+            final hasMafiaBuyedTonight = await isar
+                    .retrieveNightN(n: tonight)
+                    .then((result) => result.match(
+                        (json) => json
+                            .filterWithKey((key, value) => key == 'saulChoice')
+                            .values
+                            .singleOrNull
+                            ?.isNotEmpty,
+                        (r) => null)) ??
+                false;
+
+            mafiaHasBullet = await isar.retrieveGameStatusN(n: dayNumber).then(
+                    (gameStatus) => gameStatus!.remainedMafiasBullets! > 0) &&
+                !hasMafiaBuyedTonight;
 
             final playersListForShootInAbsenceOfGodfather = await isar
                 .retrievePlayer(

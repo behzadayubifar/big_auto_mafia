@@ -73,6 +73,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
     //
 
     print(widget.otherMafias);
+
     //
     bool saulCanBuy = false;
     if (widget.isOneOfMafiaDead == true &&
@@ -293,6 +294,12 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
     };
     //
     //
+    final foo = (widget.isGodfatherAlive == false &&
+        widget.mafiaHasBullet == true &&
+        (widget.role == MyStrings.matador ||
+            (widget.role == MyStrings.saul && buyOrShoot.value == 'shoot') ||
+            widget.role == MyStrings.mafia));
+    //
 
     return GlobalLoading(
       child: PopScope(
@@ -459,81 +466,81 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                     ),
                   ),
 
-                if ((widget.role == MyStrings.saul &&
-                        // buyOrShoot.value == 'buy' &&
-                        saulCanBuy) ||
-                    widget.role != MyStrings.saul)
-                  Positioned(
-                    top: shootOrSlaughter.value == ''
-                        ? _height / 2
-                        : _height / 2.1,
-                    child: SizedBox(
-                      height: _height / 1.6,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          if ((widget.role != MyStrings.godfather &&
-                                  widget.role != MyStrings.saul) ||
-                              (shootOrSlaughter.value != '' &&
-                                  widget.role != MyStrings.saul) ||
-                              (saulCanBuy && buyOrShoot.value == 'buy'))
-                            asyncPlayers.when(
-                              data: (playersList) {
-                                // (playersList.forEach((player) {
-                                //   print(player.playerToString(true));
-                                // }));
-                                return playersList.isEmpty
-                                    ? SizedBox()
-                                    : ListOfNightPlayersWidget(
-                                        purpose: shootOrSlaughter.value ==
-                                                'slaughter'
-                                            ? ''
-                                            : widget.role,
-                                        height: _height,
-                                        scrollController:
-                                            scrollControllerForListOfPlayers,
-                                        width: _width,
-                                        choice: choice,
-                                        nostradamousChoices:
-                                            nostradamousChoices.value.isEmpty &&
-                                                    widget.role ==
-                                                        MyStrings.nostradamous
-                                                ? () {
-                                                    final randomPlayers =
-                                                        getRandomPlayersNamesFromList(
-                                                      playersList.mapToNames(),
-                                                      playersList.length ~/ 3,
-                                                    );
-                                                    for (String player
-                                                        in randomPlayers) {
-                                                      putChoiceLocally(
-                                                          newChoice: player);
-                                                    }
-                                                    return randomPlayers;
-                                                  }()
-                                                : nostradamousChoices.value,
-                                        role: widget.role,
-                                        nightFuture: nightFuture,
-                                        putChoiceLocally: putChoiceLocally,
-                                        playersList: playersList,
-                                      );
-                              },
-                              loading: () => Center(child: defaultLoading()),
-                              error: (error, stackTrace) => Text(
-                                'Error: $error',
-                                // style: MyTextStyles.error,
-                              ),
+                // if ((widget.role == MyStrings.saul ) ||
+                //     widget.role != MyStrings.saul)
+                Positioned(
+                  top: shootOrSlaughter.value == ''
+                      ? _height / 2
+                      : _height / 2.1,
+                  child: SizedBox(
+                    height: _height / 1.6,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        if ((widget.role != MyStrings.godfather &&
+                                widget.role != MyStrings.saul) ||
+                            (shootOrSlaughter.value != '' &&
+                                widget.role != MyStrings.saul) ||
+                            (saulCanBuy && buyOrShoot.value == 'buy'))
+                          asyncPlayers.when(
+                            data: (playersList) {
+                              // (playersList.forEach((player) {
+                              //   print(player.playerToString(true));
+                              // }));
+                              return playersList.isEmpty
+                                  ? SizedBox()
+                                  : ListOfNightPlayersWidget(
+                                      purpose:
+                                          shootOrSlaughter.value == 'slaughter'
+                                              ? ''
+                                              : widget.role,
+                                      height: _height,
+                                      scrollController:
+                                          scrollControllerForListOfPlayers,
+                                      width: _width,
+                                      choice: choice,
+                                      nostradamousChoices:
+                                          nostradamousChoices.value.isEmpty &&
+                                                  widget.role ==
+                                                      MyStrings.nostradamous
+                                              ? () {
+                                                  final randomPlayers =
+                                                      getRandomPlayersNamesFromList(
+                                                    playersList.mapToNames(),
+                                                    playersList.length ~/ 3,
+                                                  );
+                                                  for (String player
+                                                      in randomPlayers) {
+                                                    putChoiceLocally(
+                                                        newChoice: player);
+                                                  }
+                                                  return randomPlayers;
+                                                }()
+                                              : nostradamousChoices.value,
+                                      role: widget.role,
+                                      nightFuture: nightFuture,
+                                      putChoiceLocally: putChoiceLocally,
+                                      playersList: playersList,
+                                    );
+                            },
+                            loading: () => Center(child: defaultLoading()),
+                            error: (error, stackTrace) => Text(
+                              'Error: $error',
+                              // style: MyTextStyles.error,
                             ),
+                          ),
 
-                          // show names for other mafias when godfather is dead and must check mafiaShot is empty
-                          if (widget.isGodfatherAlive == false &&
-                              widget.mafiaHasBullet == true &&
-                              (widget.role == MyStrings.matador ||
-                                  (widget.role == MyStrings.saul &&
-                                      buyOrShoot.value == 'shoot') ||
-                                  widget.role == MyStrings.mafia))
-                            Column(
+                        // show names for other mafias when godfather is dead and must check mafiaShot is empty
+                        if (widget.isGodfatherAlive == false &&
+                            widget.mafiaHasBullet == true &&
+                            (widget.role == MyStrings.matador ||
+                                (widget.role == MyStrings.saul &&
+                                    buyOrShoot.value == 'shoot') ||
+                                widget.role == MyStrings.mafia))
+                          () {
+                            print('here is the other mafias');
+                            return Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 // SizedBox(height: _height / 24),
@@ -553,19 +560,20 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                                       .playersListForShootInAbsenceOfGodfather!,
                                 ),
                               ],
-                            ),
-                          // show role names
-                          if (shootOrSlaughter.value == 'slaughter')
-                            RoleNamesList(
-                              width: _width,
-                              height: _height,
-                              scrollController: scrollControllerForSlaughter,
-                              guessedRole: guessedRole,
-                            ),
-                        ],
-                      ),
+                            );
+                          }(),
+                        // show role names
+                        if (shootOrSlaughter.value == 'slaughter')
+                          RoleNamesList(
+                            width: _width,
+                            height: _height,
+                            scrollController: scrollControllerForSlaughter,
+                            guessedRole: guessedRole,
+                          ),
+                      ],
                     ),
-                  )
+                  ),
+                )
               ],
             ),
           ),

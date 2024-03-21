@@ -66,7 +66,7 @@ class _NightPageState extends ConsumerState<NightPage> {
     final asyncPlayers = ref.watch(currentPlayersProvider);
 
     // -for saul-
-    final bool mafiaBuyed =
+    final bool mafiaBuyedTonight =
         (widget.info['saulChoice'] != null && widget.info['saulChoice'] != "");
     final bool isNight = widget.info['situation'] == MyStrings.nightPage;
     if (isNight)
@@ -190,13 +190,22 @@ class _NightPageState extends ConsumerState<NightPage> {
                               await ref.read(isarServiceProvider.future);
                           final tonight = await isar.getNightNumber();
 
+                          // -for saul-
+                          /* final mafiaBuyed = await isar
+                                  .retrieveGameStatusN(
+                                    n: tonight,
+                                  )
+                                  .then(
+                                      (status) => status!.hasMafiaBuyedOnce) ??
+                              false; */
+
                           //
                           final isReNight = await isar
                               .retrieveGameStatusN(
                                 n: tonight,
                               )
                               .then((status) => status!.isReNight);
-                          if (mafiaBuyed &&
+                          if (mafiaBuyedTonight &&
                               /* value.length == 0 && */
                               isReNight != true)
                             await saul(widget.info['saulChoice']);
@@ -208,7 +217,7 @@ class _NightPageState extends ConsumerState<NightPage> {
 
                           // TODO: we must handle the loading
                           if (tonight != 0) {
-                            if (mafiaBuyed && isReNight != true) {
+                            if (mafiaBuyedTonight && isReNight != true) {
                               ref.read(loadingProvider.notifier).end();
                               AwesomeDialog(
                                   context: nightContext,
@@ -269,7 +278,7 @@ class _NightPageState extends ConsumerState<NightPage> {
                                             await isar.putNight(
                                               night: tonight,
                                               godfatherChoice: '',
-                                              saulChoice: '',
+                                              // saulChoice: '',
                                               watsonChoice: '',
                                               leonChoice: '',
                                               kaneChoice: '',
@@ -296,7 +305,8 @@ class _NightPageState extends ConsumerState<NightPage> {
                                               nightCode: null,
                                               // no more shoot for mafias in this night
                                               remainedMafiasBullets: 0,
-                                              hasMafiaBuyedOnce: true,
+                                              // in saul method we has set this to true
+                                              // hasMafiaBuyedOnce: true,
                                             );
                                             // pop the dialog
                                             Navigator.of(nightContext).pop();

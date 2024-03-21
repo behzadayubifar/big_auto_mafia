@@ -68,13 +68,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
                 text: 'فهمیدم',
                 pressEvent: () async {
-                  final isUpdateAvailable = await checkForUpdate();
-                  print(isUpdateAvailable);
-                  if (isUpdateAvailable != null) {
-                    Navigator.of(context).pop();
-                    checkUpdateDialog(context);
-                    return;
-                  }
+                  // final isUpdateAvailable = await checkForUpdate();
+                  // print(isUpdateAvailable);
+                  // if (isUpdateAvailable != null) {
+                  //   Navigator.of(context).pop();
+                  //   checkUpdateDialog(context);
+                  //   return;
+                  // }
                   Navigator.of(context).pop();
                 },
               )
@@ -176,12 +176,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                       //
 
-                      if (widget.isFinished != true)
+                      if (widget.isFinished == null ||
+                          widget.isFinished != true)
                         SizedBox(
                           height: 48,
                         ),
                       //
-                      if (widget.isFinished != true)
+                      if (widget.isFinished == null ||
+                          widget.isFinished != true)
                         MyButton(
                           title: 'ادامه بازی قبلی',
                           place: 'home',

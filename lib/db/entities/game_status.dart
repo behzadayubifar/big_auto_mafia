@@ -46,7 +46,7 @@ class GameStatus {
   // if this is null && isNight == true it means that the list of players must be shown
 
   int? nightCode = -1;
-  bool? isFinished = false;
+  bool? isFinished;
   String? winner = '';
 
   bool? isChaos = false;

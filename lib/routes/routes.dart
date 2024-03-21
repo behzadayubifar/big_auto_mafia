@@ -112,7 +112,12 @@ final _router = GoRouter(
       // path: '/:isFinished',
       path: '/home/:isFinished',
       builder: (_, GoRouterState state) {
-        final isFinished = state.pathParameters['isFinished'] == 'true';
+        final isFinished = switch (state.pathParameters['isFinished']) {
+          'true' => true,
+          'null' => null,
+          'false' => false,
+          _ => null,
+        };
         print('goroter: isFinished -> ${state.pathParameters['isFinished']}');
         return HomePage(isFinished: isFinished);
         // return HomePage();

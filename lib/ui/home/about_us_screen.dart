@@ -62,7 +62,7 @@ class AboutUsScreen extends StatelessWidget {
               height: height / 24,
             ),
             TextButton(
-              onPressed: rateInMyket,
+              onPressed: () => rateIn('bazaar'),
               child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(

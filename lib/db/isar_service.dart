@@ -494,6 +494,7 @@ class IsarService {
     RoleType? side,
     bool? silenced,
     String? roleName,
+    RoleType? type,
   }) =>
       isar.writeTxn(() async {
         var playerToUpdate = await isar.players
@@ -520,6 +521,7 @@ class IsarService {
             silenced: silenced,
             whichSideWillWin: side,
             roleName: roleName,
+            type: type,
           );
           await isar.players.put(playerToUpdate);
           log('player updated successfully',

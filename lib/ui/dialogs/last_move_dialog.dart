@@ -6,6 +6,7 @@ import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/last_moves_logics.dart';
 import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -65,7 +66,7 @@ void showLastMoveDialog({
         ? 'شما به جای ${selectedPlayers.single} در بازی می‌مانید'
         : '${selectedPlayers.single} نوستراداموس نیست',
     MyStrings.silenceOfSheep =>
-      '${selectedPlayers.single} روز بعد نمی‌تواند صحبت کند',
+      '${selectedPlayers.join(', ')} روز بعد نمی‌تواند صحبت کند',
     MyStrings.roleReveal => '',
     MyStrings.handCuff =>
       '$playerWithCardName دستبند خود را به ${selectedPlayers.single} اهدا کرد',
@@ -74,6 +75,9 @@ void showLastMoveDialog({
   //
 
   AwesomeDialog(
+    dismissOnBackKeyPress: false,
+    dismissOnTouchOutside: false,
+
     context: context,
     dialogBackgroundColor: AppColors.lighterGrey,
     dialogType: DialogType.INFO,
