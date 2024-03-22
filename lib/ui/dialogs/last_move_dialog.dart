@@ -77,7 +77,6 @@ void showLastMoveDialog({
   AwesomeDialog(
     dismissOnBackKeyPress: false,
     dismissOnTouchOutside: false,
-
     context: context,
     dialogBackgroundColor: AppColors.lighterGrey,
     dialogType: DialogType.INFO,

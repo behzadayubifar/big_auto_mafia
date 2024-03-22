@@ -20,7 +20,7 @@ class AboutUsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    child:
+
     return Scaffold(
       floatingActionButton: buildFloatingActionButton(
         context: context,
@@ -62,7 +62,7 @@ class AboutUsScreen extends StatelessWidget {
               height: height / 24,
             ),
             TextButton(
-              onPressed: () => rateIn('bazaar'),
+              onPressed: () => rateIn('myket'),
               child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(

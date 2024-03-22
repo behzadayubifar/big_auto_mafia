@@ -53,7 +53,7 @@ class _DayState extends ConsumerState<Day> {
     //
     final asyncAlivePlayers = ref.watch(currentPlayersProvider);
     //
-    late final String lastMove;
+    late final String? lastMove;
     //
 
     final isGettingNight = useState(false);
@@ -156,7 +156,7 @@ class _DayState extends ConsumerState<Day> {
                   opacity: selectedPlayers.value.isEmpty ? 0 : 1,
                   duration: Duration(milliseconds: 400),
                   child: MyButton(
-                      title: 'حرکت آخر',
+                      title: 'بیرون کردن',
                       onLongPress: () async {
                         ref.read(loadingProvider.notifier).toggle();
 
@@ -164,31 +164,38 @@ class _DayState extends ConsumerState<Day> {
                         lastMove = await getARandomLastMove();
                         final String playerWithCardName =
                             selectedPlayers.value[0];
-                        final String playerWithCardRoleName = await ref
-                            .read(isarServiceProvider.future)
-                            .then((isar) => isar
-                                .getPlayerByName(playerWithCardName)
-                                .then((player) => player!.roleName!));
-
-                        final usedLastMoves = await isar
-                            .retrieveGameStatusN(n: widget.dayNumber)
-                            .then((status) => status?.usedLastMoves);
-
-                        await isar.putGameStatus(
-                            dayNumber: widget.dayNumber,
-                            usedLastMoves: [...?usedLastMoves, (lastMove)]);
-
                         await isar.updatePlayer(
                           playerName: playerWithCardName,
                           heart: 0,
                         );
+                        if (lastMove != null) {
+                          final String playerWithCardRoleName = await ref
+                              .read(isarServiceProvider.future)
+                              .then((isar) => isar
+                                  .getPlayerByName(playerWithCardName)
+                                  .then((player) => player!.roleName!));
 
-                        await ref
-                            .read(currentPlayersProvider.notifier)
-                            .action(MyStrings.dayPage);
+                          final usedLastMoves = await isar
+                              .retrieveGameStatusN(n: widget.dayNumber)
+                              .then((status) => status?.usedLastMoves);
 
-                        context.go(
-                            '/last_move/$lastMove/$playerWithCardName/$playerWithCardRoleName');
+                          await isar.putGameStatus(
+                              dayNumber: widget.dayNumber,
+                              usedLastMoves: [...?usedLastMoves, (lastMove)]);
+
+                          await ref
+                              .read(currentPlayersProvider.notifier)
+                              .action(MyStrings.dayPage);
+
+                          context.go(
+                              '/last_move/$lastMove/$playerWithCardName/$playerWithCardRoleName');
+                        } else {
+                          // All last moves are used
+                          // directly go to night
+                          await god(isGettingDay: false);
+
+                          context.goNamed('night', extra: await Info.night());
+                        }
                       }),
                 ),
               ),

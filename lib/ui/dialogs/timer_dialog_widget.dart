@@ -4,6 +4,7 @@ import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
+import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
@@ -234,6 +235,7 @@ class TimerDialog extends HookConsumerWidget {
                               timerController.value.pause();
                               await stopSound();
                               timerOverlay.remove();
+                              ref.read(loadingProvider.notifier).end();
                             }),
                     ],
                   ),
