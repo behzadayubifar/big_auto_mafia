@@ -182,18 +182,19 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
 
 // a method to assign a last move (which is not in usedLastMoves in collection of gameStatus) to a player
 Future<String?> getARandomLastMove() async {
-  final isar = await _isar;
-  final dayNumber = await isar.getDayNumber();
-  final usedLastMoves =
-      (await isar.retrieveGameStatusN(n: dayNumber))!.usedLastMoves!;
+  // final isar = await _isar;
+  // final dayNumber = await isar.getDayNumber();
+  // final usedLastMoves =
+  //     (await isar.retrieveGameStatusN(n: dayNumber))!.usedLastMoves!;
 
-  final List<String?> shuffledRemainedLastMoves = allLastMoves.keys
-      .where((element) => !usedLastMoves.contains(element))
-      .toList()
-    ..shuffle();
-  final randomLastMove = shuffledRemainedLastMoves.firstOrNull;
-  log('randomLastMove: $randomLastMove', name: 'getARandomLastMove');
-  return randomLastMove;
+  // final List<String?> shuffledRemainedLastMoves = allLastMoves.keys
+  //     .where((element) => !usedLastMoves.contains(element))
+  //     .toList()
+  //   ..shuffle();
+  // final randomLastMove = shuffledRemainedLastMoves.firstOrNull;
+  // log('randomLastMove: $randomLastMove', name: 'getARandomLastMove');
+  // return randomLastMove;
+  return MyStrings.roleReveal;
 }
 
 // a method which gets a list of players and returns randomly one of them
