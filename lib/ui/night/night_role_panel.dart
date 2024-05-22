@@ -72,7 +72,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
   Widget build(BuildContext context) {
     //
 
-    print(widget.otherMafias);
+    // print(widget.otherMafias);
 
     //
     bool saulCanBuy = false;
@@ -92,6 +92,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
             widget.isRenight != true)
         ? 'shoot'
         : '');
+    print(shootOrSlaughter.value);
     // for sual when mafia has bullet and one of them is dead
     final buyOrShoot = useState(saulCanBuy ? '' : 'shoot');
     final guessedRole = useState('');
@@ -397,7 +398,8 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                     finisher: finisher,
                     timerController: widget.timerController,
                     child: (widget.role == MyStrings.godfather &&
-                            shootOrSlaughter.value != '')
+                            shootOrSlaughter.value != '' &&
+                            !widget.isHandCuffed)
                         ?
                         // shoot or slaughter - switch to another option
                         MyButton(
@@ -485,6 +487,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                             (saulCanBuy && buyOrShoot.value == 'buy'))
                           asyncPlayers.when(
                             data: (playersList) {
+                              print(playersList);
                               // (playersList.forEach((player) {
                               //   print(player.playerToString(true));
                               // }));

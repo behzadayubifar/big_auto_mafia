@@ -272,6 +272,9 @@ class CurrentPlayers extends _$CurrentPlayers {
               return [];
 
             case MyStrings.godfatherPage:
+              return await isar
+                  .retrievePlayer()
+                  .then((record) => record.players);
             case MyStrings.mafiaPage:
             case MyStrings.saulPage:
               if (tonight == 0 ||
