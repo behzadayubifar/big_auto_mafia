@@ -45,13 +45,14 @@ class RoleNamesList extends StatelessWidget {
                       cacheExtent: _height / 1.64,
                       restorationId: 'night-page',
                       clipBehavior: Clip.antiAlias,
-                      itemCount: roleNames.values
-                          .where((role) => ![
-                                MyStrings.godfather,
-                                MyStrings.matador,
-                                MyStrings.saul,
-                                MyStrings.mafia,
-                              ].contains(role))
+                      itemCount: roleNames
+                          .values
+                          // .where((role) => ![
+                          //       MyStrings.godfather,
+                          //       MyStrings.matador,
+                          //       MyStrings.saul,
+                          //       MyStrings.mafia,
+                          //     ].contains(role))
                           .length,
                       itemBuilder: (context, index) {
                         return MyButton(
