@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';

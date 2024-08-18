@@ -138,7 +138,7 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
   print('object : $citizenPlayersCount');
   //
   final mafiaPlayersCount = (await isar.retrievePlayer(
-    isAlive: isGodfatherCountedForMafia! ? false : true,
+    isAlive: isGodfatherCountedForMafia ? false : true,
     criteria: (player) {
       if (player.roleName == roleNames[RoleName.godfather] &&
           playerNames.contains(player.playerName!)) {
@@ -158,7 +158,7 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
   //
 
   final independentPlayersCount = (await isar.retrievePlayer(
-    isAlive: isGodfatherCountedForMafia! ? false : true,
+    isAlive: isGodfatherCountedForMafia ? false : true,
     criteria: (player) =>
         player.type == RoleType.independent &&
         playerNames.contains(player.playerName!),
@@ -182,19 +182,19 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
 
 // a method to assign a last move (which is not in usedLastMoves in collection of gameStatus) to a player
 Future<String?> getARandomLastMove() async {
-  // final isar = await _isar;
-  // final dayNumber = await isar.getDayNumber();
-  // final usedLastMoves =
-  //     (await isar.retrieveGameStatusN(n: dayNumber))!.usedLastMoves!;
+  final isar = await _isar;
+  final dayNumber = await isar.getDayNumber();
+  final usedLastMoves =
+      (await isar.retrieveGameStatusN(n: dayNumber))!.usedLastMoves!;
 
-  // final List<String?> shuffledRemainedLastMoves = allLastMoves.keys
-  //     .where((element) => !usedLastMoves.contains(element))
-  //     .toList()
-  //   ..shuffle();
-  // final randomLastMove = shuffledRemainedLastMoves.firstOrNull;
-  // log('randomLastMove: $randomLastMove', name: 'getARandomLastMove');
-  // return randomLastMove;
-  return MyStrings.handCuff;
+  final List<String?> shuffledRemainedLastMoves = allLastMoves.keys
+      .where((element) => !usedLastMoves.contains(element))
+      .toList()
+    ..shuffle();
+  final randomLastMove = shuffledRemainedLastMoves.firstOrNull;
+  log('randomLastMove: $randomLastMove', name: 'getARandomLastMove');
+  return randomLastMove;
+  // return MyStrings.handCuff;
 }
 
 // a method which gets a list of players and returns randomly one of them

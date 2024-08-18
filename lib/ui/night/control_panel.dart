@@ -1,6 +1,5 @@
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
-import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 

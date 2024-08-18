@@ -2,7 +2,6 @@ import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/entities/player.dart';
-import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:flutter/material.dart';
 

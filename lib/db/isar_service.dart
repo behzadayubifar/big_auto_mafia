@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/night_results.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
@@ -396,6 +395,7 @@ class CurrentPlayers extends _$CurrentPlayers {
       },
     );
     if (extraList != null) return extraList;
+    return null;
   }
 }
 

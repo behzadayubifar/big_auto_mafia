@@ -1,16 +1,9 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:auto_mafia/constants/app_colors.dart';
-import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
-import 'package:auto_mafia/db/isar_service.dart';
-import 'package:auto_mafia/ui/common/loading.dart';
-import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
-import 'package:auto_mafia/ui/dialogs/dialog_page_widget.dart';
 import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
 import 'package:auto_mafia/ui/guide/guide_screen.dart';
 import 'package:auto_mafia/ui/home/about_us_screen.dart';
@@ -24,7 +17,6 @@ import 'package:auto_mafia/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/ui/x_page.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

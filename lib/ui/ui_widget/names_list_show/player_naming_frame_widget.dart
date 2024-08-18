@@ -1,10 +1,8 @@
 import 'dart:math';
-import 'dart:developer' as dev;
 
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/ui_utils/calculate_text_layout_size.dart';
-import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/number_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

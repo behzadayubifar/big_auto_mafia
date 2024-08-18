@@ -1,16 +1,11 @@
-import 'dart:io';
 
-import 'package:android_intent_plus/android_intent.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/lotties_assets.dart';
 import 'package:auto_mafia/ui/common/buttons/floating_action_button.dart';
 import 'package:auto_mafia/utils/about_utils.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
 
 class AboutUsScreen extends StatelessWidget {

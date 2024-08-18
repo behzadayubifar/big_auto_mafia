@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
@@ -48,9 +47,6 @@ class StatementScreen {
     // textController.add(text);
 
     final state = Overlay.of(context);
-    if (state == null) {
-      return null;
-    }
 
     OverlayEntry nostradamousResultOfPredictOverlay = OverlayEntry(
       builder: (context) {

@@ -1,17 +1,9 @@
-import 'dart:io';
-
-import 'package:android_intent_plus/android_intent.dart';
-import 'package:auto_mafia/audio/audio_assets.dart';
-import 'package:auto_mafia/audio/audio_service.dart';
-import 'package:auto_mafia/db/isar_service.dart';
-import 'package:auto_mafia/logic/load_logics.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:auto_mafia/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final _container = ProviderContainer();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // find the current platform

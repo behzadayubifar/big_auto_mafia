@@ -6,7 +6,6 @@ import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/last_moves_logics.dart';
 import 'package:auto_mafia/logic/logics.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

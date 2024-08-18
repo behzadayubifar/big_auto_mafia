@@ -5,10 +5,8 @@ import 'package:auto_mafia/ui/common/buttons/floating_action_button.dart';
 import 'package:auto_mafia/ui/common/title_widget.dart';
 import 'package:auto_mafia/ui/guide/guide_utils.dart';
 import 'package:expandable/expandable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
 
 class GuideScreen extends StatelessWidget {
   const GuideScreen({super.key});

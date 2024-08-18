@@ -1,4 +1,3 @@
-import 'package:auto_mafia/ui/dialogs/check_update_dialog.dart';
 import 'package:flutter/services.dart';
 
 const channel = const MethodChannel("ir.bezidev.auto_mafia/update");

@@ -1,15 +1,11 @@
 import 'dart:developer';
 
 import 'package:auto_mafia/constants/my_strings.dart';
-import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:go_router/go_router.dart';
 
 final _container = ProviderContainer();
 // night logics
@@ -250,7 +246,7 @@ Future<Map<String, dynamic>?> god(
   // TODO: handle the `slaughter` and `shot` for godfather and mafia in ui to do only one of them at one night
 
   if (isGettingDay && json != null) {
-    // ______________________----------Night To Day-----------________________________
+    // ______________________----------Night To Day------F-----________________________
 
     final mafiaShot = json["mafiasShot"];
     final godFatherChoice =
