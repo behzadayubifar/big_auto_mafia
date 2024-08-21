@@ -21,6 +21,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../ui/home/online_offline_page.dart';
+
 final routerProvider = Provider<GoRouter>((_) => _router);
 
 // class MyNavigatorOserver extends NavigatorObserver {
@@ -114,6 +116,11 @@ final _router = GoRouter(
         return HomePage(isFinished: isFinished);
         // return HomePage();
       },
+    ),
+    GoRoute(
+      path: '/off_or_online',
+      name: 'off-or-online',
+      builder: (context, state) => OnlineOfflinePage(),
     ),
     GoRoute(
       name: 'name-list',

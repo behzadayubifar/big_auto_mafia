@@ -11,7 +11,7 @@ class NumberHolder extends StatelessWidget {
   }) : super(key: key);
 
   final int number;
-  bool isNotFocused;
+  final bool isNotFocused;
 
   @override
   Widget build(BuildContext context) {

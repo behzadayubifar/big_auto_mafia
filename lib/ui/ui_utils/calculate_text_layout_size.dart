@@ -13,6 +13,7 @@ Size calculateTextSize({
     text: TextSpan(text: text, style: style),
     textDirection: textDirection,
     textScaleFactor: textScaleFactor,
+    // textScaler: TextScaler.linear(textScaleFactor),
   )..layout(minWidth: 0, maxWidth: double.infinity);
 
   return textPainter.size;

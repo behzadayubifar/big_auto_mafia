@@ -292,14 +292,6 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
       }
       if (tonight >= 1 && isPlayerMafia) await onExti();
     };
-    //
-    //
-    final foo = (widget.isGodfatherAlive == false &&
-        widget.mafiaHasBullet == true &&
-        (widget.role == MyStrings.matador ||
-            (widget.role == MyStrings.saul && buyOrShoot.value == 'shoot') ||
-            widget.role == MyStrings.mafia));
-    //
 
     return GlobalLoading(
       child: PopScope(

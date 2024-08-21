@@ -120,8 +120,7 @@ class NamingPage extends HookConsumerWidget {
                     MyButton(
                       title: _buttonInfo,
                       onLongPress: () async {
-                        ref.read(loadingProvider.notifier).state = true;
-
+                        ref.read(loadingProvider.notifier).toggle();
                         switch (_buttonInfo) {
                           case MyStrings.startGame:
                           case MyStrings.assignRole:
@@ -142,7 +141,7 @@ class NamingPage extends HookConsumerWidget {
                             context.pushNamed('night', extra: Info.showRoles);
                             break;
                         }
-                        ref.read(loadingProvider.notifier).state = false;
+                        ref.read(loadingProvider.notifier).toggle();
                       },
                     ),
                 ],

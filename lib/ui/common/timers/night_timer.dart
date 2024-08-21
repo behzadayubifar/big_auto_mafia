@@ -24,7 +24,6 @@ class NightTimer extends HookWidget {
   Widget build(BuildContext context) {
     Color ringColor = AppColors.darkText;
     Color backgroundColor = AppColors.primaries[4];
-    final remained2 = useState(duration);
     var fillCollor = useState(AppColors.lighterGrey);
     return Center(
       child: CircularCountDownTimer(

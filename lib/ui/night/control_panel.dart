@@ -3,7 +3,6 @@ import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 
-@immutable
 class ControlPanel extends StatelessWidget {
   ControlPanel({
     super.key,
@@ -17,7 +16,7 @@ class ControlPanel extends StatelessWidget {
 
   final double _width;
   final double _height;
-  Widget? child;
+  final Widget? child;
   final Future<Null> Function() finisher;
   final CountDownController? timerController;
 

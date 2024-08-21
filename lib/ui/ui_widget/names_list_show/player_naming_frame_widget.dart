@@ -9,28 +9,20 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-// ignore: must_be_immutable
 class PlayerNamingFrameWidget extends HookConsumerWidget {
   PlayerNamingFrameWidget({
     bool withNumber = false,
     required int number,
     required TextEditingController controller,
     super.key,
-  })  : _withNumber = withNumber,
-        _number = number,
+  })  : _number = number,
         _controller = controller;
 
   final int _number;
-  // use this to change the suffix icon rotation
-  final bool _withNumber;
-  //
   final TextEditingController _controller;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-    //
     final _focusNode = useFocusNode(
       canRequestFocus: true,
       descendantsAreFocusable: true,

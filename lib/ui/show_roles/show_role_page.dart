@@ -1,4 +1,3 @@
-
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
@@ -106,8 +105,8 @@ class _ShowRolePageState extends ConsumerState<ShowRolePage> {
           ),
         );
 
-    return WillPopScope(
-      onWillPop: () => Future.value(false),
+    return PopScope(
+      canPop: false,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.backGround,

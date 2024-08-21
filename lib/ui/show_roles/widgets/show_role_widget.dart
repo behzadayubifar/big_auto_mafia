@@ -21,7 +21,7 @@ class ShowRoleWidget extends StatelessWidget {
   final String title;
   final TextStyle? textStyle;
   final void Function()? onLongPress;
-  bool? isComplete = false;
+  final bool? isComplete;
 
   @override
   Widget build(BuildContext context) {

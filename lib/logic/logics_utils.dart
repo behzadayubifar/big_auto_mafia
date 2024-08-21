@@ -147,7 +147,7 @@ Future<({int citizen, int independent, int mafiaPlayersCount})>
           return false;
         }
 
-        return (isGodfatherCountedForMafia ?? true);
+        return (isGodfatherCountedForMafia);
       } else {
         return player.type == RoleType.mafia &&
             playerNames.contains(player.playerName!);

@@ -30,12 +30,12 @@ void main() {
   // WidgetsFlutterBinding.ensureInitialized();
   late final IsarService isar;
   late GameStatus? gameStatus0;
-  late GameStatus? gameStatus1;
-  late GameStatus? gameStatus2;
+  // late GameStatus? gameStatus1;
+  // late GameStatus? gameStatus2;
 
   late final expectedGameStatus0;
-  late final expectedGameStatus1;
-  late final expectedGameStatus2;
+  // late final expectedGameStatus1;
+  // late final expectedGameStatus2;
 
   setUpAll(() async {
     await Isar.initializeIsarCore(download: true);

@@ -49,8 +49,8 @@ class NightsResuls extends HookConsumerWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
-    return WillPopScope(
-      onWillPop: () => Future.value(false),
+    return PopScope(
+      canPop: false,
       child: GlobalLoading(
         child: Scaffold(
           backgroundColor: AppColors.backGround,
@@ -172,7 +172,6 @@ class NightsResuls extends HookConsumerWidget {
                       ],
                     ),
                   ),
-                  // TODO:
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [

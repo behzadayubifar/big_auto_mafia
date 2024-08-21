@@ -53,8 +53,6 @@ class ListOfNightPlayersWidget extends StatelessWidget {
                     bottom: purpose != '' ? _height / 32 : _height / 72),
                 child: Text(
                   switch (purpose) {
-                    // TODO: Handle this case.
-                    // MyStrings.matador => MyStrings.,
                     MyStrings.saul => MyStrings.buying,
                     MyStrings.matador => MyStrings.defuse,
                     MyStrings.godfather => MyStrings.shootInPlaceOfGodfather,
