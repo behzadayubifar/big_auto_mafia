@@ -1,3 +1,4 @@
+import 'package:auto_mafia/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:auto_mafia/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // find the current platform
+  await SharedPrefs.init();
 
   runApp(
     const ProviderScope(

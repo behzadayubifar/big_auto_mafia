@@ -1,4 +1,3 @@
-import 'package:auto_mafia/db/isar_service.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:auto_mafia/constants/app_colors.dart';
