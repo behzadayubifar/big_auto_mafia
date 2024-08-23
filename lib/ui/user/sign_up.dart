@@ -1,5 +1,4 @@
 import 'package:auto_mafia/constants/app_colors.dart';
-import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/online/users.dart';
 import 'package:auto_mafia/ui/common/buttons/online_buttons.dart';
@@ -23,7 +22,7 @@ class SignUpPage extends HookWidget {
           AppColors.lightestGrey, // Replace with your custom background color
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 32, 16.0, 16.0),
+          padding: const EdgeInsets.fromLTRB(16.0, 8, 16.0, 16.0),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -104,6 +103,7 @@ class SignUpPage extends HookWidget {
                 ),
                 SizedBox(height: 16.0),
                 MyTextFormField(
+                  maxLength: 32,
                   textDirection: TextDirection.ltr,
                   controller: passwordController,
                   nextController: confirmPasswordController,

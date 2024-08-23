@@ -23,7 +23,7 @@ class OnlineButton extends HookWidget {
         ), // Add padding to make the button bigger
       ),
       onPressed: () {
-        // Add submit button logic here
+        onPressed?.call();
       },
       child: Text(
         title,

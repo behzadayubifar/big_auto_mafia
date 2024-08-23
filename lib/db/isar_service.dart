@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/night_results.dart';
+import 'package:auto_mafia/db/entities/user.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -956,7 +957,50 @@ class IsarService {
     return null;
   }
 
-  // a method to insert a new user
+  // a method to insert a new user or update an existing user
+  Future<bool> putUser({
+    String? id,
+    String? username,
+    String? email,
+    String? password,
+    String? firstName,
+    String? lastName,
+  }) async {
+    final userExists = await isar.users.filter().idEqualTo(id).findFirst();
+    if (userExists != null) {
+      await isar.writeTxn(() => isar.users.put(userExists.copy(
+            username: username,
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName,
+          )));
+      log('user updated successfully', name: 'putUser');
+      return true;
+    } else {
+      final user = User()
+        ..id = id
+        ..username = username
+        ..email = email
+        ..password = password
+        ..firstName = firstName
+        ..lastName = lastName;
+      await isar.writeTxn(() => isar.users.put(user));
+      log('user inserted successfully', name: 'putUser');
+      return true;
+    }
+  }
+
+  // a method to retrieve a user
+  Future<User?> retrieveUserByID(String id) async {
+    final user = await isar.users.filter().idEqualTo(id).findFirst();
+    if (user != null) {
+      log('user found : ${user.toString()}', name: 'retrieveUser');
+      return user;
+    }
+    log('user not found', name: 'retrieveUser');
+    return null;
+  }
 }
 // how to manage which player has done his/her night job
 // and which one has not?

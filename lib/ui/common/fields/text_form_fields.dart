@@ -86,6 +86,10 @@ class MyTextFormField extends HookWidget {
         labelStyle: MyTextStyles.bodyLarge.copyWith(
           color: isFocused.value ? AppColors.primaries[3] : AppColors.grey,
         ),
+        counterStyle: MyTextStyles.bodySmall.copyWith(
+          color: AppColors.grey,
+          height: 1.2,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),

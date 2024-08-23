@@ -17,6 +17,7 @@ import 'package:auto_mafia/ui/statements/chaos_page.dart';
 import 'package:auto_mafia/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
+import 'package:auto_mafia/ui/user/panel.dart';
 import 'package:auto_mafia/ui/user/sign_up.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:flutter/material.dart';
@@ -27,41 +28,6 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import '../ui/home/online_offline_page.dart';
 
 final routerProvider = Provider<GoRouter>((_) => _router);
-
-// class MyNavigatorOserver extends NavigatorObserver {
-//   // @override
-//   // void didPush(Route route, Route? previousRoute) {
-//   //   super.didPush(route, previousRoute);
-//   //   log('didPush: ${route.settings.name}', name: 'navigator-observer');
-//   // }
-
-//   @override
-//   void didPop(Route route, Route? previousRoute) {
-//     print(previousRoute);
-//     // check if the previous route is empty or not if it is empty then it means that the app is going to be closed so show a dialog
-//     if (previousRoute == null) {
-//       // print(previousRoute);
-//       log('didPop: ${route.settings.name}', name: 'navigator-observer');
-//       AwesomeDialog(
-//         context: route.navigator!.context,
-//         dialogType: DialogType.WARNING,
-//         animType: AnimType.SCALE,
-//         title: 'خروج از برنامه',
-//         desc: 'آیا می خواهید از برنامه خارج شوید؟',
-//         btnCancelOnPress: () {},
-//         btnOkOnPress: () {
-//           exit(0);
-//         },
-//       );
-//     } else {
-//       log('didPop: ${route.settings.name}', name: 'navigator-observer');
-//       super.didPop(route, previousRoute);
-//     }
-//   }
-
-//   @override
-//   void
-// }
 
 final _router = GoRouter(
   // observers: [MyNavigatorOserver()],
@@ -137,6 +103,13 @@ final _router = GoRouter(
           return '/online/sign_up';
         } else {
           final decodedToken = JwtDecoder.decode(token);
+          final exp = decodedToken['expiresAt'];
+          final now = DateTime.now().millisecondsSinceEpoch / 1000;
+          if (exp < now) {
+            return '/online/sign_up';
+          } else {
+            return '/online/panel';
+          }
         }
       },
       routes: [
@@ -144,7 +117,12 @@ final _router = GoRouter(
           path: 'sign_up',
           name: 'sign-up',
           builder: (context, state) => SignUpPage(),
-        )
+        ),
+        GoRoute(
+          path: 'panel',
+          name: 'panel',
+          builder: (context, state) => Panel(),
+        ),
       ],
     ),
     GoRoute(
@@ -285,3 +263,47 @@ final _router = GoRouter(
     ),
   ],
 );
+
+
+
+
+
+
+
+
+
+
+// class MyNavigatorOserver extends NavigatorObserver {
+//   // @override
+//   // void didPush(Route route, Route? previousRoute) {
+//   //   super.didPush(route, previousRoute);
+//   //   log('didPush: ${route.settings.name}', name: 'navigator-observer');
+//   // }
+
+//   @override
+//   void didPop(Route route, Route? previousRoute) {
+//     print(previousRoute);
+//     // check if the previous route is empty or not if it is empty then it means that the app is going to be closed so show a dialog
+//     if (previousRoute == null) {
+//       // print(previousRoute);
+//       log('didPop: ${route.settings.name}', name: 'navigator-observer');
+//       AwesomeDialog(
+//         context: route.navigator!.context,
+//         dialogType: DialogType.WARNING,
+//         animType: AnimType.SCALE,
+//         title: 'خروج از برنامه',
+//         desc: 'آیا می خواهید از برنامه خارج شوید؟',
+//         btnCancelOnPress: () {},
+//         btnOkOnPress: () {
+//           exit(0);
+//         },
+//       );
+//     } else {
+//       log('didPop: ${route.settings.name}', name: 'navigator-observer');
+//       super.didPop(route, previousRoute);
+//     }
+//   }
+
+//   @override
+//   void
+// }
