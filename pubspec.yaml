@@ -69,6 +69,10 @@ dependencies:
   path_provider: any
   go_router: any
   flutter_riverpod: any
+  dio: ^5.6.0
+  internet_connection_checker: ^2.0.0
+  jwt_decoder: ^2.0.1
+  shared_preferences: ^2.3.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -119,6 +123,7 @@ flutter:
     - assets/cards/roles/
     - assets/overlays/
     - assets/characters-specific/
+    - assets/screenshots/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

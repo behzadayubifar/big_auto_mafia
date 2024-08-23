@@ -955,6 +955,8 @@ class IsarService {
     log('night results not found', name: 'retrieveNightResults');
     return null;
   }
+
+  // a method to insert a new user
 }
 // how to manage which player has done his/her night job
 // and which one has not?

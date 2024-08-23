@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
+import 'package:auto_mafia/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
 import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
@@ -16,10 +17,12 @@ import 'package:auto_mafia/ui/statements/chaos_page.dart';
 import 'package:auto_mafia/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
+import 'package:auto_mafia/ui/user/sign_up.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../ui/home/online_offline_page.dart';
 
@@ -121,6 +124,28 @@ final _router = GoRouter(
       path: '/off_or_online',
       name: 'off-or-online',
       builder: (context, state) => OnlineOfflinePage(),
+    ),
+    GoRoute(
+      path: '/online',
+      name: 'online',
+      redirect: (context, state) {
+        // redirect user to the specific page based on the condition
+        // that is already Logged in or not
+        final token = SharedPrefs.getString('token');
+        if (token == null) {
+          print('token is null');
+          return '/online/sign_up';
+        } else {
+          final decodedToken = JwtDecoder.decode(token);
+        }
+      },
+      routes: [
+        GoRoute(
+          path: 'sign_up',
+          name: 'sign-up',
+          builder: (context, state) => SignUpPage(),
+        )
+      ],
     ),
     GoRoute(
       name: 'name-list',
