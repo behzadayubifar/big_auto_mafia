@@ -1,15 +1,11 @@
 import 'dart:developer';
 
 import 'package:auto_mafia/constants/my_strings.dart';
-import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:auto_mafia/models/role_datasets.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:go_router/go_router.dart';
 
 final _container = ProviderContainer();
 // night logics
@@ -244,13 +240,12 @@ Future<Map<String, dynamic>?> god(
   final allPlayers = await isar.playersRolesMap();
   // ----------------------------------------------------------------------
   final oldDeadPlayers = await isar.retrievePlayer(isAlive: false);
-  final oldAlivePlayers = await isar.retrievePlayer();
 
   // TODO: handle the `handcuffed` players in ui & show them the specific page
   // TODO: handle the `slaughter` and `shot` for godfather and mafia in ui to do only one of them at one night
 
   if (isGettingDay && json != null) {
-    // ______________________----------Night To Day-----------________________________
+    // ______________________----------Night To Day------F-----________________________
 
     final mafiaShot = json["mafiasShot"];
     final godFatherChoice =
@@ -262,20 +257,16 @@ Future<Map<String, dynamic>?> god(
         await isar.getPlayerByName(json["konstantinChoice"]!);
     final watsonChoice = await isar.getPlayerByName(json["watsonChoice"]!);
     final matadorChoice = await isar.getPlayerByName(json["matadorChoice"]!);
-    final saulChoice = await isar.getPlayerByName(json["saulChoice"]!);
     final matadaorChoice = await json["matadorChoice"];
     final nightOfBlockage = json["nightOfBlockage"];
     final isSomeoneBlockedTonight = nightOfBlockage == nightNumber.toString();
-    final nightOfRightChoiceOfKane = json["nightOfRightChoiceOfKane"];
 
     String? toNightBlocked() => isSomeoneBlockedTonight ? matadaorChoice : null;
     int? nightCode = 503;
     bool? isGodfathersGuessRight = false;
-    String? winner = '';
 
     // we will use these variables for showing the nocturnal results !!!
     String? bornPlayer = '';
-    List<String?> killedPlayersOftonight = [];
     String? slaughteredPlayerOfTonight = '';
     String? disclosuredPlayerOfTonight = '';
 
@@ -378,17 +369,6 @@ Future<Map<String, dynamic>?> god(
       }
     }
 
-    final newAndOldDeadPlayersDiff = newDeadPlayers.players
-        .mapToNames()
-        .where((playerName) =>
-            !oldDeadPlayers.players.mapToNames().contains(playerName))
-        .toList();
-
-    // checking if anyone died
-    if (newAndOldDeadPlayersDiff.isNotEmpty) {
-      killedPlayersOftonight = newAndOldDeadPlayersDiff;
-    }
-
     final List<String> allDeadPlayers =
         (newDeadPlayers.players + oldDeadPlayers.players)
             .where((element) => element.playerName != bornPlayer)
@@ -452,10 +432,6 @@ Future<Map<String, dynamic>?> god(
       tonightDeads: newDeadPlayers.players.mapToNames(),
     );
     return info;
-    // context.goNamed('nights-results', extra: info);
-
-    // TODO: call here the method for showing the night's resukts & use born and killed Player Of tonight & slaughtered player of tonight & also the night code & kane choice if it was right
-    // TODO: or even MABEY the VICTORY message
   }
   // GO TO NEXT NIGHT
   else {

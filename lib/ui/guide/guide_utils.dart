@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/models/guide_datasets.dart';
@@ -59,4 +58,5 @@ Gradient? gradientBasedOnTag(GuideTags? tag) {
     case _:
       null;
   }
+  return null;
 }

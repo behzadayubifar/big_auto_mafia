@@ -5,8 +5,6 @@ import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/lotties_assets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:go_router/go_router.dart';
 

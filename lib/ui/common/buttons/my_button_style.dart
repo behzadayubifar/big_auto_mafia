@@ -72,16 +72,14 @@ class MyButtonStyle {
 // --------------------------------------------------------------------------------------------------------------------------
 
 @immutable
-class TextButtonDefaultOverlay extends MaterialStateProperty<Color?> {
+class TextButtonDefaultOverlay extends WidgetStateProperty<Color?> {
   TextButtonDefaultOverlay(this.primary);
   final Color primary;
   @override
-  Color? resolve(Set<MaterialState> states) {
-    if (states.contains(MaterialState.hovered))
-      return primary.withOpacity(0.04);
-    if (states.contains(MaterialState.focused) ||
-        states.contains(MaterialState.pressed))
-      return primary.withOpacity(0.12);
+  Color? resolve(Set<WidgetState> states) {
+    if (states.contains(WidgetState.hovered)) return primary.withOpacity(0.04);
+    if (states.contains(WidgetState.focused) ||
+        states.contains(WidgetState.pressed)) return primary.withOpacity(0.12);
     return null;
   }
 

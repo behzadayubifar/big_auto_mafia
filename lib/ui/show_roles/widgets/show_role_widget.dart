@@ -1,7 +1,6 @@
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:page_flip_builder/page_flip_builder.dart';
 
 class ShowRoleWidget extends StatelessWidget {
   ShowRoleWidget({
@@ -22,7 +21,7 @@ class ShowRoleWidget extends StatelessWidget {
   final String title;
   final TextStyle? textStyle;
   final void Function()? onLongPress;
-  bool? isComplete = false;
+  final bool? isComplete;
 
   @override
   Widget build(BuildContext context) {

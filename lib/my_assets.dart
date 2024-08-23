@@ -10,6 +10,9 @@ class MyAssets {
   static final String numberHolder = Assets.icons.numberHolder.path;
   static final String playerNameFrame = Assets.images.frames.namesFrame.path;
 
+  static final String logo = Assets.screenshots.logo.path;
+  static final String overlay = Assets.screenshots.overlay.path;
+
   // night's
   static final String nightBg = Assets.images.nights.nightBg.path;
   static final String moon = Assets.images.nights.moonPng.path;

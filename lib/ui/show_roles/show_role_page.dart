@@ -1,14 +1,10 @@
-import 'dart:ffi';
-
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
-import 'package:auto_mafia/ui/night/night_page.dart';
 import 'package:auto_mafia/ui/show_roles/widgets/show_role_widget.dart';
-import 'package:auto_mafia/ui/ui_widget/names_list_show/names_list_funcs.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -72,12 +68,12 @@ class _ShowRolePageState extends ConsumerState<ShowRolePage> {
               final playersWhoSawTheirRole =
                   (await isar.retrieveGameStatusN(n: 0))!
                       .playersWhoSawTheirRole
-                      ?.toList();
-              playersWhoSawTheirRole?.log();
+                      .toList();
+              playersWhoSawTheirRole.log();
               final playersCount =
                   await isar.retrievePlayer().then((rec) => rec.count);
               final haveAllSeenTheirRoles =
-                  playersWhoSawTheirRole?.length == playersCount;
+                  playersWhoSawTheirRole.length == playersCount;
 
               final int dayNumber = await isar.getDayNumber();
 
@@ -109,8 +105,8 @@ class _ShowRolePageState extends ConsumerState<ShowRolePage> {
           ),
         );
 
-    return WillPopScope(
-      onWillPop: () => Future.value(false),
+    return PopScope(
+      canPop: false,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.backGround,

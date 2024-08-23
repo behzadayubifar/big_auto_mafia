@@ -15,8 +15,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-final _container = ProviderContainer();
-
 class PlayerNameWidget extends HookConsumerWidget {
   PlayerNameWidget({
     required this.nightContext,

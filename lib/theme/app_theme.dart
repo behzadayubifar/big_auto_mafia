@@ -9,22 +9,20 @@ part 'app_theme.g.dart';
 class AutoMafiaTheme extends _$AutoMafiaTheme {
   ThemeData _theme = ThemeData(
     scrollbarTheme: ScrollbarThemeData(
-      thumbColor: MaterialStateProperty.all(AppColors.primary),
+      thumbColor: WidgetStateProperty.all(AppColors.primary),
       // interactive: true,
-      trackVisibility: MaterialStateProperty.all(true),
-      thumbVisibility: MaterialStateProperty.all(true),
-      trackColor: MaterialStateProperty.all(AppColors.primaries[1]),
+      trackVisibility: WidgetStateProperty.all(true),
+      thumbVisibility: WidgetStateProperty.all(true),
+      trackColor: WidgetStateProperty.all(AppColors.primaries[1]),
     ),
     colorScheme: ColorScheme(
       primary: AppColors.primary,
       secondary: AppColors.secondary,
       surface: AppColors.white,
-      background: AppColors.white,
       error: AppColors.secondary,
       onPrimary: AppColors.white,
       onSecondary: AppColors.white,
       onSurface: AppColors.black,
-      onBackground: AppColors.black,
       onError: AppColors.white,
       brightness: Brightness.dark,
     ),

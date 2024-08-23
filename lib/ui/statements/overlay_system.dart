@@ -19,7 +19,6 @@ Future<String?> showOverlay(
   final citizen = numberOfEachTyoeOfDeadPlayers.citizen;
   final independent = numberOfEachTyoeOfDeadPlayers.independent;
   //
-  late final String ChosenroleByGodfather;
 
   OverlayEntry enquiryOverlay = OverlayEntry(
     builder: (context) {

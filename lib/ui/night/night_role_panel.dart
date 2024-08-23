@@ -9,7 +9,6 @@ import 'package:auto_mafia/logic/night_choices_logics.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
-import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
 
 import 'package:auto_mafia/ui/night/control_panel.dart';
 import 'package:auto_mafia/ui/night/list_of_night_players_widget.dart';
@@ -72,7 +71,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
   Widget build(BuildContext context) {
     //
 
-    print(widget.otherMafias);
+    // print(widget.otherMafias);
 
     //
     bool saulCanBuy = false;
@@ -92,6 +91,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
             widget.isRenight != true)
         ? 'shoot'
         : '');
+    print(shootOrSlaughter.value);
     // for sual when mafia has bullet and one of them is dead
     final buyOrShoot = useState(saulCanBuy ? '' : 'shoot');
     final guessedRole = useState('');
@@ -292,14 +292,6 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
       }
       if (tonight >= 1 && isPlayerMafia) await onExti();
     };
-    //
-    //
-    final foo = (widget.isGodfatherAlive == false &&
-        widget.mafiaHasBullet == true &&
-        (widget.role == MyStrings.matador ||
-            (widget.role == MyStrings.saul && buyOrShoot.value == 'shoot') ||
-            widget.role == MyStrings.mafia));
-    //
 
     return GlobalLoading(
       child: PopScope(
@@ -397,7 +389,8 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                     finisher: finisher,
                     timerController: widget.timerController,
                     child: (widget.role == MyStrings.godfather &&
-                            shootOrSlaughter.value != '')
+                            shootOrSlaughter.value != '' &&
+                            !widget.isHandCuffed)
                         ?
                         // shoot or slaughter - switch to another option
                         MyButton(
@@ -485,6 +478,7 @@ class _NightRolePanelState extends ConsumerState<NightRolePanel> {
                             (saulCanBuy && buyOrShoot.value == 'buy'))
                           asyncPlayers.when(
                             data: (playersList) {
+                              print(playersList);
                               // (playersList.forEach((player) {
                               //   print(player.playerToString(true));
                               // }));

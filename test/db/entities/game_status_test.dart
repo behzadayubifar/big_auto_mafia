@@ -2,7 +2,6 @@ import 'dart:developer' show log;
 
 import 'package:auto_mafia/db/entities/game_status.dart';
 import 'package:auto_mafia/db/isar_service.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -31,12 +30,12 @@ void main() {
   // WidgetsFlutterBinding.ensureInitialized();
   late final IsarService isar;
   late GameStatus? gameStatus0;
-  late GameStatus? gameStatus1;
-  late GameStatus? gameStatus2;
+  // late GameStatus? gameStatus1;
+  // late GameStatus? gameStatus2;
 
   late final expectedGameStatus0;
-  late final expectedGameStatus1;
-  late final expectedGameStatus2;
+  // late final expectedGameStatus1;
+  // late final expectedGameStatus2;
 
   setUpAll(() async {
     await Isar.initializeIsarCore(download: true);

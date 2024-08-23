@@ -64,5 +64,10 @@ Future<bool> beautifulMind({required String guessedToBeNostradamous}) async {
 Future<String> identityReveal({required String playerName}) async {
   final isar = await _container.read(isarServiceProvider.future);
   final player = await isar.getPlayerByName(playerName);
+  await isar.updatePlayer(
+    playerName: playerName,
+    disclosured: true,
+    isReversible: false,
+  );
   return player!.roleName!;
 }

@@ -1,16 +1,12 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:auto_mafia/channels/myket_check_update.dart';
 import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
-import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/logic/load_logics.dart';
 import 'package:auto_mafia/lotties_assets.dart';
 import 'package:auto_mafia/ui/common/buttons/my_buttons.dart';
 import 'package:auto_mafia/ui/common/loading.dart';
-import 'package:auto_mafia/ui/dialogs/check_update_dialog.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';

@@ -8,7 +8,6 @@ import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/common/timers/night_timer.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -196,13 +195,14 @@ class TimerDialog extends HookConsumerWidget {
                         MyButton(
                             title: rightButtonTitle.value,
                             onPressed: () async {
-                              if (timerController.value.isPaused) {
+                              if (timerController.value.isPaused.value) {
                                 print('is paused');
                                 timerController.value.resume();
                                 rightButtonTitle.value = 'وایسا';
                                 await playSound(AppAudios.kitchenTimer);
                                 return;
-                              } else if (timerController.value.isStarted) {
+                              } else if (timerController
+                                  .value.isStarted.value) {
                                 print(timerController.value.getTime());
                                 timerController.value.pause();
                                 rightButtonTitle.value = 'ادامه';
@@ -210,7 +210,7 @@ class TimerDialog extends HookConsumerWidget {
                                 return;
                               } else if ((timerController.value.getTime()) ==
                                       '00' &&
-                                  timerController.value.isStarted) {
+                                  timerController.value.isStarted.value) {
                                 print('00');
                               } else {
                                 print('is not started');

@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/night_results.dart';
 import 'package:auto_mafia/utils/dev_log.dart';
@@ -112,8 +111,8 @@ class CurrentPlayers extends _$CurrentPlayers {
             case MyStrings.leonPage:
               return await isar
                   .retrievePlayer(
-                    criteria: (player) => player.roleName != MyStrings.leon,
-                  )
+                      // criteria: (player) => player.roleName != MyStrings.leon,
+                      )
                   .then((record) => record.players);
 
             case MyStrings.kanePage:
@@ -123,7 +122,13 @@ class CurrentPlayers extends _$CurrentPlayers {
                   )
                   .then((record) => record.players);
 
+            case MyStrings.mafiaPage:
             case MyStrings.godfatherPage:
+              return await isar
+                  .retrievePlayer(
+                      // criteria: (player) => player.type != RoleType.mafia,
+                      )
+                  .then((record) => record.players);
             case MyStrings.saulPage:
               return await isar
                   .retrievePlayer(
@@ -145,10 +150,14 @@ class CurrentPlayers extends _$CurrentPlayers {
                       );
               return await isar.retrievePlayer(
                 criteria: (player) {
-                  final c1 = player.type != RoleType.mafia;
-                  final c2 = matadorChoice == player.playerName &&
-                      lastNightOfBlockage == '$lastNight';
-                  return c1 && !c2;
+                  // final c1 = player.type != RoleType.mafia;
+                  return !(matadorChoice == player.playerName &&
+                      lastNightOfBlockage == '$lastNight');
+
+                  // final c1 = player.type != RoleType.mafia;
+                  // final c2 = matadorChoice == player.playerName &&
+                  //     lastNightOfBlockage == '$lastNight';
+                  // return c1 && !c2;
                 },
               ).then((record) => record.players);
 
@@ -245,8 +254,8 @@ class CurrentPlayers extends _$CurrentPlayers {
                   leon!.shotCount < 2)
                 return await isar
                     .retrievePlayer(
-                      criteria: (player) => player.roleName != MyStrings.leon,
-                    )
+                        // criteria: (player) => player.roleName != MyStrings.leon,
+                        )
                     .then((record) => record.players);
               return [];
 
@@ -262,6 +271,9 @@ class CurrentPlayers extends _$CurrentPlayers {
               return [];
 
             case MyStrings.godfatherPage:
+              return await isar
+                  .retrievePlayer()
+                  .then((record) => record.players);
             case MyStrings.mafiaPage:
             case MyStrings.saulPage:
               if (tonight == 0 ||
@@ -276,8 +288,8 @@ class CurrentPlayers extends _$CurrentPlayers {
                 // for shoot in absence of godfather
                 extraList = await isar
                     .retrievePlayer(
-                      criteria: (player) => player.type != RoleType.mafia,
-                    )
+                        // criteria: (player) => player.type != RoleType.mafia,
+                        )
                     .then((record) => record.players);
                 return Future.value(extraList);
               }
@@ -293,8 +305,8 @@ class CurrentPlayers extends _$CurrentPlayers {
                 // for shoot in absence of godfather
                 extraList = await isar
                     .retrievePlayer(
-                      criteria: (player) => player.type != RoleType.mafia,
-                    )
+                        // criteria: (player) => player.type != RoleType.mafia,
+                        )
                     .then((record) => record.players);
 
                 final lastNightOfBlockage =
@@ -309,10 +321,12 @@ class CurrentPlayers extends _$CurrentPlayers {
                         );
                 final result = await isar.retrievePlayer(
                   criteria: (player) {
-                    final c1 = player.type != RoleType.mafia;
-                    final c2 = player.playerName == matadorChoice &&
-                        lastNightOfBlockage == '$lastNight';
-                    return c1 && !c2;
+                    // final c1 = player.type != RoleType.mafia;
+                    // final c2 = player.playerName == matadorChoice &&
+                    //     lastNightOfBlockage == '$lastNight';
+                    // return c1 && !c2;
+                    return !(player.playerName == matadorChoice &&
+                        lastNightOfBlockage == '$lastNight');
                   },
                 ).then((record) => record.players);
 
@@ -381,6 +395,7 @@ class CurrentPlayers extends _$CurrentPlayers {
       },
     );
     if (extraList != null) return extraList;
+    return null;
   }
 }
 
@@ -940,6 +955,8 @@ class IsarService {
     log('night results not found', name: 'retrieveNightResults');
     return null;
   }
+
+  // a method to insert a new user
 }
 // how to manage which player has done his/her night job
 // and which one has not?

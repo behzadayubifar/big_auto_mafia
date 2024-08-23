@@ -1,7 +1,6 @@
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/gen/assets.gen.dart';
-import 'package:auto_mafia/models/role_datasets.dart';
 import 'package:auto_mafia/my_assets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

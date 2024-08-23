@@ -76,7 +76,7 @@ void main() {
     // day 0
     test('day 0', () async {
       // arrange
-      final dayNumber = isar.getDayNumber();
+      // final dayNumber = isar.getDayNumber();
       final nostradamous = await isar.getPlayerByRole(RoleName.nostradamous);
       print(nostradamous?.playerName);
 

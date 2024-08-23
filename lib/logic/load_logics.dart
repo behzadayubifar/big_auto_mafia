@@ -2,6 +2,7 @@ import 'package:auto_mafia/constants/info_strings.dart';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/isar_service.dart';
 import 'package:auto_mafia/extensions/results_ex.dart';
+import 'package:auto_mafia/logic/logics_utils.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -70,7 +71,7 @@ loadGame(BuildContext context) async {
       final alivePlayers = await isar.retrievePlayer();
       context.goNamed(
         'chaos',
-        extra: alivePlayers.players,
+        extra: alivePlayers.players.mapToNames(),
       );
 
     case MyStrings.gameOver:

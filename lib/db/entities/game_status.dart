@@ -27,7 +27,6 @@ class GameStatus {
   int dayNumber = 0;
   int? wholeGameTimePassed = 0;
   String? situation = '';
-  // TODO: handle this in UI *******************
   // this must change in two times :
   // (initial_value) = ['playerName', '$initialTime']
   //    1. At the start of night, it must be set to

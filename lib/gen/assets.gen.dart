@@ -8,8 +8,9 @@
 // ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 
 class $AssetsAudioGen {
   const $AssetsAudioGen();
@@ -39,7 +40,10 @@ class $AssetsAudioGen {
 class $AssetsCardsGen {
   const $AssetsCardsGen();
 
+  /// Directory path: assets/cards/last_moves
   $AssetsCardsLastMovesGen get lastMoves => const $AssetsCardsLastMovesGen();
+
+  /// Directory path: assets/cards/roles
   $AssetsCardsRolesGen get roles => const $AssetsCardsRolesGen();
 }
 
@@ -225,13 +229,17 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// Directory path: assets/images/back_ground
   $AssetsImagesBackGroundGen get backGround =>
       const $AssetsImagesBackGroundGen();
 
   /// File path: assets/images/day_bg.png
   AssetGenImage get dayBg => const AssetGenImage('assets/images/day_bg.png');
 
+  /// Directory path: assets/images/days
   $AssetsImagesDaysGen get days => const $AssetsImagesDaysGen();
+
+  /// Directory path: assets/images/frames
   $AssetsImagesFramesGen get frames => const $AssetsImagesFramesGen();
 
   /// File path: assets/images/mafia_launcher.png
@@ -246,6 +254,7 @@ class $AssetsImagesGen {
   AssetGenImage get nightBg =>
       const AssetGenImage('assets/images/night_bg.png');
 
+  /// Directory path: assets/images/nights
   $AssetsImagesNightsGen get nights => const $AssetsImagesNightsGen();
 
   /// List of all assets
@@ -356,6 +365,52 @@ class $AssetsOverlaysGen {
       ];
 }
 
+class $AssetsScreenshotsGen {
+  const $AssetsScreenshotsGen();
+
+  /// File path: assets/screenshots/konstantin.png
+  AssetGenImage get konstantin =>
+      const AssetGenImage('assets/screenshots/konstantin.png');
+
+  /// File path: assets/screenshots/logo.png
+  AssetGenImage get logo => const AssetGenImage('assets/screenshots/logo.png');
+
+  /// File path: assets/screenshots/logo2.png
+  AssetGenImage get logo2 =>
+      const AssetGenImage('assets/screenshots/logo2.png');
+
+  /// File path: assets/screenshots/matador.png
+  AssetGenImage get matador =>
+      const AssetGenImage('assets/screenshots/matador.png');
+
+  /// File path: assets/screenshots/nights_results.png
+  AssetGenImage get nightsResults =>
+      const AssetGenImage('assets/screenshots/nights_results.png');
+
+  /// File path: assets/screenshots/overlay.png
+  AssetGenImage get overlay =>
+      const AssetGenImage('assets/screenshots/overlay.png');
+
+  /// File path: assets/screenshots/saul.png
+  AssetGenImage get saul => const AssetGenImage('assets/screenshots/saul.png');
+
+  /// File path: assets/screenshots/what_is_role.png
+  AssetGenImage get whatIsRole =>
+      const AssetGenImage('assets/screenshots/what_is_role.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+        konstantin,
+        logo,
+        logo2,
+        matador,
+        nightsResults,
+        overlay,
+        saul,
+        whatIsRole
+      ];
+}
+
 class $AssetsCardsLastMovesGen {
   const $AssetsCardsLastMovesGen();
 
@@ -371,6 +426,7 @@ class $AssetsCardsLastMovesGen {
   AssetGenImage get handcuff =>
       const AssetGenImage('assets/cards/last_moves/handcuff.jpg');
 
+  /// Directory path: assets/cards/last_moves/pics
   $AssetsCardsLastMovesPicsGen get pics => const $AssetsCardsLastMovesPicsGen();
 
   /// File path: assets/cards/last_moves/role-reveal.jpg
@@ -566,12 +622,20 @@ class Assets {
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
   static const $AssetsOverlaysGen overlays = $AssetsOverlaysGen();
+  static const $AssetsScreenshotsGen screenshots = $AssetsScreenshotsGen();
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName);
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  });
 
   final String _assetName;
+
+  final Size? size;
+  final Set<String> flavors;
 
   Image image({
     Key? key,
@@ -643,9 +707,22 @@ class AssetGenImage {
 }
 
 class SvgGenImage {
-  const SvgGenImage(this._assetName);
+  const SvgGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  }) : _isVecFormat = false;
+
+  const SvgGenImage.vec(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  }) : _isVecFormat = true;
 
   final String _assetName;
+  final Size? size;
+  final Set<String> flavors;
+  final bool _isVecFormat;
 
   SvgPicture svg({
     Key? key,
@@ -660,19 +737,32 @@ class SvgGenImage {
     WidgetBuilder? placeholderBuilder,
     String? semanticsLabel,
     bool excludeFromSemantics = false,
-    SvgTheme theme = const SvgTheme(),
+    SvgTheme? theme,
     ColorFilter? colorFilter,
     Clip clipBehavior = Clip.hardEdge,
     @deprecated Color? color,
     @deprecated BlendMode colorBlendMode = BlendMode.srcIn,
     @deprecated bool cacheColorFilter = false,
   }) {
-    return SvgPicture.asset(
-      _assetName,
+    final BytesLoader loader;
+    if (_isVecFormat) {
+      loader = AssetBytesLoader(
+        _assetName,
+        assetBundle: bundle,
+        packageName: package,
+      );
+    } else {
+      loader = SvgAssetLoader(
+        _assetName,
+        assetBundle: bundle,
+        packageName: package,
+        theme: theme,
+      );
+    }
+    return SvgPicture(
+      loader,
       key: key,
       matchTextDirection: matchTextDirection,
-      bundle: bundle,
-      package: package,
       width: width,
       height: height,
       fit: fit,
@@ -681,10 +771,8 @@ class SvgGenImage {
       placeholderBuilder: placeholderBuilder,
       semanticsLabel: semanticsLabel,
       excludeFromSemantics: excludeFromSemantics,
-      theme: theme,
-      colorFilter: colorFilter,
-      color: color,
-      colorBlendMode: colorBlendMode,
+      colorFilter: colorFilter ??
+          (color == null ? null : ColorFilter.mode(color, colorBlendMode)),
       clipBehavior: clipBehavior,
       cacheColorFilter: cacheColorFilter,
     );
