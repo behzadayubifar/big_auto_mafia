@@ -45,3 +45,6 @@ app.*.map.json
 /android/key.properties
 /android/local.properties
 /android/app/upload-keystore.jks
+
+# generated files
+*.g.dart

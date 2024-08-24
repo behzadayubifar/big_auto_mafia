@@ -17,8 +17,8 @@ import 'package:auto_mafia/ui/statements/chaos_page.dart';
 import 'package:auto_mafia/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
-import 'package:auto_mafia/ui/user/panel.dart';
-import 'package:auto_mafia/ui/user/sign_up.dart';
+import 'package:auto_mafia/online/presentation/users/panel/panel.dart';
+import 'package:auto_mafia/online/presentation/users/sign_up/sign_up_page.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -99,7 +99,6 @@ final _router = GoRouter(
         // that is already Logged in or not
         final token = SharedPrefs.getString('token');
         if (token == null) {
-          print('token is null');
           return '/online/sign_up';
         } else {
           final decodedToken = JwtDecoder.decode(token);

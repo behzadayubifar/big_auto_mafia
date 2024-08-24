@@ -965,6 +965,10 @@ class IsarService {
     String? password,
     String? firstName,
     String? lastName,
+    int? coins,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? isAdmin,
   }) async {
     final userExists = await isar.users.filter().idEqualTo(id).findFirst();
     if (userExists != null) {
@@ -974,6 +978,10 @@ class IsarService {
             password: password,
             firstName: firstName,
             lastName: lastName,
+            coins: coins,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            isAdmin: isAdmin,
           )));
       log('user updated successfully', name: 'putUser');
       return true;
@@ -984,7 +992,11 @@ class IsarService {
         ..email = email
         ..password = password
         ..firstName = firstName
-        ..lastName = lastName;
+        ..lastName = lastName
+        ..coins = coins
+        ..createdAt = createdAt
+        ..updatedAt = updatedAt
+        ..isAdmin = isAdmin;
       await isar.writeTxn(() => isar.users.put(user));
       log('user inserted successfully', name: 'putUser');
       return true;
