@@ -5,8 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../constants/app_colors.dart';
 import '../../../constants/my_text_styles.dart';
 
-class MyTextFormField extends HookWidget {
-  /* const */ MyTextFormField({
+class MyTextField extends HookWidget {
+  /* const */ MyTextField({
     this.textDirection,
     this.keyboardType,
     this.nextController,
@@ -85,6 +85,10 @@ class MyTextFormField extends HookWidget {
         labelText: labelText,
         labelStyle: MyTextStyles.bodyLarge.copyWith(
           color: isFocused.value ? AppColors.primaries[3] : AppColors.grey,
+        ),
+        counterStyle: MyTextStyles.bodySmall.copyWith(
+          color: AppColors.grey,
+          height: 1.2,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.0),
