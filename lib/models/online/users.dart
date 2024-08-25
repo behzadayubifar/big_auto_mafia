@@ -19,8 +19,8 @@ class UserResp {
 
   factory UserResp.fromJson(Map<String, dynamic> json) {
     return UserResp(
-      users: List<User>.from((json['users'] as List<Map<String, dynamic>>)
-          .map((x) => User.fromJson(x))),
+      users: List<User>.from(
+          (json['users'] as List<dynamic>).map((x) => User.fromJson(x))),
       token: json['token'],
       msg: json['msg'],
     );

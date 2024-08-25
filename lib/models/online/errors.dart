@@ -1,15 +1,7 @@
-/* 
-type ErrorResp struct {
-	Msg     string         `json:"msg"`
-	Err     any            `json:"err"`
-	Details map[string]any `json:"details"`
-}
- */
-
 class ErrorResp {
   String msg;
   dynamic err;
-  Map<String, dynamic> details;
+  Map<String, dynamic>? details;
 
   ErrorResp({required this.msg, required this.err, required this.details});
 
@@ -17,7 +9,7 @@ class ErrorResp {
     return ErrorResp(
       msg: json['msg'],
       err: json['err'],
-      details: Map<String, dynamic>.from(json['details']),
+      details: json['details'],
     );
   }
 }

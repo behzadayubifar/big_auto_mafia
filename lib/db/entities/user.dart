@@ -54,9 +54,9 @@ class User {
     ..firstName = json['first_name']
     ..lastName = json['last_name']
     ..coins = json['coins']
-    ..createdAt = json['created_at']
-    ..updatedAt = json['updated_at']
-    ..isAdmin = json['is_admin'];
+    ..createdAt = DateTime.parse(json['created_at'])
+    ..updatedAt = DateTime.parse(json['updated_at'])
+    ..isAdmin = json['is_admin'] == "true";
 
   Map<String, dynamic> toJson() => {
         'id': id,

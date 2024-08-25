@@ -26,6 +26,7 @@ class UsersRepository {
     required String lastName,
   }) async {
     final response = await dio.post(
+      // "http://192.168.1.3:8080/api/v1/register",
       Endpoints.register,
       data: User()
           .copy(
@@ -37,25 +38,17 @@ class UsersRepository {
           )
           .toJson(),
     );
-
     if (response.statusCode == 201) {
       final token = response.data['token'];
-      // await isar.putUser(
-      //   id: response.data['id'],
-      //   username: userName,
-      //   email: email,
-      //   password: password,
-      //   firstName: firstName,
-      //   lastName: lastName,
-      // );
       await SharedPrefs.setString('token', token);
       log('User registered successfully with token: $token', name: "register");
       log('response :' + response.data.toString(), name: "register");
-      SharedPrefs.setString('token', token);
       return UserResp.fromJson(response.data);
     } else {
-      log('Failed to register user');
-      return ErrorResp.fromJson(response.data);
+      log('Failed to register user -- response: ${response.data}');
+      final err = ErrorResp.fromJson(response.data);
+      log('error message: ${err.msg}');
+      return err;
     }
   }
 
@@ -67,13 +60,11 @@ class UsersRepository {
         'password': password,
       }),
     );
-
     if (response.statusCode == 200) {
       final token = response.data['token'];
-      await SharedPrefs.setString('token', token);
+      SharedPrefs.setString('token', token);
       log('User logged in successfully with token: $token', name: "login");
       log('response :' + response.data.toString(), name: "login");
-      SharedPrefs.setString('token', token);
       return UserResp.fromJson(response.data);
     } else {
       log('Failed to login user');

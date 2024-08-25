@@ -18,16 +18,21 @@ import 'package:auto_mafia/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/online/presentation/users/panel/panel.dart';
-import 'package:auto_mafia/online/presentation/users/sign_up/sign_up_page.dart';
+import 'package:auto_mafia/online/presentation/users/sign_up/user_entry.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../ui/home/online_offline_page.dart';
 
-final routerProvider = Provider<GoRouter>((_) => _router);
+part 'routes.g.dart';
+
+@riverpod
+GoRouter router(RouterRef ref) {
+  return _router;
+}
 
 final _router = GoRouter(
   // observers: [MyNavigatorOserver()],
@@ -99,28 +104,47 @@ final _router = GoRouter(
         // that is already Logged in or not
         final token = SharedPrefs.getString('token');
         if (token == null) {
-          return '/online/sign_up';
+          return '/online/user_entry/:false';
         } else {
+          // get current location
+          final currentLocation = state.fullPath;
+          print('currentLocation: $currentLocation');
+
+          // if (currentLocation == '/online/panel')
+          //   return '/online/user_entry/:true';
+
           final decodedToken = JwtDecoder.decode(token);
           final exp = decodedToken['expiresAt'];
           final now = DateTime.now().millisecondsSinceEpoch / 1000;
           if (exp < now) {
-            return '/online/sign_up';
+            return '/online/user_entry/:true';
           } else {
-            return '/online/panel';
+            return '/online/panel/${decodedToken['userID']}';
           }
         }
       },
       routes: [
         GoRoute(
-          path: 'sign_up',
-          name: 'sign-up',
-          builder: (context, state) => SignUpPage(),
-        ),
+            path: 'user_entry/:isLogin',
+            name: 'user-entry',
+            builder: (context, state) {
+              final isLogin = state.pathParameters['isLogin'] == 'true';
+              return UserEntry(
+                isLogin: isLogin,
+              );
+            }),
         GoRoute(
-          path: 'panel',
+          path: 'panel/:id',
           name: 'panel',
-          builder: (context, state) => Panel(),
+          builder: (context, state) {
+            final token = SharedPrefs.getString('token');
+            final decodedToken = JwtDecoder.decode(token!);
+            final userID = decodedToken['userID'];
+
+            return Panel(
+              id: userID,
+            );
+          },
         ),
       ],
     ),

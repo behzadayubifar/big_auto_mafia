@@ -419,6 +419,7 @@ class IsarService {
           NightSchema,
           GameStatusSchema,
           ResultsSchema,
+          UserSchema,
         ],
         inspector: true,
         directory: dir.path,
@@ -1007,10 +1008,8 @@ class IsarService {
   Future<User?> retrieveUserByID(String id) async {
     final user = await isar.users.filter().idEqualTo(id).findFirst();
     if (user != null) {
-      log('user found : ${user.toString()}', name: 'retrieveUser');
       return user;
     }
-    log('user not found', name: 'retrieveUser');
     return null;
   }
 }

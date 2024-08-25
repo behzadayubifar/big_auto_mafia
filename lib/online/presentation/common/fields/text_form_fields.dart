@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import '../../../constants/app_colors.dart';
-import '../../../constants/my_text_styles.dart';
+import '../../../../constants/app_colors.dart';
+import '../../../../constants/my_text_styles.dart';
 
 class MyTextField extends HookWidget {
   /* const */ MyTextField({
