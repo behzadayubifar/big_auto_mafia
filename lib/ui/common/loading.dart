@@ -21,6 +21,8 @@ class loading extends _$loading {
 
   void toggle() => state = !state;
 
+  void start() => state = true;
+
   void end() => state = false;
 }
 

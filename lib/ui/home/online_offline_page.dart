@@ -56,6 +56,7 @@ class OnlineOfflinePage extends HookConsumerWidget {
                       height: 1.3,
                     ),
                     btnOkOnPress: () {
+                      ref.read(loadingProvider.notifier).start();
                       SharedPrefs.setString('ip', ipController.text);
                       Endpoints.host = ipController.text;
                       ref.read(routerProvider).goNamed('online');

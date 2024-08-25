@@ -14,6 +14,8 @@ class OnlineButton extends HookConsumerWidget {
     required this.provider,
     required this.title,
     required this.onPressed,
+    this.shadowColor,
+    this.elevation,
     super.key,
   });
 
@@ -22,6 +24,8 @@ class OnlineButton extends HookConsumerWidget {
   final ProviderListenable provider;
   final double height;
   final double width;
+  final Color? shadowColor;
+  final double? elevation;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,8 +61,8 @@ class OnlineButton extends HookConsumerWidget {
       width: width,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          shadowColor: AppColors.black,
-          elevation: 5.0,
+          shadowColor: shadowColor ?? AppColors.black,
+          elevation: elevation ?? 10.0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

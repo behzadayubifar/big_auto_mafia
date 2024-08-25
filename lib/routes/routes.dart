@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:auto_mafia/constants/my_strings.dart';
 import 'package:auto_mafia/db/entities/player.dart';
 import 'package:auto_mafia/db/shared_prefs/shared_prefs.dart';
+import 'package:auto_mafia/ui/common/loading.dart';
 import 'package:auto_mafia/ui/day/day.dart';
 import 'package:auto_mafia/ui/day/show_last_move.dart';
 import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
@@ -22,274 +23,274 @@ import 'package:auto_mafia/online/presentation/users/sign_up/user_entry.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../db/isar_service.dart';
 import '../ui/home/online_offline_page.dart';
 
 part 'routes.g.dart';
 
 @riverpod
 GoRouter router(RouterRef ref) {
-  return _router;
-}
+  var name;
+  var coins;
 
-final _router = GoRouter(
-  // observers: [MyNavigatorOserver()],
-  debugLogDiagnostics: true,
-  // initialLocation: '/name_list/show-roles',
-  // initialLocation: '/night',
-  // initialLocation: '/night/:${MyStrings.showMyRole}',
-  // initialLocation: '/night-role-panel',
-  // initialLocation: '/night_timer',
-  // last was this :
-  // initialLocation: '/name_list',
-  // initialLocation: '/',
-  initialLocation: '/splash',
-  // initialLocation: '/nights_results',
-  // initialLocation: '/day',
-  // initialLocation: '/x-page',
-  // initialLocation: '/chaos',
+  return GoRouter(
+    // observers: [MyNavigatorOserver()],
+    debugLogDiagnostics: true,
+    // initialLocation: '/name_list/show-roles',
+    // initialLocation: '/night',
+    // initialLocation: '/night/:${MyStrings.showMyRole}',
+    // initialLocation: '/night-role-panel',
+    // initialLocation: '/night_timer',
+    // last was this :
+    // initialLocation: '/name_list',
+    // initialLocation: '/',
+    initialLocation: '/splash',
+    // initialLocation: '/nights_results',
+    // initialLocation: '/day',
+    // initialLocation: '/x-page',
+    // initialLocation: '/chaos',
 
-  routes: <RouteBase>[
-    GoRoute(
-      path: '/splash',
-      builder: (context, state) => SplashScreen(),
-    ),
-    GoRoute(
-      name: 'nights-results',
-      path: '/nights_results',
-      builder: (context, state) {
-        final info = state.extra as Map<String, dynamic>;
+    routes: <RouteBase>[
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => SplashScreen(),
+      ),
+      GoRoute(
+        name: 'nights-results',
+        path: '/nights_results',
+        builder: (context, state) {
+          final info = state.extra as Map<String, dynamic>;
 
-        return NightsResuls(
-          tonight: info['tonight']!.toString(),
-          bornPlayer: info['bornPlayer'],
-          disclosured: info['disclosured'],
-          slaughtered: info['slaughtered'],
-          tonightDeads: info['tonightDeads'],
-          nightCode: info['nightCode'],
-          allDeadPlayers: info['allDeadPlayers'],
-          remainedChancesForNightEnquiry:
-              info['remainedChancesForNightEnquiry'],
-        );
-      },
-    ),
-    GoRoute(
-      name: 'home',
-      // path: '/:isFinished',
-      path: '/home/:isFinished',
-      builder: (_, GoRouterState state) {
-        final isFinished = switch (state.pathParameters['isFinished']) {
-          'true' => true,
-          'null' => null,
-          'false' => false,
-          _ => null,
-        };
-        print('goroter: isFinished -> ${state.pathParameters['isFinished']}');
-        return HomePage(isFinished: isFinished);
-        // return HomePage();
-      },
-    ),
-    GoRoute(
-      path: '/off_or_online',
-      name: 'off-or-online',
-      builder: (context, state) => OnlineOfflinePage(),
-    ),
-    GoRoute(
-      path: '/online',
-      name: 'online',
-      redirect: (context, state) {
-        // redirect user to the specific page based on the condition
-        // that is already Logged in or not
-        final token = SharedPrefs.getString('token');
-        if (token == null) {
-          return '/online/user_entry/:false';
-        } else {
-          // get current location
-          final currentLocation = state.fullPath;
-          print('currentLocation: $currentLocation');
-
-          // if (currentLocation == '/online/panel')
-          //   return '/online/user_entry/:true';
-
-          final decodedToken = JwtDecoder.decode(token);
-          final exp = decodedToken['expiresAt'];
-          final now = DateTime.now().millisecondsSinceEpoch / 1000;
-          if (exp < now) {
-            return '/online/user_entry/:true';
+          return NightsResuls(
+            tonight: info['tonight']!.toString(),
+            bornPlayer: info['bornPlayer'],
+            disclosured: info['disclosured'],
+            slaughtered: info['slaughtered'],
+            tonightDeads: info['tonightDeads'],
+            nightCode: info['nightCode'],
+            allDeadPlayers: info['allDeadPlayers'],
+            remainedChancesForNightEnquiry:
+                info['remainedChancesForNightEnquiry'],
+          );
+        },
+      ),
+      GoRoute(
+        name: 'home',
+        // path: '/:isFinished',
+        path: '/home/:isFinished',
+        builder: (_, GoRouterState state) {
+          final isFinished = switch (state.pathParameters['isFinished']) {
+            'true' => true,
+            'null' => null,
+            'false' => false,
+            _ => null,
+          };
+          print('goroter: isFinished -> ${state.pathParameters['isFinished']}');
+          return HomePage(isFinished: isFinished);
+          // return HomePage();
+        },
+      ),
+      GoRoute(
+        path: '/off_or_online',
+        name: 'off-or-online',
+        builder: (context, state) => OnlineOfflinePage(),
+      ),
+      GoRoute(
+        path: '/online',
+        name: 'online',
+        redirect: (context, state) async {
+          String path = "";
+          // redirect user to the specific page based on the condition
+          // that is already Logged in or not
+          final token = SharedPrefs.getString('token');
+          if (token == null) {
+            path = '/online/user_entry/:false';
           } else {
-            return '/online/panel/${decodedToken['userID']}';
+            final decodedToken = JwtDecoder.decode(token);
+            final exp = decodedToken['expiresAt'];
+            final now = DateTime.now().millisecondsSinceEpoch / 1000;
+            if (exp < now) {
+              path = '/online/user_entry/:true';
+            } else /*  if the token is still valid  */ {
+              final userID = decodedToken['userID'];
+              final isar = await ref.read(isarServiceProvider.future);
+              final user = await isar.retrieveUserByID(userID);
+              name = user!.firstName! + ' ' + user.lastName!;
+              coins = user.coins ?? 0;
+              path = '/online/panel';
+            }
           }
-        }
-      },
-      routes: [
-        GoRoute(
-            path: 'user_entry/:isLogin',
-            name: 'user-entry',
+          ref.read(loadingProvider.notifier).end();
+          return path;
+        },
+        routes: [
+          GoRoute(
+              path: 'user_entry/:isLogin',
+              name: 'user-entry',
+              builder: (context, state) {
+                final isLogin = state.pathParameters['isLogin'] == 'true';
+                return UserEntry(
+                  isLogin: isLogin,
+                );
+              }),
+          GoRoute(
+            path: 'panel',
+            name: 'panel',
             builder: (context, state) {
-              final isLogin = state.pathParameters['isLogin'] == 'true';
-              return UserEntry(
-                isLogin: isLogin,
+              return Panel(
+                name: name,
+                coins: coins,
               );
-            }),
-        GoRoute(
-          path: 'panel/:id',
-          name: 'panel',
-          builder: (context, state) {
-            final token = SharedPrefs.getString('token');
-            final decodedToken = JwtDecoder.decode(token!);
-            final userID = decodedToken['userID'];
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        name: 'name-list',
+        path: '/name_list',
+        builder: (context, state) => NamingPage(),
+        routes: [
+          GoRoute(
+              name: 'show-roles',
+              path: 'show-roles/:role',
+              builder: (context, state) {
+                final role = state.pathParameters['role'];
+                return ShowRolePage(role: role!);
+              }),
+        ],
+      ),
+      GoRoute(
+        name: 'night',
+        path: '/night',
+        builder: (context, state) {
+          final info = state.extra as Map<String, dynamic>;
+          log('info: $info', name: 'night-info');
+          if (info['situation'] == MyStrings.nightPage) {
+            WidgetsBinding.instance.scheduleFrameCallback((timeStamp) {
+              if (int.tryParse(info['nightNumber'])! >= 1 &&
+                  info['isAnyoneDoneNightJob'] == 'false')
+                Overlay.of(context).insert(timerOverlay);
+            });
+          }
+          return NightPage(info: info);
+        },
+      ),
+      GoRoute(
+        name: 'x-page',
+        path: '/x-page',
+        builder: (context, state) => XWidget(),
+        // builder: (context, state) => XPage(),
+      ),
+      GoRoute(
+        name: 'night_role_panel',
+        path: '/night-role-panel',
+        builder: (context, state) {
+          final info = state.extra as Map<String, dynamic>;
+          final String name = info['name']!;
+          final String role = info['role']!;
+          final String code = info['code']!;
+          final bool isGodfatherAlive = info['isGodfatherAlive']!;
+          final bool? mafiaHasBullet = info['mafiaHasBullet'];
+          final int night = info['night']!;
+          final List<Player> playersListForShootInAbsenceOfGodfather =
+              info['playersListForShootInAbsenceOfGodfather']!;
+          final bool isHandCuffed = info['isHandCuffed']!;
+          final bool isOneOfMafiaDead = info['isOneOfMafiaDead'];
+          final bool? hasMafiaBuyedOnce = info['hasMafiaBuyedOnce'];
+          final List<Player>? otherMafias = info['otherMafias'];
 
-            return Panel(
-              id: userID,
-            );
-          },
-        ),
-      ],
-    ),
-    GoRoute(
-      name: 'name-list',
-      path: '/name_list',
-      builder: (context, state) => NamingPage(),
-      routes: [
-        GoRoute(
-            name: 'show-roles',
-            path: 'show-roles/:role',
-            builder: (context, state) {
-              final role = state.pathParameters['role'];
-              return ShowRolePage(role: role!);
-            }),
-      ],
-    ),
-    GoRoute(
-      name: 'night',
-      path: '/night',
-      builder: (context, state) {
-        final info = state.extra as Map<String, dynamic>;
-        log('info: $info', name: 'night-info');
-        if (info['situation'] == MyStrings.nightPage) {
-          WidgetsBinding.instance.scheduleFrameCallback((timeStamp) {
-            if (int.tryParse(info['nightNumber'])! >= 1 &&
-                info['isAnyoneDoneNightJob'] == 'false')
-              Overlay.of(context).insert(timerOverlay);
-          });
-        }
-        return NightPage(info: info);
-      },
-    ),
-    GoRoute(
-      name: 'x-page',
-      path: '/x-page',
-      builder: (context, state) => XWidget(),
-      // builder: (context, state) => XPage(),
-    ),
-    GoRoute(
-      name: 'night_role_panel',
-      path: '/night-role-panel',
-      builder: (context, state) {
-        final info = state.extra as Map<String, dynamic>;
-        final String name = info['name']!;
-        final String role = info['role']!;
-        final String code = info['code']!;
-        final bool isGodfatherAlive = info['isGodfatherAlive']!;
-        final bool? mafiaHasBullet = info['mafiaHasBullet'];
-        final int night = info['night']!;
-        final List<Player> playersListForShootInAbsenceOfGodfather =
-            info['playersListForShootInAbsenceOfGodfather']!;
-        final bool isHandCuffed = info['isHandCuffed']!;
-        final bool isOneOfMafiaDead = info['isOneOfMafiaDead'];
-        final bool? hasMafiaBuyedOnce = info['hasMafiaBuyedOnce'];
-        final List<Player>? otherMafias = info['otherMafias'];
+          return NightRolePanel(
+            name: name,
+            role: role,
+            code: code,
+            isGodfatherAlive: isGodfatherAlive,
+            mafiaHasBullet: mafiaHasBullet,
+            playersListForShootInAbsenceOfGodfather:
+                playersListForShootInAbsenceOfGodfather,
+            night: night,
+            isHandCuffed: isHandCuffed,
+            isOneOfMafiaDead: isOneOfMafiaDead,
+            hasMafiaBuyedOnce: hasMafiaBuyedOnce,
+            otherMafias: otherMafias,
+          );
+        },
+      ),
+      GoRoute(
+        name: 'game-over',
+        path: '/game_over/:winner',
+        builder: (context, state) {
+          final winner = state.pathParameters['winner']!;
+          final players = state.extra as List<Player>;
+          return GameOverPage(
+            winner: winner,
+            players: players,
+          );
+        },
+      ),
+      GoRoute(
+        name: 'chaos',
+        path: '/chaos',
+        builder: (context, state) {
+          final threeRemainedPlayers = state.extra as List<String>;
+          // final threeRemainedPlayers = [
+          //   'بازیکن 1',
+          //   'بازیکن 2',
+          //   'بازیکن 3',
+          // ];
+          return Chaos(playersNames: threeRemainedPlayers);
+        },
+      ),
+      GoRoute(
+        name: 'day',
+        path: '/day/:dayNumber',
+        builder: (context, state) {
+          final dayNumber = int.parse(state.pathParameters['dayNumber']!);
+          print('dayNumber ...: $dayNumber');
+          return Day(
+            dayNumber: dayNumber,
+          );
+        },
+      ),
+      GoRoute(
+        name: 'guide',
+        path: '/guide',
+        builder: (context, state) {
+          return GuideScreen();
+        },
+      ),
+      GoRoute(
+        name: 'about',
+        path: '/about',
+        builder: (context, state) {
+          return AboutUsScreen();
+        },
+      ),
+      GoRoute(
+        name: 'last-move',
+        path:
+            '/last_move/:lastMove/:playerWithCardName/:playerWithCardRoleName',
+        builder: (context, state) {
+          final String lastMove = state.pathParameters['lastMove']!;
+          final String playerWithCardName =
+              state.pathParameters['playerWithCardName']!;
+          final String playerWithCardRoleName =
+              state.pathParameters['playerWithCardRoleName']!;
+          return ShowLastMove(
+            lastMoveName: lastMove,
+            playerWithCardName: playerWithCardName,
+            playerWithCardRoleName: playerWithCardRoleName,
+          );
+        },
+      ),
+    ],
+  );
 
-        return NightRolePanel(
-          name: name,
-          role: role,
-          code: code,
-          isGodfatherAlive: isGodfatherAlive,
-          mafiaHasBullet: mafiaHasBullet,
-          playersListForShootInAbsenceOfGodfather:
-              playersListForShootInAbsenceOfGodfather,
-          night: night,
-          isHandCuffed: isHandCuffed,
-          isOneOfMafiaDead: isOneOfMafiaDead,
-          hasMafiaBuyedOnce: hasMafiaBuyedOnce,
-          otherMafias: otherMafias,
-        );
-      },
-    ),
-    GoRoute(
-      name: 'game-over',
-      path: '/game_over/:winner',
-      builder: (context, state) {
-        final winner = state.pathParameters['winner']!;
-        final players = state.extra as List<Player>;
-        return GameOverPage(
-          winner: winner,
-          players: players,
-        );
-      },
-    ),
-    GoRoute(
-      name: 'chaos',
-      path: '/chaos',
-      builder: (context, state) {
-        final threeRemainedPlayers = state.extra as List<String>;
-        // final threeRemainedPlayers = [
-        //   'بازیکن 1',
-        //   'بازیکن 2',
-        //   'بازیکن 3',
-        // ];
-        return Chaos(playersNames: threeRemainedPlayers);
-      },
-    ),
-    GoRoute(
-      name: 'day',
-      path: '/day/:dayNumber',
-      builder: (context, state) {
-        final dayNumber = int.parse(state.pathParameters['dayNumber']!);
-        print('dayNumber ...: $dayNumber');
-        return Day(
-          dayNumber: dayNumber,
-        );
-      },
-    ),
-    GoRoute(
-      name: 'guide',
-      path: '/guide',
-      builder: (context, state) {
-        return GuideScreen();
-      },
-    ),
-    GoRoute(
-      name: 'about',
-      path: '/about',
-      builder: (context, state) {
-        return AboutUsScreen();
-      },
-    ),
-    GoRoute(
-      name: 'last-move',
-      path: '/last_move/:lastMove/:playerWithCardName/:playerWithCardRoleName',
-      builder: (context, state) {
-        final String lastMove = state.pathParameters['lastMove']!;
-        final String playerWithCardName =
-            state.pathParameters['playerWithCardName']!;
-        final String playerWithCardRoleName =
-            state.pathParameters['playerWithCardRoleName']!;
-        return ShowLastMove(
-          lastMoveName: lastMove,
-          playerWithCardName: playerWithCardName,
-          playerWithCardRoleName: playerWithCardRoleName,
-        );
-      },
-    ),
-  ],
-);
-
-
-
-
+  ;
+}
 
 
 
