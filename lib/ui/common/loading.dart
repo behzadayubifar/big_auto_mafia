@@ -37,8 +37,6 @@ class GlobalLoading extends HookConsumerWidget {
     ref.listen(
       loadingProvider,
       (previous, next) {
-        print(previous);
-        print(next);
         if (previous == next) return;
         if (next) {
           // Add a modal barrier so the user cannot interact with the app while the loading indicator is visible
