@@ -3,20 +3,23 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../constants/my_text_styles.dart';
+import '../../../db/entities/user.dart';
 
 class AccountTile extends StatelessWidget {
   const AccountTile({
-    required this.title,
+    required this.user,
     required this.height,
     required this.width,
     this.onPressed,
+    this.repeatedName,
     super.key,
   });
 
-  final String title;
+  final User user;
   final double height;
   final double width;
   final void Function()? onPressed;
+  final bool? repeatedName;
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +44,26 @@ class AccountTile extends StatelessWidget {
                   color: AppColors.darkerGrey,
                 ),
                 SizedBox(width: width / 32),
-                // name
-                Text(
-                  title,
-                  style: MyTextStyles.bodyLarge.copyWith(
-                    color: AppColors.grey,
-                    height: 1.5,
-                  ),
+                // name (if name is repeated we show the name and the username)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.fullName,
+                      style: MyTextStyles.bodyLarge.copyWith(
+                        color: AppColors.grey,
+                        height: 1.5,
+                      ),
+                    ),
+                    if (repeatedName!)
+                      Text(
+                        user.username!,
+                        style: MyTextStyles.bodyMD.copyWith(
+                          color: AppColors.darkerGrey,
+                          height: 1.5,
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),

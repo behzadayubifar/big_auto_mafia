@@ -1,3 +1,4 @@
+import 'package:auto_mafia/db/entities/user.dart';
 import 'package:auto_mafia/online/presentation/common/account_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,13 +12,17 @@ class MyDrawer extends ConsumerWidget {
   const MyDrawer({
     super.key,
     required this.height,
-    required this.name,
+    required this.currentUserName,
     required this.width,
+    this.otherAccounts,
+    this.repeatedNames,
   });
 
   final double height;
-  final String name;
+  final String currentUserName;
   final double width;
+  final List<User>? otherAccounts;
+  final List<String>? repeatedNames;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,7 +30,7 @@ class MyDrawer extends ConsumerWidget {
       backgroundColor: AppColors.lightestGrey,
       elevation: 24,
       shadowColor: AppColors.black,
-      // a place to swith between accounts -- if there are multiple accounts we show them here and a plus button to add a new account
+      // a place to swith between otherAccounts -- if there are multiple otherAccounts we show them here and a plus button to add a new account
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -55,7 +60,7 @@ class MyDrawer extends ConsumerWidget {
                   ),
                   SizedBox(height: height / 32),
                   Text(
-                    name,
+                    currentUserName,
                     style: MyTextStyles.headlineSmall.copyWith(
                       color: AppColors.darkestGrey,
                       height: 1.5,
@@ -67,47 +72,64 @@ class MyDrawer extends ConsumerWidget {
             ),
             // Divider
             Divider(color: AppColors.white, thickness: 1, height: 0),
-            // accounts list
+            // otherAccounts list
             SizedBox(
               height: height / 1.6,
-              child: ListView(
-                children: [
-                  // account with a divider --> widget
-                  AccountTile(
-                      title: "فاطمه جمشیدی", height: height, width: width),
-                  AccountTile(title: "علی هاشمی", height: height, width: width),
-                  // add new account
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: height / 32, horizontal: width / 16),
-                    child: Row(
+              child: otherAccounts == null
+                  ? SizedBox()
+                  : ListView(
                       children: [
-                        // icon
-                        Icon(
-                          FontAwesomeIcons.plus,
-                          size: 24,
-                          color: AppColors.darkerGrey,
-                        ),
-                        SizedBox(width: width / 32),
-                        // name
-                        TextButton(
-                          child: Text(
-                            "افزودن حساب کاربری",
-                            style: MyTextStyles.bodyMD.copyWith(
-                                color: AppColors.darkestGrey, height: 1.5),
+                        // otherAccounts
+                        for (int i = 0; i < otherAccounts!.length; i++)
+                          AccountTile(
+                            user: otherAccounts![i],
+                            height: height,
+                            width: width,
+                            onPressed: () {
+                              ref.read(routerProvider).goNamed(
+                                    'user-entry',
+                                    pathParameters: {'isLogin': 'true'},
+                                    extra: otherAccounts![i].username!,
+                                  );
+                            },
+                            repeatedName: repeatedNames != null
+                                ? repeatedNames!
+                                    .contains(otherAccounts![i].fullName)
+                                : false,
                           ),
-                          onPressed: () {
-                            ref.read(routerProvider).goNamed(
-                              'user-entry',
-                              pathParameters: {'isLogin': 'true'},
-                            );
-                          },
+                        // add new account
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: height / 32, horizontal: width / 16),
+                          child: Row(
+                            children: [
+                              // icon
+                              Icon(
+                                FontAwesomeIcons.plus,
+                                size: 24,
+                                color: AppColors.darkerGrey,
+                              ),
+                              SizedBox(width: width / 32),
+                              // name
+                              TextButton(
+                                child: Text(
+                                  "افزودن حساب کاربری",
+                                  style: MyTextStyles.bodyMD.copyWith(
+                                      color: AppColors.darkestGrey,
+                                      height: 1.5),
+                                ),
+                                onPressed: () {
+                                  ref.read(routerProvider).goNamed(
+                                    'user-entry',
+                                    pathParameters: {'isLogin': 'true'},
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),

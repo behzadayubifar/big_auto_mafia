@@ -23,10 +23,10 @@ import 'package:auto_mafia/online/presentation/users/sign_up/user_entry.dart';
 import 'package:auto_mafia/ui/x_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../db/entities/user.dart';
 import '../db/isar_service.dart';
 import '../ui/home/online_offline_page.dart';
 
@@ -34,8 +34,10 @@ part 'routes.g.dart';
 
 @riverpod
 GoRouter router(RouterRef ref) {
-  var name;
-  var coins;
+  var _name;
+  var _coins;
+
+  var _extra = <String, dynamic>{};
 
   return GoRouter(
     // observers: [MyNavigatorOserver()],
@@ -108,20 +110,38 @@ GoRouter router(RouterRef ref) {
           // that is already Logged in or not
           final token = SharedPrefs.getString('token');
           if (token == null) {
-            path = '/online/user_entry/:false';
+            path = '/online/user_entry/false';
           } else {
             final decodedToken = JwtDecoder.decode(token);
             final exp = decodedToken['expiresAt'];
             final now = DateTime.now().millisecondsSinceEpoch / 1000;
             if (exp < now) {
-              path = '/online/user_entry/:true';
+              path = '/online/user_entry/true';
             } else /*  if the token is still valid  */ {
-              final userID = decodedToken['userID'];
-              final isar = await ref.read(isarServiceProvider.future);
-              final user = await isar.retrieveUserByID(userID);
-              name = user!.firstName! + ' ' + user.lastName!;
-              coins = user.coins ?? 0;
-              path = '/online/panel';
+              final isLogin = state.pathParameters['isLogin'] == 'true';
+              if (isLogin) {
+                path = '/online/user_entry/true';
+              } else {
+                final userID = decodedToken['userID'];
+                final isar = await ref.read(isarServiceProvider.future);
+                final user = await isar.retrieveUserByID(userID);
+                _name = user!.firstName! + ' ' + user.lastName!;
+                _coins = user.coins ?? 0;
+
+                final otherAccounts = await isar.retrieveOtherUsers(userID);
+                final repeatedNames =
+                    getUsersWithRepeatedFullName(otherAccounts);
+                final currentUser = await isar.retrieveUserByID(userID);
+
+                // add otherAccounts and repeatedNames to the extra
+                _extra = {
+                  'otherAccounts': otherAccounts,
+                  'repeatedNames': repeatedNames,
+                  'currentUser': currentUser,
+                };
+
+                path = '/online/panel';
+              }
             }
           }
           ref.read(loadingProvider.notifier).end();
@@ -133,17 +153,25 @@ GoRouter router(RouterRef ref) {
               name: 'user-entry',
               builder: (context, state) {
                 final isLogin = state.pathParameters['isLogin'] == 'true';
+                final userName = state.extra as String?;
                 return UserEntry(
                   isLogin: isLogin,
+                  userName: userName,
                 );
               }),
           GoRoute(
             path: 'panel',
             name: 'panel',
             builder: (context, state) {
+              final otherAccounts = _extra['otherAccounts'] as List<User>?;
+              final repeatedNames = _extra['repeatedNames'] as List<User>;
+              final currentUser = _extra['currentUser'] as User;
+
               return Panel(
-                name: name,
-                coins: coins,
+                currentUser: currentUser,
+                coins: _coins,
+                otherAccounts: otherAccounts,
+                repeatedNames: repeatedNames.map((e) => e.fullName).toList(),
               );
             },
           ),
@@ -288,8 +316,6 @@ GoRouter router(RouterRef ref) {
       ),
     ],
   );
-
-  ;
 }
 
 

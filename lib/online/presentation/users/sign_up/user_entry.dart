@@ -6,15 +6,17 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../common/fields/text_form_fields.dart';
-import '../users_controller.dart';
+import '../controller/users_controller.dart';
 
 class UserEntry extends HookConsumerWidget {
   /* const */ UserEntry({
     required this.isLogin,
+    this.userName,
     Key? key,
   }) : super(key: key);
 
   final bool isLogin;
+  final String? userName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +25,7 @@ class UserEntry extends HookConsumerWidget {
     // ------------------ Controllers ------------------
     final fNameController = useTextEditingController();
     final lNameController = useTextEditingController();
-    final usernameController = useTextEditingController();
+    final userNameController = useTextEditingController(text: userName);
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
     final confirmPasswordController = useTextEditingController();
@@ -80,7 +82,7 @@ class UserEntry extends HookConsumerWidget {
                       : MyTextField(
                           labelText: 'نام خانوادگی',
                           controller: lNameController,
-                          nextController: usernameController,
+                          nextController: userNameController,
                           validator: (content) {
                             if (content == null || content.isEmpty) {
                               return 'لطفا نام خانوادگی خود را وارد کنید';
@@ -100,7 +102,7 @@ class UserEntry extends HookConsumerWidget {
                   MyTextField(
                     labelText: 'نام کاربری',
                     textDirection: TextDirection.ltr,
-                    controller: usernameController,
+                    controller: userNameController,
                     nextController:
                         isLogining.value ? passwordController : emailController,
                     maxLength: 32,
@@ -113,7 +115,7 @@ class UserEntry extends HookConsumerWidget {
                           return 'لطفا نام کاربری خود را وارد کنید';
                         } else if (content.length < 6) {
                           return 'نام کاربری باید حداقل 6 کاراکتر باشد';
-                        } /* check if username is english */ else if (!RegExp(
+                        } /* check if userName is english */ else if (!RegExp(
                                 r'^[a-zA-Z0-9_]*$')
                             .hasMatch(content)) {
                           return 'نام کاربری باید فقط شامل حروف انگلیسی، اعداد و زیرخط باشد';
@@ -197,7 +199,7 @@ class UserEntry extends HookConsumerWidget {
                                     await ref
                                         .read(usersControllerProvider.notifier)
                                         .loginUser(
-                                          userName: usernameController.text,
+                                          userName: userNameController.text,
                                           password: passwordController.text,
                                         );
                                     isProcessing.value = false;
@@ -206,7 +208,7 @@ class UserEntry extends HookConsumerWidget {
                                     await ref
                                         .read(usersControllerProvider.notifier)
                                         .registerUser(
-                                          usernameController.text,
+                                          userNameController.text,
                                           emailController.text,
                                           passwordController.text,
                                           fNameController.text,

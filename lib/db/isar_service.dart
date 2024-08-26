@@ -974,6 +974,7 @@ class IsarService {
     final userExists = await isar.users.filter().idEqualTo(id).findFirst();
     if (userExists != null) {
       await isar.writeTxn(() => isar.users.put(userExists.copy(
+            id: id,
             username: username,
             email: email,
             password: password,
@@ -1012,7 +1013,14 @@ class IsarService {
     }
     return null;
   }
-}
+
+  // a method to retrieve all other users except the current user
+  Future<List<User>> retrieveOtherUsers(String id) async {
+    final users = await isar.users.where().findAll();
+    final otherUsers = users.where((user) => user.id != id).toList();
+    return otherUsers;
+  }
+
 // how to manage which player has done his/her night job
 // and which one has not?
 // and how to differntiate between` timeLeft` and `nightDone`?
@@ -1030,3 +1038,4 @@ class IsarService {
 // 4. were in the night panel but has not done his/her night job
 //  -> if (nightDone == false && timeLeft != 0) then the player has not done his/her night job
 //     but still were in role panel
+}

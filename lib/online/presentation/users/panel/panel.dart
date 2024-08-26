@@ -2,11 +2,11 @@ import 'package:auto_mafia/constants/app_colors.dart';
 import 'package:auto_mafia/constants/my_text_styles.dart';
 import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dart';
 import 'package:auto_mafia/online/presentation/users/users_controller.dart';
-import 'package:auto_mafia/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../db/entities/user.dart';
 import '../../../../ui/common/loading.dart';
 import '../../common/app_bar.dart';
 import '../../common/my_drawer.dart';
@@ -14,13 +14,17 @@ import '../../common/page_with_drawer_on_drag.dart';
 
 class Panel extends HookConsumerWidget {
   const Panel({
-    required this.name,
+    required this.currentUser,
     required this.coins,
+    required this.otherAccounts,
+    required this.repeatedNames,
     super.key,
   });
 
-  final String name;
+  final User currentUser;
   final int coins;
+  final List<User>? otherAccounts;
+  final List<String>? repeatedNames;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +37,13 @@ class Panel extends HookConsumerWidget {
       child: PageWithDrawerOnDrag(
         width: width,
         scaffoldKey: _scaffoldKey,
-        drawer: MyDrawer(height: height, name: name, width: width),
+        drawer: MyDrawer(
+          height: height,
+          currentUserName: currentUser.fullName,
+          otherAccounts: otherAccounts,
+          repeatedNames: repeatedNames,
+          width: width,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,7 +63,7 @@ class Panel extends HookConsumerWidget {
               children: [
                 // profile
                 Text(
-                  name,
+                  currentUser.fullName,
                   style: MyTextStyles.bodyLarge.copyWith(
                     color: AppColors.lightestGrey,
                     height: 1.5,

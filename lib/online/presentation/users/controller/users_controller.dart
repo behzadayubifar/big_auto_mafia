@@ -4,8 +4,8 @@ import 'package:auto_mafia/models/online/users.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../db/isar_service.dart';
-import '../../data/users/users_repository.dart';
+import '../../../../db/isar_service.dart';
+import '../../../data/users/users_repository.dart';
 
 part 'users_controller.g.dart';
 
@@ -87,11 +87,10 @@ class UsersController extends _$UsersController {
           isAdmin: loginResult.users[0].isAdmin,
         );
         log('loggin in: ');
-        ref.read(routerProvider).goNamed('panel', pathParameters: {
-          'name': loginResult.users[0].firstName! +
-              ' ' +
-              loginResult.users[0].lastName!,
-        });
+        ref.read(routerProvider).goNamed(
+              'panel',
+              extra: loginResult.users[0],
+            );
       } else {
         log('login failed');
       }
