@@ -1,7 +1,7 @@
 import 'dart:developer' show log;
 
-import 'package:auto_mafia/db/entities/game_status.dart';
-import 'package:auto_mafia/db/isar_service.dart';
+import 'package:auto_mafia/offline/db/entities/game_status.dart';
+import 'package:auto_mafia/offline/db/isar_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';

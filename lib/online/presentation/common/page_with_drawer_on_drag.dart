@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants/app_colors.dart';
+import '../../../offline/constants/app_colors.dart';
 
 class PageWithDrawerOnDrag extends StatelessWidget {
   const PageWithDrawerOnDrag({

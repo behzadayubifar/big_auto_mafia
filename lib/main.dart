@@ -1,4 +1,4 @@
-import 'package:auto_mafia/db/shared_prefs/shared_prefs.dart';
+import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:auto_mafia/theme/app_theme.dart';
 import 'package:flutter/material.dart';

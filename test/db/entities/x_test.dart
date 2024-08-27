@@ -1,4 +1,4 @@
-import 'package:auto_mafia/db/entities/game_status.dart';
+import 'package:auto_mafia/offline/db/entities/game_status.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:auto_mafia/db/isar_service.dart';
-import 'package:auto_mafia/logic/logics.dart';
-import 'package:auto_mafia/logic/night_choices_logics.dart';
-import 'package:auto_mafia/models/role_datasets.dart';
+import 'package:auto_mafia/offline/db/isar_service.dart';
+import 'package:auto_mafia/offline/logic/logics.dart';
+import 'package:auto_mafia/offline/logic/night_choices_logics.dart';
+import 'package:auto_mafia/offline/models/role_datasets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';

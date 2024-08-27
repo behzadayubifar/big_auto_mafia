@@ -1,7 +1,7 @@
-import 'package:auto_mafia/constants/app_colors.dart';
-import 'package:auto_mafia/constants/my_text_styles.dart';
-import 'package:auto_mafia/models/online/errors.dart';
-import 'package:auto_mafia/online/presentation/users/users_controller.dart';
+import 'package:auto_mafia/offline/constants/app_colors.dart';
+import 'package:auto_mafia/offline/constants/my_text_styles.dart';
+import 'package:auto_mafia/online/data/models/errors.dart';
+import 'package:auto_mafia/online/presentation/users/controller/users_controller.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -11,21 +11,25 @@ class OnlineButton extends HookConsumerWidget {
   /* const */ OnlineButton({
     required this.height,
     required this.width,
-    required this.provider,
+    this.provider,
     required this.title,
     required this.onPressed,
     this.shadowColor,
     this.elevation,
+    this.backgroundColor,
+    this.textColor,
     super.key,
   });
 
   final String title;
   final void Function()? onPressed;
-  final ProviderListenable provider;
+  final ProviderListenable? provider;
   final double height;
   final double width;
   final Color? shadowColor;
   final double? elevation;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,8 +51,6 @@ class OnlineButton extends HookConsumerWidget {
                   style: MyTextStyles.bodyMedium.copyWith(
                     height: 1.6,
                   )),
-              // btnOkText: 'فهمیدم',
-              // btnOkOnPress: () => context.pop(),
               buttonsTextStyle: MyTextStyles.bodyMedium.copyWith(
                 height: 1.2,
               )).show();
@@ -61,6 +63,7 @@ class OnlineButton extends HookConsumerWidget {
       width: width,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor ?? AppColors.white,
           shadowColor: shadowColor ?? AppColors.black,
           elevation: elevation ?? 10.0,
           shape: RoundedRectangleBorder(
@@ -81,7 +84,7 @@ class OnlineButton extends HookConsumerWidget {
                 ),
             orElse: () => Text(title,
                 style: MyTextStyles.headlineSmall.copyWith(
-                  color: AppColors.green,
+                  color: textColor ?? AppColors.green,
                   // height: 1.2,
                 ))),
       ),

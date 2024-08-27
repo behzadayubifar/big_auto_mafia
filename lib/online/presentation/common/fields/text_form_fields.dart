@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import '../../../../constants/app_colors.dart';
-import '../../../../constants/my_text_styles.dart';
+import '../../../../offline/constants/app_colors.dart';
+import '../../../../offline/constants/my_text_styles.dart';
 
 class MyTextField extends HookWidget {
   /* const */ MyTextField({
@@ -17,6 +17,8 @@ class MyTextField extends HookWidget {
     this.obscureText = false,
     this.validator,
     this.labelText,
+    this.fillColor,
+    this.labelColor,
     super.key,
   });
 
@@ -30,6 +32,8 @@ class MyTextField extends HookWidget {
   final TextEditingController? nextController;
   final TextInputType? keyboardType;
   final TextDirection? textDirection;
+  final Color? fillColor;
+  Color? labelColor;
 
   @override
   Widget build(BuildContext context) {
@@ -81,11 +85,28 @@ class MyTextField extends HookWidget {
       decoration: InputDecoration(
         errorStyle: MyTextStyles.bodySmall
             .copyWith(height: 1.2, color: AppColors.secondary),
-        fillColor: AppColors.white60,
-        labelText: labelText,
-        labelStyle: MyTextStyles.bodyLarge.copyWith(
-          color: isFocused.value ? AppColors.primaries[3] : AppColors.grey,
+        fillColor: fillColor ?? AppColors.white60,
+        // labelText: labelText,
+        label: Container(
+          decoration: BoxDecoration(
+            color: fillColor ?? AppColors.white60,
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            labelText!,
+            style: MyTextStyles.bodyLarge.copyWith(
+              color: labelColor ?? AppColors.grey,
+            ),
+          ),
         ),
+        // labelStyle: MyTextStyles.bodyLarge.copyWith(
+        //     color: labelColor ??
+        //         () {
+        //           labelColor =
+        //               isFocused.value ? AppColors.primaries[3] : AppColors.grey;
+        //           return AppColors.grey;
+        //         }()),
         counterStyle: MyTextStyles.bodySmall.copyWith(
           color: AppColors.grey,
           height: 1.2,

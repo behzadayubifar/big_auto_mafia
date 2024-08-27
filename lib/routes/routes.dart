@@ -1,34 +1,35 @@
 import 'dart:developer';
 
-import 'package:auto_mafia/constants/my_strings.dart';
-import 'package:auto_mafia/db/entities/player.dart';
-import 'package:auto_mafia/db/shared_prefs/shared_prefs.dart';
-import 'package:auto_mafia/ui/common/loading.dart';
-import 'package:auto_mafia/ui/day/day.dart';
-import 'package:auto_mafia/ui/day/show_last_move.dart';
-import 'package:auto_mafia/ui/dialogs/timer_dialog_widget.dart';
-import 'package:auto_mafia/ui/guide/guide_screen.dart';
-import 'package:auto_mafia/ui/home/about_us_screen.dart';
-import 'package:auto_mafia/ui/home/home_page.dart';
-import 'package:auto_mafia/ui/home/splash_screen.dart';
-import 'package:auto_mafia/ui/night/night_page.dart';
-import 'package:auto_mafia/ui/night/night_role_panel.dart';
-import 'package:auto_mafia/ui/show_roles/show_role_page.dart';
-import 'package:auto_mafia/ui/statements/chaos_page.dart';
-import 'package:auto_mafia/ui/statements/game_over_page.dart';
-import 'package:auto_mafia/ui/statements/nights_results_page.dart';
-import 'package:auto_mafia/ui/ui_widget/names_list_show/naming_page.dart';
+import 'package:auto_mafia/offline/constants/my_strings.dart';
+import 'package:auto_mafia/offline/db/entities/player.dart';
+import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
+import 'package:auto_mafia/offline/ui/common/loading.dart';
+import 'package:auto_mafia/offline/ui/day/day.dart';
+import 'package:auto_mafia/offline/ui/day/show_last_move.dart';
+import 'package:auto_mafia/offline/ui/dialogs/timer_dialog_widget.dart';
+import 'package:auto_mafia/offline/ui/guide/guide_screen.dart';
+import 'package:auto_mafia/offline/ui/home/about_us_screen.dart';
+import 'package:auto_mafia/offline/ui/home/home_page.dart';
+import 'package:auto_mafia/offline/ui/home/splash_screen.dart';
+import 'package:auto_mafia/offline/ui/night/night_page.dart';
+import 'package:auto_mafia/offline/ui/night/night_role_panel.dart';
+import 'package:auto_mafia/offline/ui/show_roles/show_role_page.dart';
+import 'package:auto_mafia/offline/ui/statements/chaos_page.dart';
+import 'package:auto_mafia/offline/ui/statements/game_over_page.dart';
+import 'package:auto_mafia/offline/ui/statements/nights_results_page.dart';
+import 'package:auto_mafia/offline/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/online/presentation/users/panel/panel.dart';
 import 'package:auto_mafia/online/presentation/users/sign_up/user_entry.dart';
-import 'package:auto_mafia/ui/x_page.dart';
+import 'package:auto_mafia/offline/ui/x_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../db/entities/user.dart';
-import '../db/isar_service.dart';
-import '../ui/home/online_offline_page.dart';
+import '../offline/db/entities/user.dart';
+import '../offline/db/isar_service.dart';
+import '../online/presentation/rooms/room_entry.dart';
+import '../offline/ui/home/online_offline_page.dart';
 
 part 'routes.g.dart';
 
@@ -121,7 +122,9 @@ GoRouter router(RouterRef ref) {
               final isLogin = state.pathParameters['isLogin'] == 'true';
               if (isLogin) {
                 path = '/online/user_entry/true';
-              } else {
+              } else if (state.fullPath == '/online') {
+                print(state.fullPath == '/online');
+                print('full path : ${state.fullPath}');
                 final userID = decodedToken['userID'];
                 final isar = await ref.read(isarServiceProvider.future);
                 final user = await isar.retrieveUserByID(userID);
@@ -141,6 +144,8 @@ GoRouter router(RouterRef ref) {
                 };
 
                 path = '/online/panel';
+              } else {
+                return null;
               }
             }
           }
@@ -175,6 +180,12 @@ GoRouter router(RouterRef ref) {
               );
             },
           ),
+          GoRoute(
+              path: 'room_entry',
+              name: 'room-entry',
+              builder: (context, state) {
+                return RoomEntry();
+              }),
         ],
       ),
       GoRoute(

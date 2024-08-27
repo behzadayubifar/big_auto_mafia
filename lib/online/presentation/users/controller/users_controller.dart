@@ -1,11 +1,11 @@
 import 'dart:developer';
 
-import 'package:auto_mafia/models/online/users.dart';
+import 'package:auto_mafia/online/data/models/users.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../db/isar_service.dart';
-import '../../../data/users/users_repository.dart';
+import '../../../../offline/db/isar_service.dart';
+import '../../../domain/users/users_repository.dart';
 
 part 'users_controller.g.dart';
 

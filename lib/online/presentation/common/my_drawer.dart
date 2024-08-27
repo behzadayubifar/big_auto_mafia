@@ -1,11 +1,11 @@
-import 'package:auto_mafia/db/entities/user.dart';
+import 'package:auto_mafia/offline/db/entities/user.dart';
 import 'package:auto_mafia/online/presentation/common/account_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../constants/app_colors.dart';
-import '../../../constants/my_text_styles.dart';
+import '../../../offline/constants/app_colors.dart';
+import '../../../offline/constants/my_text_styles.dart';
 import '../../../routes/routes.dart';
 
 class MyDrawer extends ConsumerWidget {

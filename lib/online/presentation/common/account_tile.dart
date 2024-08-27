@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../constants/app_colors.dart';
-import '../../../constants/my_text_styles.dart';
-import '../../../db/entities/user.dart';
+import '../../../offline/constants/app_colors.dart';
+import '../../../offline/constants/my_text_styles.dart';
+import '../../../offline/db/entities/user.dart';
 
 class AccountTile extends StatelessWidget {
   const AccountTile({

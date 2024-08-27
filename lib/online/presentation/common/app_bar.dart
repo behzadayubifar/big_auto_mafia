@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../constants/app_colors.dart';
-import '../../../constants/my_text_styles.dart';
+import '../../../offline/constants/app_colors.dart';
+import '../../../offline/constants/my_text_styles.dart';
 
 class MyAppBar extends ConsumerWidget {
   const MyAppBar({

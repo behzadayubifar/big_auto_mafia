@@ -10,7 +10,22 @@ class Endpoints {
   static const String port = ":8080";
   static const String apiV1 = "/api/v1";
 
-  static const String register = "/register";
-  static const String login = "/login";
-  // static const String logout = "/api/v1/logout";
+  // -- Users
+  static const String register = "/register"; // post
+  static const String login = "/login"; // post
+  static const String getUsers = "/users"; // get
+  static const String getUser = "/users/"; // get
+  static const String updateUser = "/users/"; // put
+  static const String deleteUser = "/users/"; // delete
+  static const String partiallyUpdateUser = "/users/"; // patch
+
+  // -- Rooms
+  static const String createRoom = "/rooms"; // post
+  static const String getRooms = "/rooms"; // get
+  static const String getRoom = "/rooms/"; // get
+  static const String manageRoom = "/rooms/"; // post
+  static const String partiallyUpdateRoom = "/rooms/"; // patch
+  static const String joinRoom = "/rooms/"; // post
+  static const String leaveRoom = "/rooms/"; // post
+  static const String updateRoomStatus = "/rooms/"; // patch
 }

@@ -1,13 +1,14 @@
-import 'package:auto_mafia/constants/app_colors.dart';
-import 'package:auto_mafia/constants/my_text_styles.dart';
+import 'package:auto_mafia/offline/constants/app_colors.dart';
+import 'package:auto_mafia/offline/constants/my_text_styles.dart';
 import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dart';
-import 'package:auto_mafia/online/presentation/users/users_controller.dart';
+import 'package:auto_mafia/online/presentation/users/controller/users_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../db/entities/user.dart';
-import '../../../../ui/common/loading.dart';
+import '../../../../offline/db/entities/user.dart';
+import '../../../../routes/routes.dart';
+import '../../../../offline/ui/common/loading.dart';
 import '../../common/app_bar.dart';
 import '../../common/my_drawer.dart';
 import '../../common/page_with_drawer_on_drag.dart';
@@ -110,7 +111,7 @@ class Panel extends HookConsumerWidget {
               provider: usersControllerProvider,
               shadowColor: AppColors.primaries[0],
               elevation: 12,
-              onPressed: () {},
+              onPressed: () => ref.read(routerProvider).goNamed('room-entry'),
             ),
             SizedBox(height: height / 3.2),
           ],
