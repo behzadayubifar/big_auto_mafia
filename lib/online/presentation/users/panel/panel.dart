@@ -111,7 +111,7 @@ class Panel extends HookConsumerWidget {
               provider: usersControllerProvider,
               shadowColor: AppColors.primaries[0],
               elevation: 12,
-              onPressed: () => ref.read(routerProvider).goNamed('room-entry'),
+              onPressed: () => ref.read(routerProvider).pushNamed('room-entry'),
             ),
             SizedBox(height: height / 3.2),
           ],

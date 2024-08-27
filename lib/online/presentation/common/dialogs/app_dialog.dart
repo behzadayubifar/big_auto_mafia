@@ -1,24 +1,27 @@
+import 'package:auto_mafia/offline/constants/my_text_styles.dart';
+import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../offline/constants/app_colors.dart';
 import '../../../../offline/models/role_datasets.dart';
-import '../../rooms/room_entry.dart';
 import '../buttons/online_buttons.dart';
-import '../checkboxes/app_checkbox.dart';
+import '../checkboxes/roles_selection_checkbox.dart';
 import '../guide.dart';
 
-class AppDialog<T> extends HookConsumerWidget {
+class AppDialog extends HookConsumerWidget {
   const AppDialog({
     super.key,
     required this.content,
+    required this.context,
   });
 
   final Widget? content;
+  final BuildContext context;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(_, WidgetRef ref) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Column(
@@ -46,8 +49,12 @@ class AppDialog<T> extends HookConsumerWidget {
   factory AppDialog.rolesSelection({
     required double height,
     required double width,
+    required int numberOfPlayers,
+    required WidgetRef ref, // Add ref as a parameter
+    required BuildContext context,
   }) {
     return AppDialog(
+      context: context,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,29 +63,39 @@ class AppDialog<T> extends HookConsumerWidget {
           // guied
           Container(
             decoration: BoxDecoration(
-              color: AppColors.lightestGrey,
+              // color: AppColors.lightestGrey,
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.grey.withOpacity(0.6),
+                  AppColors.lightestGrey.withOpacity(0.8),
+                ],
+                begin: Alignment.bottomLeft,
+                end: Alignment.bottomCenter,
+              ),
               borderRadius: BorderRadius.circular(width / 32),
             ),
-            padding: EdgeInsets.symmetric(horizontal: width / 64),
-            height: height / 12,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: EdgeInsets.symmetric(
+                horizontal: width / 32, vertical: height / 64),
+            // height: height / 4,
+            width: width / 1.2,
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Guied(
                   width: width,
-                  title: 'شهروند',
+                  side: 'شهروند',
                   iconColor: AppColors.green,
                 ),
-                SizedBox(width: width / 48),
+                SizedBox(height: height / 24),
                 Guied(
                   width: width,
-                  title: 'مافیا',
+                  side: 'مافیا',
                   iconColor: AppColors.secondary,
                 ),
-                SizedBox(width: width / 48),
+                SizedBox(height: height / 24),
                 Guied(
                   width: width,
-                  title: 'مستقل',
+                  side: 'مستقل',
                   iconColor: AppColors.primaries[2],
                 ),
               ],
@@ -87,7 +104,7 @@ class AppDialog<T> extends HookConsumerWidget {
           SizedBox(height: height / 32),
           // a list of roles & for each role a checkbox and color is based on side
           SizedBox(
-            height: height / 2,
+            height: height / 2.4,
             width: width / 1,
             child: Scrollbar(
               scrollbarOrientation: ScrollbarOrientation.right,
@@ -96,9 +113,9 @@ class AppDialog<T> extends HookConsumerWidget {
                   (roleName) {
                     return RolesSelectionCheckbox(
                       title: roleName,
-                      textColor: switch (allRoles2[roleName]!['type']) {
-                        RoleType.citizen => AppColors.green,
-                        RoleType.mafia => AppColors.secondary,
+                      textColor: switch (allRoles2[roleName]!['side']) {
+                        'شهروند' => AppColors.green,
+                        'مافیا' => AppColors.secondary,
                         _ => AppColors.primaries[2],
                       },
                     );
@@ -116,7 +133,41 @@ class AppDialog<T> extends HookConsumerWidget {
             width: width / 1.6,
             title: 'ثبت نقش‌ها',
             onPressed: () {
+              print('submit the selected roles');
               // submit the selected roles
+              final selectedRoles = ref.read(selectedRolesProvider);
+              if (selectedRoles.length == numberOfPlayers) {
+              } else {
+                AwesomeDialog(
+                  context: context,
+                  padding: EdgeInsets.all(width / 32),
+                  dialogType: DialogType.WARNING,
+                  body: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        selectedRoles.length < numberOfPlayers
+                            ? 'تعداد نقش‌ها کمتر از تعداد بازیکنان است'
+                            : 'تعداد نقش‌ها بیشتر از تعداد بازیکنان است',
+                        style: MyTextStyles.bodyLarge.copyWith(
+                          color: AppColors.darkText,
+                          height: 1.5,
+                        ),
+                      ),
+                      SizedBox(height: height / 64),
+                      Text(
+                        selectedRoles.length < numberOfPlayers
+                            ? 'لطفا برای هر بازیکن یک نقش انتخاب کنید'
+                            : 'لطفا برای هر بازیکن یک نقش انتخاب کنید',
+                        style: MyTextStyles.bodyMD.copyWith(
+                          color: AppColors.darkerGrey,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                )..show();
+              }
             },
           ),
         ],

@@ -43,6 +43,14 @@ class AppColors {
     Color(0xFF050505),
   ];
 
+  static const greens = [
+    Color(0xFFC1E7D9),
+    Color(0xFF8FD9B9),
+    Color(0xFF07A240),
+    Color(0xFF0D7A2A),
+    Color(0xFF0A4C1A),
+  ];
+
   static final List<List<Color>> allSwatches = [
     primaries,
     secondaries,

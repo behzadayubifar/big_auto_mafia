@@ -1,13 +1,9 @@
 import 'package:auto_mafia/offline/constants/app_colors.dart';
-import 'package:auto_mafia/offline/models/role_datasets.dart';
 import 'package:auto_mafia/online/presentation/common/dialogs/app_dialog.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../offline/constants/my_text_styles.dart';
 import '../common/buttons/online_buttons.dart';
 import '../common/fields/text_form_fields.dart';
 import '../common/forms_block.dart';
@@ -69,7 +65,6 @@ class RoomEntry extends HookConsumerWidget {
           labelText: 'تکرار رمز روم',
           controller: roomConfirmPasswordController,
           fillColor: AppColors.lightestGrey,
-          textInputAction: TextInputAction.done,
           validator: (content) {
             if (content == null || content.isEmpty) {
               return 'لطفا رمز روم را تکرار کنید';
@@ -102,7 +97,7 @@ class RoomEntry extends HookConsumerWidget {
           },
         ),
         SizedBox(height: height / 32),
-        // a button to show a dialog to select the roles
+        // select the roles
         OnlineButton(
           height: height / 12,
           width: width / 1.6,
@@ -115,21 +110,29 @@ class RoomEntry extends HookConsumerWidget {
             // show a dialog to select the roles
             showDialog(
               context: context,
-              builder: (BuildContext context) {
+              builder: (_) {
                 return AppDialog.rolesSelection(
                   height: height,
                   width: width,
+                  numberOfPlayers:
+                      int.tryParse(numberOfPlayersController.text)!,
+                  ref: ref,
+                  context: context,
                 );
               },
             );
           },
         ),
-
+      ],
+      actions: [
         // Create Room Button
-        SizedBox(height: height / 8),
         OnlineButton(
             height: height / 12,
-            width: width / 2,
+            width: width / 1.6,
+            backgroundColor: AppColors.greens[2],
+            textColor: AppColors.lightestGrey,
+            elevation: 12,
+            shadowColor: AppColors.greens[0],
             title: 'ایجاد روم',
             provider: roomsControllerProvider,
             onPressed: () {
