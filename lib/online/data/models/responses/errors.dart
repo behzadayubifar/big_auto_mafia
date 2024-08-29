@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:auto_mafia/online/presentation/users/controller/accounts_controller.dart';
-import 'package:auto_mafia/online/presentation/users/controller/users_controller.dart';
+
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../offline/constants/my_text_styles.dart';
 
@@ -15,7 +12,7 @@ class ErrorResp {
   dynamic err;
   Map<String, dynamic>? details;
 
-  ErrorResp({required this.msg, required this.err, required this.details});
+  ErrorResp({required this.msg, this.err, this.details});
 
   factory ErrorResp.fromJson(Map<String, dynamic> json) {
     return ErrorResp(
@@ -57,22 +54,35 @@ class ErrorsObserver extends ProviderObserver {
         data: (data) {
           if (data is ErrorResp) {
             print("crrent: $newValue");
-            AwesomeDialog(
-                context: NavigationService.navigatorKey.currentContext!,
-                padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
-                dialogType: DialogType.ERROR,
-                title: 'خطا',
-                body: Text(data.msg,
-                    style: MyTextStyles.bodyMedium.copyWith(
-                      height: 1.6,
-                    )),
-                buttonsTextStyle: MyTextStyles.bodyMedium.copyWith(
-                  height: 1.2,
-                )).show();
+            awesomeError(data);
+          } else {
+            print(
+                'Provider $provider updated from $previousValue to $newValue');
           }
         },
+        error: (error, stackTrace) {
+          print('Provider $provider threw $error at $stackTrace');
+        },
       );
+    } else if (newValue is AsyncError) {
+      print('Provider $provider threw ${newValue.error}');
+      awesomeError(newValue.error as ErrorResp);
     }
+  }
+
+  void awesomeError(ErrorResp data) {
+    AwesomeDialog(
+        context: NavigationService.navigatorKey.currentContext!,
+        padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+        dialogType: DialogType.ERROR,
+        title: 'خطا',
+        body: Text(data.msg,
+            style: MyTextStyles.bodyMedium.copyWith(
+              height: 1.6,
+            )),
+        buttonsTextStyle: MyTextStyles.bodyMedium.copyWith(
+          height: 1.2,
+        )).show();
   }
 
   // @override

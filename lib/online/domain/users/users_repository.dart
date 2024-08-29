@@ -80,6 +80,8 @@ class UsersRepository {
         headers: {
           'Authorization': {await SharedPrefs.getString('token')},
         },
+        // receiveTimeout: Duration(seconds: 2),
+        // sendTimeout: Duration(seconds: 2),
       ),
     );
     if (response.statusCode == 200) {

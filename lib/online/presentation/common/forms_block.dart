@@ -19,7 +19,7 @@ class FormBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    final isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
     return Scaffold(
       backgroundColor: AppColors.backGround,
       resizeToAvoidBottomInset:
@@ -49,7 +49,7 @@ class FormBlock extends StatelessWidget {
                 ),
               ),
               // Actions
-              if (actions != null && !isKeyboardVisible)
+              if (actions != null && isKeyboardVisible)
                 SizedBox(height: height / 24),
               if (actions != null && !isKeyboardVisible) ...actions!,
             ],

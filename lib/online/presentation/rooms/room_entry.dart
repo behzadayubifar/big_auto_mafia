@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../routes/routes.dart';
 import '../common/buttons/online_buttons.dart';
 import '../common/fields/text_form_fields.dart';
 import '../common/forms_block.dart';
@@ -43,7 +44,7 @@ class RoomEntry extends HookConsumerWidget {
       children: [
         // Room Name
         MyTextField(
-          textDirection: TextDirection.ltr,
+          textDirection: TextDirection.rtl,
           labelText: 'نام روم',
           controller: roomNameController,
           fillColor: AppColors.lightestGrey,
@@ -60,11 +61,16 @@ class RoomEntry extends HookConsumerWidget {
         MyTextField(
           textDirection: TextDirection.ltr,
           labelText: 'رمز روم',
+          maxLength: 32,
+          keyboardType: TextInputType.visiblePassword,
+          obscureText: true,
           controller: roomPasswordController,
           fillColor: AppColors.lightestGrey,
           validator: (content) {
             if (content == null || content.isEmpty) {
               return 'لطفا رمز روم را وارد کنید';
+            } else if (content.length < 8) {
+              return 'رمز روم باید حداقل 8 کاراکتر باشد';
             }
             return null;
           },
@@ -75,6 +81,8 @@ class RoomEntry extends HookConsumerWidget {
           textDirection: TextDirection.ltr,
           labelText: 'تکرار رمز روم',
           controller: roomConfirmPasswordController,
+          keyboardType: TextInputType.visiblePassword,
+          obscureText: true,
           fillColor: AppColors.lightestGrey,
           validator: (content) {
             if (content == null || content.isEmpty) {
@@ -91,6 +99,7 @@ class RoomEntry extends HookConsumerWidget {
         MyTextField(
           textDirection: TextDirection.ltr,
           labelText: 'تعداد بازیکنان',
+          keyboardType: TextInputType.number,
           controller: numberOfPlayersController,
           fillColor: AppColors.lightestGrey,
           textInputAction: TextInputAction.done,
@@ -156,6 +165,11 @@ class RoomEntry extends HookConsumerWidget {
                       numberOfPlayers:
                           int.tryParse(numberOfPlayersController.text)!,
                     );
+                ref.read(routerProvider).goNamed(
+                      'waiting-room',
+                      // pathParameters: {'name': createRoomResult.rooms[0].name!},
+                    );
+                //
               }
             }),
       ],

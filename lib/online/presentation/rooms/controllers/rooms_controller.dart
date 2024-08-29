@@ -1,8 +1,12 @@
 import 'dart:developer';
 
+import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../offline/db/entities/room.dart';
 import '../../../../offline/db/isar_service.dart';
+import '../../../data/models/responses/errors.dart';
 import '../../../data/models/responses/rooms.dart';
 import '../../../../routes/routes.dart';
 import '../../../domain/rooms/rooms_repository.dart';
@@ -12,7 +16,11 @@ part 'rooms_controller.g.dart';
 @riverpod
 class RoomsController extends _$RoomsController {
   @override
-  FutureOr<dynamic> build() {}
+  FutureOr<Either<ErrorResp, RoomResp>> build() {
+    return right(RoomResp(rooms: [], msg: ''));
+  }
+
+  // get room
 
   // create room
   Future<void> createRoom({
@@ -29,26 +37,27 @@ class RoomsController extends _$RoomsController {
           numberOfPlayers: numberOfPlayers,
           password: password,
         );
-        if (createRoomResult is RoomResp) {
-          log('create room success');
-          final isar = await ref.read(isarServiceProvider.future);
-          await isar.putRoom(
-            id: createRoomResult.rooms[0].id,
-            name: name,
-            numberOfPlayers: numberOfPlayers,
-            password: password,
-            status: createRoomResult.rooms[0].status,
-            players: createRoomResult.rooms[0].players,
-            createdAt: createRoomResult.rooms[0].createdAt,
-            updatedAt: createRoomResult.rooms[0].updatedAt,
-          );
-          ref.read(routerProvider).goNamed(
-                'waiting-room',
-                // pathParameters: {'name': createRoomResult.rooms[0].name!},
-              );
-        } else {
-          log('create room failed');
-        }
+
+        createRoomResult.match(
+          (l) {
+            log('create room failed');
+          },
+          (r) async {
+            log('create room success');
+            await SharedPrefs.setModel('currentRoom', r.rooms[0]);
+            final isar = await ref.read(isarServiceProvider.future);
+            await isar.putRoom(
+              id: r.rooms[0].id,
+              name: name,
+              numberOfPlayers: numberOfPlayers,
+              password: password,
+              status: r.rooms[0].status,
+              players: r.rooms[0].players,
+              createdAt: r.rooms[0].createdAt,
+              updatedAt: r.rooms[0].updatedAt,
+            );
+          },
+        );
         return createRoomResult;
       },
     );
@@ -63,24 +72,31 @@ class RoomsController extends _$RoomsController {
         roomId: roomId,
         password: password,
       );
-      if (joinRoomResult is RoomResp) {
-        log('join room success');
-        final isar = await ref.read(isarServiceProvider.future);
-        await isar.putRoom(
-          id: joinRoomResult.rooms[0].id,
-          name: joinRoomResult.rooms[0].name,
-          numberOfPlayers: joinRoomResult.rooms[0].numberOfPlayers,
-          // TODO; Save Hashed Password Loaclly?
-          password: password,
-          status: joinRoomResult.rooms[0].status,
-          players: joinRoomResult.rooms[0].players,
-          createdAt: joinRoomResult.rooms[0].createdAt,
-          updatedAt: joinRoomResult.rooms[0].updatedAt,
-        );
-        ref.read(routerProvider).goNamed('room', pathParameters: {
-          'name': joinRoomResult.rooms[0].name!,
-        });
-      }
+      joinRoomResult.match(
+        (l) {
+          log('join room failed');
+        },
+        (r) async {
+          log('join room success');
+          await SharedPrefs.setString('currentRoomID', roomId);
+          final isar = await ref.read(isarServiceProvider.future);
+          await isar.putRoom(
+            id: r.rooms[0].id,
+            name: r.rooms[0].name,
+            numberOfPlayers: r.rooms[0].numberOfPlayers,
+            // TODO; Save Hashed Password Loaclly?
+            password: password,
+            status: r.rooms[0].status,
+            players: r.rooms[0].players,
+            createdAt: r.rooms[0].createdAt,
+            updatedAt: r.rooms[0].updatedAt,
+          );
+          ref.read(routerProvider).goNamed('room', pathParameters: {
+            'name': r.rooms[0].name!,
+          });
+        },
+      );
+      return joinRoomResult;
     });
   }
 
@@ -90,12 +106,51 @@ class RoomsController extends _$RoomsController {
     final roomsRepo = ref.read(roomsRepositoryProvider);
     state = await AsyncValue.guard(() async {
       final leaveRoomResult = await roomsRepo.leaveRoom(roomId);
-      if (leaveRoomResult is RoomResp) {
-        log('leave room success');
-        final isar = await ref.read(isarServiceProvider.future);
-        await isar.deleteRoom(leaveRoomResult.rooms[0].id!);
-        ref.read(routerProvider).goNamed('panel');
-      }
+      leaveRoomResult.match(
+        (l) {
+          log('leave room failed');
+        },
+        (r) async {
+          log('leave room success');
+          SharedPrefs.remove('currentRoomID');
+          final isar = await ref.read(isarServiceProvider.future);
+          await isar.deleteRoom(r.rooms[0].id!);
+          ref.read(routerProvider).goNamed('panel');
+        },
+      );
+      return leaveRoomResult;
+    });
+  }
+
+  // get room
+  Future<void> getRoombyId(String roomId) async {
+    state = const AsyncLoading();
+    final roomsRepo = ref.read(roomsRepositoryProvider);
+    state = await AsyncValue.guard(() async {
+      final getRoomResult = await roomsRepo.getRoomById(roomId);
+      getRoomResult.match(
+        (l) {
+          log('get room failed');
+        },
+        (r) async {
+          log('get room success');
+          final isar = await ref.read(isarServiceProvider.future);
+          await isar.putRoom(
+            id: r.rooms[0].id,
+            name: r.rooms[0].name,
+            numberOfPlayers: r.rooms[0].numberOfPlayers,
+            password: r.rooms[0].password,
+            status: r.rooms[0].status,
+            players: r.rooms[0].players,
+            createdAt: r.rooms[0].createdAt,
+            updatedAt: r.rooms[0].updatedAt,
+          );
+          ref.read(routerProvider).goNamed('room', pathParameters: {
+            'name': r.rooms[0].name!,
+          });
+        },
+      );
+      return getRoomResult;
     });
   }
 }

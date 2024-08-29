@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/models/responses/errors.dart';
@@ -16,7 +17,7 @@ class RoomsRepository {
 
   RoomsRepository({required this.dio});
 
-  Future<dynamic> createRoom({
+  Future<Either<ErrorResp, RoomResp>> createRoom({
     required String name,
     required int numberOfPlayers,
     required String password,
@@ -35,14 +36,14 @@ class RoomsRepository {
     if (response.statusCode == 201) {
       log('Room created successfully', name: "createRoom");
       log('response :' + response.data.toString(), name: "createRoom");
-      return RoomResp.fromJson(response.data);
+      return Right(RoomResp.fromJson(response.data));
     } else {
       log('Failed to create room');
-      return ErrorResp.fromJson(response.data);
+      return Left(ErrorResp.fromJson(response.data));
     }
   }
 
-  Future<dynamic> joinRoom(
+  Future<Either<ErrorResp, RoomResp>> joinRoom(
       {required String roomId, required String password}) async {
     final response = await dio.post(
       Endpoints.joinRoom + roomId + '/join',
@@ -50,38 +51,38 @@ class RoomsRepository {
     if (response.statusCode == 200) {
       log('Room joined successfully', name: "joinRoom");
       log('response :' + response.data.toString(), name: "joinRoom");
-      return RoomResp.fromJson(response.data);
+      return Right(RoomResp.fromJson(response.data));
     } else {
       log('Failed to join room');
-      return ErrorResp.fromJson(response.data);
+      return Left(ErrorResp.fromJson(response.data));
     }
   }
 
-  Future<dynamic> leaveRoom(String roomId) async {
+  Future<Either<ErrorResp, RoomResp>> leaveRoom(String roomId) async {
     final response = await dio.post(
       Endpoints.leaveRoom + roomId + '/leave',
     );
     if (response.statusCode == 200) {
       log('Room left successfully', name: "leaveRoom");
       log('response :' + response.data.toString(), name: "leaveRoom");
-      return RoomResp.fromJson(response.data);
+      return Right(RoomResp.fromJson(response.data));
     } else {
       log('Failed to leave room');
-      return ErrorResp.fromJson(response.data);
+      return Left(ErrorResp.fromJson(response.data));
     }
   }
 
-  Future<dynamic> getRoomById(String roomId) async {
+  Future<Either<ErrorResp, RoomResp>> getRoomById(String roomId) async {
     final response = await dio.get(
       Endpoints.getRoom + roomId,
     );
     if (response.statusCode == 200) {
       log('Room fetched successfully', name: "getRoomById");
       log('response :' + response.data.toString(), name: "getRoomById");
-      return RoomResp.fromJson(response.data);
+      return Right(RoomResp.fromJson(response.data));
     } else {
       log('Failed to fetch room');
-      return ErrorResp.fromJson(response.data);
+      return Left(ErrorResp.fromJson(response.data));
     }
   }
 

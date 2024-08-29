@@ -13,4 +13,9 @@ class RoomResp {
       msg: json['msg'],
     );
   }
+
+  // empty room response
+  factory RoomResp.empty() {
+    return RoomResp(rooms: [], msg: '');
+  }
 }
