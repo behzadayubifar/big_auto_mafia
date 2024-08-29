@@ -18,6 +18,8 @@ import 'package:auto_mafia/offline/ui/statements/chaos_page.dart';
 import 'package:auto_mafia/offline/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/offline/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/offline/ui/ui_widget/names_list_show/naming_page.dart';
+import 'package:auto_mafia/online/presentation/rooms/waiting_room.dart';
+import 'package:auto_mafia/online/presentation/users/controller/accounts_controller.dart';
 import 'package:auto_mafia/online/presentation/users/panel/panel.dart';
 import 'package:auto_mafia/online/presentation/users/sign_up/user_entry.dart';
 import 'package:auto_mafia/offline/ui/x_page.dart';
@@ -26,23 +28,26 @@ import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../offline/db/entities/user.dart';
-import '../offline/db/isar_service.dart';
 import '../online/presentation/rooms/room_entry.dart';
 import '../offline/ui/home/online_offline_page.dart';
 
 part 'routes.g.dart';
 
+class NavigationService {
+  static final navigatorKey = GlobalKey<NavigatorState>();
+}
+
 @riverpod
 GoRouter router(RouterRef ref) {
-  var _name;
-  var _coins;
+  // var _name;
+  // var _coins;
 
-  var _extra = <String, dynamic>{};
+  // var _extra = <String, dynamic>{};
 
   return GoRouter(
     // observers: [MyNavigatorOserver()],
     debugLogDiagnostics: true,
+    navigatorKey: NavigationService.navigatorKey,
     // initialLocation: '/name_list/show-roles',
     // initialLocation: '/night',
     // initialLocation: '/night/:${MyStrings.showMyRole}',
@@ -52,6 +57,13 @@ GoRouter router(RouterRef ref) {
     // initialLocation: '/name_list',
     // initialLocation: '/',
     initialLocation: '/splash',
+    errorBuilder: (context, state) {
+      return Scaffold(
+        body: Center(
+          child: Text('Error: ${state.error}'),
+        ),
+      );
+    },
     // initialLocation: '/nights_results',
     // initialLocation: '/day',
     // initialLocation: '/x-page',
@@ -114,7 +126,7 @@ GoRouter router(RouterRef ref) {
             path = '/online/user_entry/false';
           } else {
             final decodedToken = JwtDecoder.decode(token);
-            final exp = decodedToken['expiresAt'];
+            final exp = decodedToken['exp'];
             final now = DateTime.now().millisecondsSinceEpoch / 1000;
             if (exp < now) {
               path = '/online/user_entry/true';
@@ -125,23 +137,27 @@ GoRouter router(RouterRef ref) {
               } else if (state.fullPath == '/online') {
                 print(state.fullPath == '/online');
                 print('full path : ${state.fullPath}');
-                final userID = decodedToken['userID'];
-                final isar = await ref.read(isarServiceProvider.future);
-                final user = await isar.retrieveUserByID(userID);
-                _name = user!.firstName! + ' ' + user.lastName!;
-                _coins = user.coins ?? 0;
+                // final userID = decodedToken['userID'];
+                // final isar = await ref.read(isarServiceProvider.future);
+                // final user = await isar.retrieveUserByID(userID);
+                // // _name = user!.firstName! + ' ' + user.lastName!;
+                // // _coins = user.coins ?? 0;
 
-                final otherAccounts = await isar.retrieveOtherUsers(userID);
-                final repeatedNames =
-                    getUsersWithRepeatedFullName(otherAccounts);
-                final currentUser = await isar.retrieveUserByID(userID);
+                // final otherAccounts = await isar.retrieveOtherUsers(userID);
+                // final repeatedNames =
+                //     getUsersWithRepeatedFullName(otherAccounts);
+                // final currentUser = await isar.retrieveUserByID(userID);
 
                 // add otherAccounts and repeatedNames to the extra
-                _extra = {
-                  'otherAccounts': otherAccounts,
-                  'repeatedNames': repeatedNames,
-                  'currentUser': currentUser,
-                };
+                // _extra = {
+                //   'otherAccounts': otherAccounts,
+                //   'repeatedNames': repeatedNames,
+                //   'currentUser': currentUser,
+                // };
+
+                await ref
+                    .read(accountsControllerProvider.notifier)
+                    .getAllAccountsLocally();
 
                 path = '/online/panel';
               } else {
@@ -168,16 +184,7 @@ GoRouter router(RouterRef ref) {
             path: 'panel',
             name: 'panel',
             builder: (context, state) {
-              final otherAccounts = _extra['otherAccounts'] as List<User>?;
-              final repeatedNames = _extra['repeatedNames'] as List<User>;
-              final currentUser = _extra['currentUser'] as User;
-
-              return Panel(
-                currentUser: currentUser,
-                coins: _coins,
-                otherAccounts: otherAccounts,
-                repeatedNames: repeatedNames.map((e) => e.fullName).toList(),
-              );
+              return Panel();
             },
           ),
           GoRoute(
@@ -186,8 +193,21 @@ GoRouter router(RouterRef ref) {
               builder: (context, state) {
                 return RoomEntry();
               }),
+          GoRoute(
+              path: 'waiting_room',
+              name: 'waiting-room',
+              builder: (context, state) {
+                return Container(); /* WaitingRoom(
+                  currentUser: _extra['currentUser'] as User,
+                  otherAccounts: _extra['otherAccounts'] as List<User>?,
+                  repeatedNames: _extra['repeatedNames'] as List<User>?,
+                  room: state.extra as Room,
+                ); */
+              }),
         ],
       ),
+
+      // ------------------ Offline ------------------
       GoRoute(
         name: 'name-list',
         path: '/name_list',

@@ -4,8 +4,8 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../data/models/errors.dart';
-import '../../data/models/rooms.dart';
+import '../../data/models/responses/errors.dart';
+import '../../data/models/responses/rooms.dart';
 import '../../data/endpoints.dart';
 import '../../service/dio_provider.dart';
 

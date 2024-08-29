@@ -5,13 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'online/data/models/responses/errors.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPrefs.init();
 
   runApp(
-    const ProviderScope(
-      overrides: [],
+    ProviderScope(
+      observers: [
+        ErrorsObserver(),
+      ],
       child: MainApp(),
     ),
   );
@@ -32,6 +36,7 @@ class MainApp extends ConsumerWidget {
 
     return MaterialApp.router(
       // handle back button for quitting the app and showing a dialog
+      scaffoldMessengerKey: GlobalKey<ScaffoldMessengerState>(),
 
       title: 'Auto Mafia',
       /* backButtonDispatcher: RootBackButtonDispatcher(), */

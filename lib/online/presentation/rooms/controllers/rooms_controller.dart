@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../offline/db/isar_service.dart';
-import '../../../data/models/rooms.dart';
+import '../../../data/models/responses/rooms.dart';
 import '../../../../routes/routes.dart';
 import '../../../domain/rooms/rooms_repository.dart';
 
@@ -15,11 +15,11 @@ class RoomsController extends _$RoomsController {
   FutureOr<dynamic> build() {}
 
   // create room
-  Future<void> createRoom(
-    String name,
-    int numberOfPlayers,
-    String password,
-  ) async {
+  Future<void> createRoom({
+    required String name,
+    required int numberOfPlayers,
+    required String password,
+  }) async {
     state = const AsyncLoading();
     final roomsRepo = ref.read(roomsRepositoryProvider);
     state = await AsyncValue.guard(
@@ -42,9 +42,10 @@ class RoomsController extends _$RoomsController {
             createdAt: createRoomResult.rooms[0].createdAt,
             updatedAt: createRoomResult.rooms[0].updatedAt,
           );
-          ref.read(routerProvider).goNamed('room', pathParameters: {
-            'name': createRoomResult.rooms[0].name!,
-          });
+          ref.read(routerProvider).goNamed(
+                'waiting-room',
+                // pathParameters: {'name': createRoomResult.rooms[0].name!},
+              );
         } else {
           log('create room failed');
         }

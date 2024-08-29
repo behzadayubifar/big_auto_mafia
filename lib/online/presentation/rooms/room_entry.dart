@@ -23,8 +23,19 @@ class RoomEntry extends HookConsumerWidget {
     final roomConfirmPasswordController = useTextEditingController();
     final numberOfPlayersController = useTextEditingController();
 
+    final isNumberOfPlayersControllerValid = useState(false);
+
     // ------------------ Form Key ------------------
     final _formKey = GlobalKey<FormState>();
+
+    numberOfPlayersController.addListener(() {
+      print('number of players controller: ${numberOfPlayersController.text}');
+      isNumberOfPlayersControllerValid.value =
+          int.tryParse(numberOfPlayersController.text) != null &&
+              int.tryParse(numberOfPlayersController.text)! >= 7 &&
+              int.tryParse(numberOfPlayersController.text)! <= 11;
+      return null;
+    });
 
     return FormBlock(
       height: height,
@@ -106,22 +117,24 @@ class RoomEntry extends HookConsumerWidget {
           elevation: 12,
           shadowColor: AppColors.primaries[0],
           title: 'انتخاب نقش‌ها',
-          onPressed: () {
-            // show a dialog to select the roles
-            showDialog(
-              context: context,
-              builder: (_) {
-                return AppDialog.rolesSelection(
-                  height: height,
-                  width: width,
-                  numberOfPlayers:
-                      int.tryParse(numberOfPlayersController.text)!,
-                  ref: ref,
-                  context: context,
-                );
-              },
-            );
-          },
+          onPressed: isNumberOfPlayersControllerValid.value
+              ? () {
+                  // show a dialog to select the roles
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      return AppDialog.rolesSelection(
+                        height: height,
+                        width: width,
+                        numberOfPlayers:
+                            int.tryParse(numberOfPlayersController.text)!,
+                        ref: ref,
+                        context: context,
+                      );
+                    },
+                  );
+                }
+              : null,
         ),
       ],
       actions: [
@@ -136,7 +149,14 @@ class RoomEntry extends HookConsumerWidget {
             title: 'ایجاد روم',
             provider: roomsControllerProvider,
             onPressed: () {
-              if (_formKey.currentState!.validate()) {}
+              if (_formKey.currentState!.validate()) {
+                ref.read(roomsControllerProvider.notifier).createRoom(
+                      name: roomNameController.text,
+                      password: roomPasswordController.text,
+                      numberOfPlayers:
+                          int.tryParse(numberOfPlayersController.text)!,
+                    );
+              }
             }),
       ],
     );

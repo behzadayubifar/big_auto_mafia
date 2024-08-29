@@ -73,6 +73,7 @@ dependencies:
   internet_connection_checker: ^2.0.0
   jwt_decoder: ^2.0.1
   shared_preferences: ^2.3.2
+  share_plus: ^10.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

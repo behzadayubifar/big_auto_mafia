@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefs {
@@ -68,4 +69,15 @@ class SharedPrefs {
   static Future<bool?> remove(String key) async => await _prefs!.remove(key);
 
   static Future<bool?> clear() async => await _prefs!.clear();
+
+  static String? get userID {
+    final token = SharedPrefs.getString('token');
+    if (token != null) {
+      final isExpired = JwtDecoder.isExpired(token);
+      if (!isExpired) {
+        return JwtDecoder.decode(token)['userID'];
+      }
+    }
+    return null;
+  }
 }

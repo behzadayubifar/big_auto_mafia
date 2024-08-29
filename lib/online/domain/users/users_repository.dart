@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
-import 'package:auto_mafia/online/data/models/errors.dart';
-import 'package:auto_mafia/online/data/models/users.dart';
+import 'package:auto_mafia/online/data/models/responses/errors.dart';
+import 'package:auto_mafia/online/data/models/responses/users.dart';
 import 'package:auto_mafia/online/service/dio_provider.dart';
 import 'package:auto_mafia/online/data/endpoints.dart';
 import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../offline/db/entities/user.dart';
@@ -69,6 +70,25 @@ class UsersRepository {
     } else {
       log('Failed to login user');
       return ErrorResp.fromJson(response.data);
+    }
+  }
+
+  Future<Either<ErrorResp, UserResp>> fetchUser(String userID) async {
+    final response = await dio.get(
+      Endpoints.getUser + userID,
+      options: Options(
+        headers: {
+          'Authorization': {await SharedPrefs.getString('token')},
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      log('User fetched successfully', name: "fetchUser");
+      log('response :' + response.data.toString(), name: "fetchUser");
+      return Right(UserResp.fromJson(response.data));
+    } else {
+      log('Failed to fetch user', name: "fetchUser");
+      return Left(ErrorResp.fromJson(response.data));
     }
   }
 }

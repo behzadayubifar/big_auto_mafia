@@ -3,7 +3,9 @@ import 'package:auto_mafia/offline/constants/my_strings.dart';
 import 'package:auto_mafia/offline/db/entities/night_results.dart';
 import 'package:auto_mafia/offline/db/entities/room.dart';
 import 'package:auto_mafia/offline/db/entities/user.dart';
+import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/offline/utils/dev_log.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:auto_mafia/offline/db/entities/game_status.dart';
@@ -960,6 +962,8 @@ class IsarService {
     return null;
   }
 
+  // --- Users ---
+
   // a method to insert a new user or update an existing user
   Future<bool> putUser({
     String? id,
@@ -1021,6 +1025,23 @@ class IsarService {
     final users = await isar.users.where().findAll();
     final otherUsers = users.where((user) => user.id != id).toList();
     return otherUsers;
+  }
+
+  // a method to retrieve all users
+  /// if the token is not null, it will return the current user as the first element
+  /// and the other users as the rest of the list
+  Future<List<User>> retrieveAllUsers() async {
+    final users = await isar.users.where().findAll();
+
+    final token = SharedPrefs.getString('token');
+    if (token != null) {
+      final decoded = JwtDecoder.decode(token);
+      final id = decoded['userID'];
+      final currentUser = users.firstWhere((user) => user.id == id);
+      final otherUsers = users.where((user) => user.id != id).toList();
+      return [currentUser, ...otherUsers];
+    }
+    return users;
   }
 
   // --- Rooms ---

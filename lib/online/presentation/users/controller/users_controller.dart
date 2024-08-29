@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:auto_mafia/online/data/models/users.dart';
+import 'package:auto_mafia/online/data/models/responses/users.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -9,7 +9,7 @@ import '../../../domain/users/users_repository.dart';
 
 part 'users_controller.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class UsersController extends _$UsersController {
   @override
   FutureOr<dynamic> build() {}
@@ -72,6 +72,7 @@ class UsersController extends _$UsersController {
       final loginResult = await usersRepo.login(userName, password);
       log('loginResult: $loginResult');
       if (loginResult is UserResp) {
+        print('coins : ${loginResult.users[0].coins}');
         log('login success');
         final isar = await ref.read(isarServiceProvider.future);
         await isar.putUser(
@@ -96,5 +97,56 @@ class UsersController extends _$UsersController {
       }
       return loginResult;
     });
+  }
+
+  // fetch current user by id
+  Future<void> fetchUser(String userID) async {
+    final usersRepo = ref.read(usersRepositoryProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () async {
+        final userResult = await usersRepo.fetchUser(userID);
+        userResult.match(
+          (l) {
+            log('fetch user failed');
+          },
+          (r) async {
+            log('fetch user success');
+            final isar = await ref.read(isarServiceProvider.future);
+            await isar.putUser(
+              id: r.users[0].id,
+              username: r.users[0].username,
+              password: r.users[0].password,
+              email: r.users[0].email,
+              firstName: r.users[0].firstName,
+              lastName: r.users[0].lastName,
+              coins: r.users[0].coins,
+              createdAt: r.users[0].createdAt,
+              updatedAt: r.users[0].updatedAt,
+              isAdmin: r.users[0].isAdmin,
+            );
+          },
+        );
+        /*  if (userResult is UserResp) {
+          log('fetch user success');
+          final isar = await ref.read(isarServiceProvider.future);
+          await isar.putUser(
+            id: userResult.users[0].id,
+            username: userResult.users[0].username,
+            password: userResult.users[0].password,
+            email: userResult.users[0].email,
+            firstName: userResult.users[0].firstName,
+            lastName: userResult.users[0].lastName,
+            coins: userResult.users[0].coins,
+            createdAt: userResult.users[0].createdAt,
+            updatedAt: userResult.users[0].updatedAt,
+            isAdmin: userResult.users[0].isAdmin,
+          );
+        } else {
+          log('fetch user failed');
+        } */
+        return userResult;
+      },
+    );
   }
 }

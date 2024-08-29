@@ -8,7 +8,7 @@ type RoomResponse struct {
 
  */
 
-import '../../../offline/db/entities/user.dart';
+import '../../../../offline/db/entities/user.dart';
 
 class UserResp {
   List<User> users;

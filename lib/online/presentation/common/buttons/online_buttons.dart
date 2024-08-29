@@ -1,8 +1,6 @@
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
-import 'package:auto_mafia/online/data/models/errors.dart';
-import 'package:auto_mafia/online/presentation/users/controller/users_controller.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:auto_mafia/online/data/models/responses/errors.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -33,30 +31,12 @@ class OnlineButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.watch(usersControllerProvider);
-
-    ref.listen(
-      usersControllerProvider,
-      (previous, current) {
-        if (previous == current || current is AsyncLoading) return;
-
-        if (current.value is ErrorResp) {
-          print("crrent: $current");
-          AwesomeDialog(
-              context: context,
-              padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
-              dialogType: DialogType.ERROR,
-              title: 'خطا',
-              body: Text((current.value as ErrorResp).msg,
-                  style: MyTextStyles.bodyMedium.copyWith(
-                    height: 1.6,
-                  )),
-              buttonsTextStyle: MyTextStyles.bodyMedium.copyWith(
-                height: 1.2,
-              )).show();
-        }
-      },
-    );
+    // final controller = ref.watch(usersControllerProvider);
+    var controller;
+    if (provider != null) {
+      controller = ref.watch(provider!);
+      // errorListener(ref, provider!, context);
+    }
 
     return SizedBox(
       height: height,
@@ -75,18 +55,17 @@ class OnlineButton extends HookConsumerWidget {
           ), // Add padding to make the button bigger
         ),
         onPressed: onPressed,
-        child: controller.maybeWhen(
-            // I want my loading widget gets its size exatly from its parent
-            loading: () => LoadingAnimationWidget.flickr(
-                  size: height / 3.2,
-                  leftDotColor: AppColors.green,
-                  rightDotColor: AppColors.primary,
-                ),
-            orElse: () => Text(title,
+        child: controller is AsyncLoading
+            ? LoadingAnimationWidget.flickr(
+                size: height / 3.2,
+                leftDotColor: AppColors.green,
+                rightDotColor: AppColors.primary,
+              )
+            : Text(title,
                 style: MyTextStyles.headlineSmall.copyWith(
                   color: textColor ?? AppColors.green,
                   // height: 1.2,
-                ))),
+                )),
       ),
     );
   }
