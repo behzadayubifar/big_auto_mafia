@@ -41,7 +41,6 @@ class UsersRepository {
     );
     if (response.statusCode == 201) {
       final token = response.data['token'];
-      await SharedPrefs.setString('token', token);
       log('User registered successfully with token: $token', name: "register");
       log('response :' + response.data.toString(), name: "register");
       return UserResp.fromJson(response.data);
@@ -62,9 +61,6 @@ class UsersRepository {
       }),
     );
     if (response.statusCode == 200) {
-      final token = response.data['token'];
-      SharedPrefs.setString('token', token);
-      log('User logged in successfully with token: $token', name: "login");
       log('response :' + response.data.toString(), name: "login");
       return UserResp.fromJson(response.data);
     } else {

@@ -5,11 +5,12 @@ import 'package:auto_mafia/routes/routes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../offline/db/isar_service.dart';
+import '../../../../offline/db/shared_prefs/shared_prefs.dart';
 import '../../../domain/users/users_repository.dart';
 
 part 'users_controller.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class UsersController extends _$UsersController {
   @override
   FutureOr<dynamic> build() {}
@@ -35,9 +36,11 @@ class UsersController extends _$UsersController {
         );
         if (registerResult is UserResp) {
           log('register success');
+          log('id: ${registerResult.users[0].id}');
+          SharedPrefs.setString('token', registerResult.token);
           final isar = await ref.read(isarServiceProvider.future);
           await isar.putUser(
-            id: registerResult.users[0].id,
+            id: SharedPrefs.userID,
             username: userName,
             password: password,
             email: email,
@@ -48,11 +51,7 @@ class UsersController extends _$UsersController {
             updatedAt: registerResult.users[0].updatedAt,
             isAdmin: registerResult.users[0].isAdmin,
           );
-          ref.read(routerProvider).goNamed('panel', pathParameters: {
-            'name': registerResult.users[0].firstName! +
-                ' ' +
-                registerResult.users[0].lastName!,
-          });
+          ref.read(routerProvider).goNamed('panel');
         } else {
           log('register failed');
         }
@@ -74,6 +73,7 @@ class UsersController extends _$UsersController {
       if (loginResult is UserResp) {
         print('coins : ${loginResult.users[0].coins}');
         log('login success');
+        SharedPrefs.setString('token', loginResult.token);
         final isar = await ref.read(isarServiceProvider.future);
         await isar.putUser(
           id: loginResult.users[0].id,
@@ -88,10 +88,7 @@ class UsersController extends _$UsersController {
           isAdmin: loginResult.users[0].isAdmin,
         );
         log('loggin in: ');
-        ref.read(routerProvider).goNamed(
-              'panel',
-              extra: loginResult.users[0],
-            );
+        ref.read(routerProvider).goNamed('panel');
       } else {
         log('login failed');
       }

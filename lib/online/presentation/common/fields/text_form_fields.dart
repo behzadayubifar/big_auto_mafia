@@ -6,7 +6,7 @@ import '../../../../offline/constants/app_colors.dart';
 import '../../../../offline/constants/my_text_styles.dart';
 
 class MyTextField extends HookWidget {
-  /* const */ MyTextField({
+  const MyTextField({
     this.textDirection,
     this.keyboardType,
     this.nextController,
@@ -19,6 +19,7 @@ class MyTextField extends HookWidget {
     this.labelText,
     this.fillColor,
     this.labelColor,
+    this.onSubmitted,
     super.key,
   });
 
@@ -33,16 +34,18 @@ class MyTextField extends HookWidget {
   final TextInputType? keyboardType;
   final TextDirection? textDirection;
   final Color? fillColor;
-  Color? labelColor;
+  final Color? labelColor;
+  final Function(String)? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
     final _focusNode = useFocusNode();
-    final isFocused = useState(false);
+
+    // final isFocused = useState(false);
 
     useEffect(() {
       void listener() {
-        isFocused.value = _focusNode.hasFocus;
+        // isFocused.value = _focusNode.hasFocus;
       }
 
       _focusNode.addListener(listener);
@@ -154,6 +157,10 @@ class MyTextField extends HookWidget {
         // Remove the last space or any other whitespace character in the field
         final trimmedValue = value.replaceAll(RegExp(r'\s+$'), '');
         controller!.text = trimmedValue;
+
+        if (onSubmitted != null) {
+          onSubmitted!(value);
+        }
       },
     );
   }

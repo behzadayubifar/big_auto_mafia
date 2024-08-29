@@ -56,6 +56,10 @@ class RoomsController extends _$RoomsController {
               createdAt: r.rooms[0].createdAt,
               updatedAt: r.rooms[0].updatedAt,
             );
+            ref.read(routerProvider).goNamed(
+                  'waiting-room',
+                  // pathParameters: {'name': createRoomResult.rooms[0].name!},
+                );
           },
         );
         return createRoomResult;

@@ -2,6 +2,7 @@ import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dart';
+import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
 import 'package:auto_mafia/online/presentation/users/controller/accounts_controller.dart';
 import 'package:auto_mafia/online/presentation/users/controller/users_controller.dart';
 import 'package:flutter/material.dart';
@@ -127,7 +128,7 @@ class Panel extends HookConsumerWidget {
                           title: "پیوستن به روم",
                           height: height / 8,
                           width: width / 1.6,
-                          provider: usersControllerProvider,
+                          provider: roomsControllerProvider,
                           shadowColor: AppColors.primaries[0],
                           elevation: 12,
                           onPressed: () {},
@@ -138,7 +139,7 @@ class Panel extends HookConsumerWidget {
                           title: "ایجاد روم",
                           height: height / 8,
                           width: width / 1.6,
-                          provider: usersControllerProvider,
+                          provider: roomsControllerProvider,
                           shadowColor: AppColors.primaries[0],
                           elevation: 12,
                           onPressed: () =>

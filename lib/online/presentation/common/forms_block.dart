@@ -49,7 +49,7 @@ class FormBlock extends StatelessWidget {
                 ),
               ),
               // Actions
-              if (actions != null && isKeyboardVisible)
+              if (actions != null && !isKeyboardVisible)
                 SizedBox(height: height / 24),
               if (actions != null && !isKeyboardVisible) ...actions!,
             ],

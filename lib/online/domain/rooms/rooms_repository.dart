@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../offline/db/shared_prefs/shared_prefs.dart';
 import '../../data/models/responses/errors.dart';
 import '../../data/models/responses/rooms.dart';
 import '../../data/endpoints.dart';
@@ -22,17 +23,19 @@ class RoomsRepository {
     required int numberOfPlayers,
     required String password,
   }) async {
-    final response = await dio.post(Endpoints.createRoom,
-        data: jsonEncode({
-          'name': name,
-          'number_of_players': numberOfPlayers,
-          'password': password,
-        }),
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ));
+    final response = await dio.post(
+      Endpoints.createRoom,
+      data: jsonEncode({
+        'name': name,
+        'number_of_players': numberOfPlayers,
+        'password': password,
+      }),
+      options: Options(
+        headers: {
+          'Authorization': {await SharedPrefs.getString('token')},
+        },
+      ),
+    );
     if (response.statusCode == 201) {
       log('Room created successfully', name: "createRoom");
       log('response :' + response.data.toString(), name: "createRoom");
@@ -47,6 +50,11 @@ class RoomsRepository {
       {required String roomId, required String password}) async {
     final response = await dio.post(
       Endpoints.joinRoom + roomId + '/join',
+      options: Options(
+        headers: {
+          'Authorization': {await SharedPrefs.getString('token')},
+        },
+      ),
     );
     if (response.statusCode == 200) {
       log('Room joined successfully', name: "joinRoom");
@@ -61,6 +69,11 @@ class RoomsRepository {
   Future<Either<ErrorResp, RoomResp>> leaveRoom(String roomId) async {
     final response = await dio.post(
       Endpoints.leaveRoom + roomId + '/leave',
+      options: Options(
+        headers: {
+          'Authorization': {await SharedPrefs.getString('token')},
+        },
+      ),
     );
     if (response.statusCode == 200) {
       log('Room left successfully', name: "leaveRoom");
@@ -75,6 +88,11 @@ class RoomsRepository {
   Future<Either<ErrorResp, RoomResp>> getRoomById(String roomId) async {
     final response = await dio.get(
       Endpoints.getRoom + roomId,
+      options: Options(
+        headers: {
+          'Authorization': {await SharedPrefs.getString('token')},
+        },
+      ),
     );
     if (response.statusCode == 200) {
       log('Room fetched successfully', name: "getRoomById");
@@ -89,6 +107,11 @@ class RoomsRepository {
   Future<dynamic> updateRoomStatus(String roomId, String status) async {
     final response = await dio.patch(
       Endpoints.updateRoomStatus + roomId + "/$status",
+      options: Options(
+        headers: {
+          'Authorization': {await SharedPrefs.getString('token')},
+        },
+      ),
     );
     if (response.statusCode == 200) {
       log('Room status updated successfully', name: "updateRoomStatus");
@@ -107,6 +130,11 @@ class RoomsRepository {
       data: jsonEncode({
         'players_ids': playersIds,
       }),
+      options: Options(
+        headers: {
+          'Authorization': {await SharedPrefs.getString('token')},
+        },
+      ),
     );
     if (response.statusCode == 200) {
       log('Room managed successfully', name: "manageRoom");

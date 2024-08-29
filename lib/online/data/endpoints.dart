@@ -20,7 +20,7 @@ class Endpoints {
   static const String partiallyUpdateUser = "/users/"; // patch
 
   // -- Rooms
-  static const String createRoom = "/rooms"; // post
+  static const String createRoom = "/rooms/"; // post
   static const String getRooms = "/rooms"; // get
   static const String getRoom = "/rooms/"; // get
   static const String manageRoom = "/rooms/"; // post

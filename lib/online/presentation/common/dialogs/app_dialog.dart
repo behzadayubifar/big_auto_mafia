@@ -1,5 +1,6 @@
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
+import 'package:auto_mafia/routes/routes.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -137,6 +138,7 @@ class AppDialog extends HookConsumerWidget {
               // submit the selected roles
               final selectedRoles = ref.read(selectedRolesProvider);
               if (selectedRoles.length == numberOfPlayers) {
+                ref.read(routerProvider).pop();
               } else {
                 AwesomeDialog(
                   context: context,

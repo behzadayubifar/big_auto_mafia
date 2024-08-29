@@ -10,7 +10,7 @@ import '../../../domain/users/users_repository.dart';
 
 part 'accounts_controller.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class AccountsController extends _$AccountsController {
   @override
   Future<Either<ErrorResp, List<User>>> build() async {

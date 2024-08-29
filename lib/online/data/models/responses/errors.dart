@@ -4,6 +4,7 @@ import 'package:auto_mafia/routes/routes.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 
 import '../../../../offline/constants/my_text_styles.dart';
 
@@ -55,6 +56,9 @@ class ErrorsObserver extends ProviderObserver {
           if (data is ErrorResp) {
             print("crrent: $newValue");
             awesomeError(data);
+          } else if (data is Left) {
+            print("crrent: $newValue");
+            awesomeError(data.value);
           } else {
             print(
                 'Provider $provider updated from $previousValue to $newValue');

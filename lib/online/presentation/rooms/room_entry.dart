@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/online/presentation/common/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
@@ -29,14 +31,18 @@ class RoomEntry extends HookConsumerWidget {
     // ------------------ Form Key ------------------
     final _formKey = GlobalKey<FormState>();
 
-    numberOfPlayersController.addListener(() {
-      print('number of players controller: ${numberOfPlayersController.text}');
-      isNumberOfPlayersControllerValid.value =
-          int.tryParse(numberOfPlayersController.text) != null &&
-              int.tryParse(numberOfPlayersController.text)! >= 7 &&
-              int.tryParse(numberOfPlayersController.text)! <= 11;
-      return null;
-    });
+// TODO FIX THIS listening is wrong here?
+    // useEffect(() {
+    //   final listener = () {
+    //     final text = numberOfPlayersController.text;
+    //     final number = int.tryParse(text);
+    //     isNumberOfPlayersControllerValid.value =
+    //         number != null && number >= 7 && number <= 11;
+    //   };
+
+    //   numberOfPlayersController.addListener(listener);
+    //   return () => numberOfPlayersController.removeListener(listener);
+    // }, [numberOfPlayersController]);
 
     return FormBlock(
       height: height,
@@ -103,6 +109,12 @@ class RoomEntry extends HookConsumerWidget {
           controller: numberOfPlayersController,
           fillColor: AppColors.lightestGrey,
           textInputAction: TextInputAction.done,
+          onSubmitted: (_) {
+            final text = numberOfPlayersController.text;
+            final number = int.tryParse(text);
+            isNumberOfPlayersControllerValid.value =
+                number != null && number >= 7 && number <= 11;
+          },
           validator: (content) {
             if (content == null || content.isEmpty) {
               return 'لطفا تعداد بازیکنان را وارد کنید';
@@ -165,10 +177,7 @@ class RoomEntry extends HookConsumerWidget {
                       numberOfPlayers:
                           int.tryParse(numberOfPlayersController.text)!,
                     );
-                ref.read(routerProvider).goNamed(
-                      'waiting-room',
-                      // pathParameters: {'name': createRoomResult.rooms[0].name!},
-                    );
+
                 //
               }
             }),
