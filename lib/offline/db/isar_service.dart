@@ -15,6 +15,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:isar/isar.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../online/data/models/responses/rooms.dart';
+
 part 'isar_service.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -1054,6 +1056,7 @@ class IsarService {
     String? status,
     DateTime? createdAt,
     DateTime? updatedAt,
+    List<UsersInRoom>? usersInfo,
   }) async {
     final roomExists = await isar.rooms.filter().idEqualTo(id).findFirst();
     if (roomExists != null) {
@@ -1066,6 +1069,7 @@ class IsarService {
             status: status,
             createdAt: createdAt,
             updatedAt: updatedAt,
+            usersInfo: usersInfo,
           )));
       log('room updated successfully', name: 'putRoom');
       return roomExists;
@@ -1078,7 +1082,8 @@ class IsarService {
         ..password = password
         ..status = status
         ..createdAt = createdAt
-        ..updatedAt = updatedAt;
+        ..updatedAt = updatedAt
+        ..usersInfo = usersInfo;
       await isar.writeTxn(() => isar.rooms.put(room));
       log('room inserted successfully', name: 'putRoom');
       return room;
@@ -1093,6 +1098,11 @@ class IsarService {
     return null;
   }
 
+  Future<List<Room?>> retrieveAllRooms() async {
+    final rooms = await isar.rooms.where().findAll();
+    return rooms;
+  }
+
   Future<bool> deleteRoom(String id) async {
     final roomToDelete = await isar.rooms.filter().idEqualTo(id).findFirst();
     if (roomToDelete != null) {
@@ -1103,6 +1113,7 @@ class IsarService {
     log('room not found', name: 'deleteRoom');
     return false;
   }
+
 // how to manage which player has done his/her night job
 // and which one has not?
 // and how to differntiate between` timeLeft` and `nightDone`?

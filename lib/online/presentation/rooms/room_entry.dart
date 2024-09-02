@@ -141,6 +141,7 @@ class RoomEntry extends HookConsumerWidget {
           onPressed: isNumberOfPlayersControllerValid.value
               ? () {
                   // show a dialog to select the roles
+                  // TODO; Later add this feature --> being chosen roles based on the number of players
                   showDialog(
                     context: context,
                     builder: (_) {
@@ -169,16 +170,14 @@ class RoomEntry extends HookConsumerWidget {
             shadowColor: AppColors.greens[0],
             title: 'ایجاد روم',
             provider: roomsControllerProvider,
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                ref.read(roomsControllerProvider.notifier).createRoom(
+                await ref.read(roomsControllerProvider.notifier).createRoom(
                       name: roomNameController.text,
                       password: roomPasswordController.text,
                       numberOfPlayers:
                           int.tryParse(numberOfPlayersController.text)!,
                     );
-
-                //
               }
             }),
       ],

@@ -6,7 +6,7 @@ class Endpoints {
   // static const String host = "http://192.168.214.83:8080";
 
   static const String http = "http://";
-  static String host = "192.168.236.83";
+  static String host = "192.168.1.4";
   static const String port = ":8080";
   static const String apiV1 = "/api/v1";
 
@@ -28,4 +28,7 @@ class Endpoints {
   static const String joinRoom = "/rooms/"; // post
   static const String leaveRoom = "/rooms/"; // post
   static const String updateRoomStatus = "/rooms/"; // patch
+
+  // -- Events
+  static const String events = "/events/"; // get
 }

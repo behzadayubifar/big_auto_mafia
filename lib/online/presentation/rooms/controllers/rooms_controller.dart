@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
+import 'package:auto_mafia/online/events/sse.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -44,7 +45,7 @@ class RoomsController extends _$RoomsController {
           },
           (r) async {
             log('create room success');
-            await SharedPrefs.setModel('currentRoom', r.rooms[0]);
+            await SharedPrefs.setModel<Room>('currentRoom', r.rooms[0]);
             final isar = await ref.read(isarServiceProvider.future);
             await isar.putRoom(
               id: r.rooms[0].id,
@@ -55,10 +56,16 @@ class RoomsController extends _$RoomsController {
               players: r.rooms[0].players,
               createdAt: r.rooms[0].createdAt,
               updatedAt: r.rooms[0].updatedAt,
+              usersInfo: r.users![r.rooms[0].id!],
             );
             ref.read(routerProvider).goNamed(
                   'waiting-room',
-                  // pathParameters: {'name': createRoomResult.rooms[0].name!},
+                  extra: createRoomResult
+                      .getRight()
+                      .getOrElse(() => RoomResp.empty())
+                      .users!
+                      .values
+                      .toList()[0],
                 );
           },
         );
@@ -82,7 +89,7 @@ class RoomsController extends _$RoomsController {
         },
         (r) async {
           log('join room success');
-          await SharedPrefs.setString('currentRoomID', roomId);
+          await SharedPrefs.setModel<Room>('currentRoom', r.rooms[0]);
           final isar = await ref.read(isarServiceProvider.future);
           await isar.putRoom(
             id: r.rooms[0].id,
@@ -94,10 +101,17 @@ class RoomsController extends _$RoomsController {
             players: r.rooms[0].players,
             createdAt: r.rooms[0].createdAt,
             updatedAt: r.rooms[0].updatedAt,
+            usersInfo: r.users![r.rooms[0].id!],
           );
-          ref.read(routerProvider).goNamed('room', pathParameters: {
-            'name': r.rooms[0].name!,
-          });
+          ref.read(routerProvider).goNamed(
+                'waiting-room',
+                extra: joinRoomResult
+                    .getRight()
+                    .getOrElse(() => RoomResp.empty())
+                    .users!
+                    .values
+                    .toList()[0],
+              );
         },
       );
       return joinRoomResult;

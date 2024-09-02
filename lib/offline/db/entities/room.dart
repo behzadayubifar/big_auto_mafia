@@ -1,3 +1,4 @@
+import 'package:auto_mafia/online/data/models/responses/rooms.dart';
 import 'package:isar/isar.dart';
 
 import 'fast_hash.dart';
@@ -15,6 +16,7 @@ class Room {
   String? password;
   String? status;
   List<String>? players;
+  List<UsersInRoom>? usersInfo;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -29,6 +31,7 @@ class Room {
     List<String>? players,
     DateTime? createdAt,
     DateTime? updatedAt,
+    List<UsersInRoom>? usersInfo,
   }) =>
       Room()
         ..id = id
@@ -38,7 +41,8 @@ class Room {
         ..status = status
         ..players = players
         ..createdAt = createdAt
-        ..updatedAt = updatedAt;
+        ..updatedAt = updatedAt
+        ..usersInfo = usersInfo;
 
   static Room fromJson(Map<String, dynamic> json) => Room()
     ..id = json['id']

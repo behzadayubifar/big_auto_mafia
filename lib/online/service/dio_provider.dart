@@ -7,20 +7,22 @@ part 'dio_provider.g.dart';
 
 @riverpod
 Dio dio(DioRef ref) {
-  return Dio(BaseOptions(
-    baseUrl: Endpoints.http + Endpoints.host + Endpoints.port + Endpoints.apiV1,
-    contentType: Headers.jsonContentType,
-    responseType: ResponseType.json,
-    headers: {
-      "Accept-Language": "fa",
-    },
-    connectTimeout: Duration(seconds: 5),
-    receiveTimeout: Duration(seconds: 5),
+  return Dio(
+    BaseOptions(
+      baseUrl:
+          Endpoints.http + Endpoints.host + Endpoints.port + Endpoints.apiV1,
+      contentType: Headers.jsonContentType,
+      responseType: ResponseType.json,
+      headers: {
+        "Accept-Language": "fa",
+      },
+      connectTimeout: Duration(seconds: 5),
+      receiveTimeout: Duration(seconds: 5),
 
-    receiveDataWhenStatusError: true,
-    // persistentConnection: false,
-  ))
-    ..interceptors.add(
+      receiveDataWhenStatusError: true,
+      // persistentConnection: false,
+    ),
+  )..interceptors.add(
       InterceptorsWrapper(onRequest: (options, handler) {
         // Do something before request is sent
         print('request path : ' + options.path);

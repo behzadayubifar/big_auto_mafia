@@ -35,21 +35,24 @@ class OnlineOfflinePage extends HookConsumerWidget {
                     context: context,
                     title: "ENTER IP",
                     body: SingleChildScrollView(
-                        child: Column(children: [
-                      MyTextField(
-                          textDirection: TextDirection.ltr,
-                          labelText: 'IP',
-                          controller: ipController,
-                          validator: (content) {
-                            if (content == null || content.isEmpty) {
-                              return 'لطفا IP را وارد کنید';
-                            }
-                            return null;
-                          }),
-                      SizedBox(
-                        height: size.height / 32,
+                      child: Column(
+                        children: [
+                          MyTextField(
+                              textDirection: TextDirection.ltr,
+                              labelText: 'IP',
+                              controller: ipController,
+                              validator: (content) {
+                                if (content == null || content.isEmpty) {
+                                  return 'لطفا IP را وارد کنید';
+                                }
+                                return null;
+                              }),
+                          SizedBox(
+                            height: size.height / 32,
+                          ),
+                        ],
                       ),
-                    ])),
+                    ),
                     dialogType: DialogType.INFO_REVERSED,
                     btnOkText: 'تایید',
                     buttonsTextStyle: MyTextStyles.bodyLarge.copyWith(
@@ -59,7 +62,7 @@ class OnlineOfflinePage extends HookConsumerWidget {
                       ref.read(loadingProvider.notifier).start();
                       SharedPrefs.setString('ip', ipController.text);
                       Endpoints.host = ipController.text;
-                      ref.read(routerProvider).goNamed('online');
+                      ref.read(routerProvider).pushNamed('online');
                     },
                   ).show();
                 },

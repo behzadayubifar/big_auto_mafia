@@ -6,7 +6,7 @@ import '../../../../offline/constants/app_colors.dart';
 import '../../../../offline/constants/my_text_styles.dart';
 
 class MyTextField extends HookWidget {
-  const MyTextField({
+  MyTextField({
     this.textDirection,
     this.keyboardType,
     this.nextController,
@@ -40,12 +40,11 @@ class MyTextField extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final _focusNode = useFocusNode();
-
-    // final isFocused = useState(false);
+    final isFocused = useState(false);
 
     useEffect(() {
       void listener() {
-        // isFocused.value = _focusNode.hasFocus;
+        isFocused.value = _focusNode.hasFocus;
       }
 
       _focusNode.addListener(listener);

@@ -9,6 +9,7 @@ class OnlineButton extends HookConsumerWidget {
   /* const */ OnlineButton({
     required this.height,
     required this.width,
+    this.padding,
     this.provider,
     required this.title,
     required this.onPressed,
@@ -16,6 +17,7 @@ class OnlineButton extends HookConsumerWidget {
     this.elevation,
     this.backgroundColor,
     this.textColor,
+    this.textStyle,
     super.key,
   });
 
@@ -24,10 +26,12 @@ class OnlineButton extends HookConsumerWidget {
   final ProviderListenable? provider;
   final double height;
   final double width;
+  final EdgeInsetsGeometry? padding;
   final Color? shadowColor;
   final double? elevation;
   final Color? backgroundColor;
   final Color? textColor;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,10 +53,11 @@ class OnlineButton extends HookConsumerWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          padding: EdgeInsets.symmetric(
-            vertical: 32.0,
-            horizontal: 32.0,
-          ), // Add padding to make the button bigger
+          padding: padding ??
+              EdgeInsets.symmetric(
+                vertical: 32.0,
+                horizontal: 32.0,
+              ), // Add padding to make the button bigger
         ),
         onPressed: onPressed,
         child: controller is AsyncLoading
@@ -61,11 +66,14 @@ class OnlineButton extends HookConsumerWidget {
                 leftDotColor: AppColors.green,
                 rightDotColor: AppColors.primary,
               )
-            : Text(title,
-                style: MyTextStyles.headlineSmall.copyWith(
-                  color: textColor ?? AppColors.green,
-                  // height: 1.2,
-                )),
+            : Text(
+                title,
+                style: textStyle ??
+                    MyTextStyles.headlineSmall.copyWith(
+                      color: textColor ?? AppColors.green,
+                      // height: 1.2,
+                    ),
+              ),
       ),
     );
   }

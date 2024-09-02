@@ -49,27 +49,27 @@ class ErrorsObserver extends ProviderObserver {
     Object? newValue,
     ProviderContainer container,
   ) {
-    print('Provider $provider updated from $previousValue to $newValue');
+    // print('Provider $provider updated from $previousValue to $newValue');
     if (newValue is AsyncData) {
       newValue.whenOrNull(
         data: (data) {
           if (data is ErrorResp) {
-            print("crrent: $newValue");
+            // print("crrent: $newValue");
             awesomeError(data);
           } else if (data is Left) {
-            print("crrent: $newValue");
+            // print("crrent: $newValue");
             awesomeError(data.value);
           } else {
-            print(
-                'Provider $provider updated from $previousValue to $newValue');
+            // print(
+            //     'Provider $provider updated from $previousValue to $newValue');
           }
         },
         error: (error, stackTrace) {
-          print('Provider $provider threw $error at $stackTrace');
+          // print('Provider $provider threw $error at $stackTrace');
         },
       );
     } else if (newValue is AsyncError) {
-      print('Provider $provider threw ${newValue.error}');
+      // print('Provider $provider threw ${newValue.error}');
       awesomeError(newValue.error as ErrorResp);
     }
   }
@@ -120,7 +120,7 @@ showError(previous, current, context) {
   if (previous == current || current is AsyncLoading) return;
 
   if (current.value is ErrorResp) {
-    print("crrent: $current");
+    // print("crrent: $current");
     AwesomeDialog(
         context: context,
         padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
@@ -147,7 +147,7 @@ void errorListener2(
         if (previous == current || current is AsyncLoading) return;
 
         if (current.value!.isLeft()) {
-          print("crrent: $current");
+          // print("crrent: $current");
           AwesomeDialog(
               context: context,
               padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),

@@ -40,7 +40,7 @@ class UsersController extends _$UsersController {
           SharedPrefs.setString('token', registerResult.token);
           final isar = await ref.read(isarServiceProvider.future);
           await isar.putUser(
-            id: SharedPrefs.userID,
+            id: registerResult.users[0].id,
             username: userName,
             password: password,
             email: email,

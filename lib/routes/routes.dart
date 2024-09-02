@@ -18,6 +18,7 @@ import 'package:auto_mafia/offline/ui/statements/chaos_page.dart';
 import 'package:auto_mafia/offline/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/offline/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/offline/ui/ui_widget/names_list_show/naming_page.dart';
+import 'package:auto_mafia/online/data/models/responses/rooms.dart';
 import 'package:auto_mafia/online/presentation/rooms/waiting_room.dart';
 import 'package:auto_mafia/online/presentation/users/controller/accounts_controller.dart';
 import 'package:auto_mafia/online/presentation/users/panel/panel.dart';
@@ -28,6 +29,7 @@ import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../offline/db/entities/room.dart';
 import '../online/presentation/rooms/room_entry.dart';
 import '../offline/ui/home/online_offline_page.dart';
 
@@ -197,12 +199,11 @@ GoRouter router(RouterRef ref) {
               path: 'waiting_room',
               name: 'waiting-room',
               builder: (context, state) {
-                return Container(); /* WaitingRoom(
-                  currentUser: _extra['currentUser'] as User,
-                  otherAccounts: _extra['otherAccounts'] as List<User>?,
-                  repeatedNames: _extra['repeatedNames'] as List<User>?,
-                  room: state.extra as Room,
-                ); */
+                // final alreadyJoined =
+                //     SharedPrefs.getModel<Room>('currentRoom', Room.fromJson);
+                return WaitingRoom(
+                    // alreadyJoined: alreadyJoined,
+                    );
               }),
         ],
       ),
