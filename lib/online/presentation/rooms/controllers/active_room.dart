@@ -1,3 +1,4 @@
+import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../offline/db/entities/room.dart';
@@ -9,11 +10,21 @@ part 'active_room.g.dart';
 class ActiveRooms extends _$ActiveRooms {
   @override
   Future<List<Room?>> build() async {
-    return getRooms();
+    final currentUserId = await SharedPrefs.userID;
+    return getRooms(currentUserId!);
   }
 
-  Future<List<Room?>> getRooms() async {
+  Future<List<Room?>> getRooms(String userId) async {
     final isar = await ref.read(isarServiceProvider.future);
-    return isar.retrieveAllRooms();
+    final allRoomsWhichCurrentUserIsPresentAt = isar.retrieveUserRooms(userId);
+    return allRoomsWhichCurrentUserIsPresentAt;
   }
+
+  Future<Room?> getRoomById(String id) async {
+    final isar = await ref.read(isarServiceProvider.future);
+    final room = isar.retrieveRoomByID(id);
+    return room;
+  }
+
+  // fetch room from server where
 }

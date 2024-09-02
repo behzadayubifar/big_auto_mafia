@@ -4,7 +4,7 @@ import '../../../../offline/constants/app_colors.dart';
 import '../../../../offline/constants/my_text_styles.dart';
 
 class MyListTile extends StatelessWidget {
-  const MyListTile(
+  MyListTile(
       {required this.height,
       required this.width,
       required this.index,
@@ -23,8 +23,9 @@ class MyListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      splashColor: AppColors.lightestGrey,
       onTap: () {
-        onTap!();
+        onTap?.call();
       },
       child: Container(
         height: height,

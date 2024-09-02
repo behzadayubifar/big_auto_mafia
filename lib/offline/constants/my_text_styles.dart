@@ -1,4 +1,3 @@
-
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -81,6 +80,7 @@ class MyTextStyles {
     color: const Color(0xB2070E25),
     fontSize: 20,
     fontWeight: FontWeight.w400,
+    overflow: TextOverflow.ellipsis,
     // height: 0.09,
   );
 
@@ -99,6 +99,7 @@ class MyTextStyles {
     color: const Color(0xB2070E25),
     fontSize: 16,
     fontWeight: FontWeight.w400,
+    overflow: TextOverflow.ellipsis,
     height: 0.11,
   );
 

@@ -32,6 +32,14 @@ class UsersInRoom {
       fullName: json['full_name'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user_name': userName,
+      'id': id,
+      'full_name': fullName,
+    };
+  }
 }
 
 class RoomResp {

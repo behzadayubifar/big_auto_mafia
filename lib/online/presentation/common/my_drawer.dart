@@ -12,7 +12,7 @@ import '../../../offline/constants/my_text_styles.dart';
 import '../../../routes/routes.dart';
 
 class MyDrawer extends ConsumerWidget {
-  const MyDrawer({
+  MyDrawer({
     super.key,
   });
 
@@ -120,60 +120,75 @@ class MyDrawer extends ConsumerWidget {
           // otherAccounts list
           SizedBox(
             height: height / 1.6,
-            child: otherAccounts.isEmpty
-                ? SizedBox()
-                : ListView(
-                    children: [
-                      // otherAccounts
-                      for (int i = 0; i < otherAccounts.length; i++)
-                        AccountTile(
-                          user: otherAccounts[i],
-                          height: height,
-                          width: width,
-                          onPressed: () {
-                            ref.read(routerProvider).goNamed(
-                                  'user-entry',
-                                  pathParameters: {'isLogin': 'true'},
-                                  extra: otherAccounts[i].username!,
-                                );
-                          },
-                          repeatedName: repeatedNames.isNotEmpty
-                              ? repeatedNames
-                                  .contains(otherAccounts[i].fullName)
-                              : false,
-                        ),
-                      // add new account
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: height / 32, horizontal: width / 16),
-                        child: Row(
-                          children: [
-                            // icon
-                            Icon(
-                              FontAwesomeIcons.plus,
-                              size: 24,
-                              color: AppColors.darkerGrey,
-                            ),
-                            SizedBox(width: width / 32),
-                            // name
-                            TextButton(
-                              child: Text(
-                                "افزودن حساب کاربری",
-                                style: MyTextStyles.bodyMD.copyWith(
-                                    color: AppColors.darkestGrey, height: 1.5),
-                              ),
-                              onPressed: () {
-                                ref.read(routerProvider).goNamed(
-                                  'user-entry',
-                                  pathParameters: {'isLogin': 'true'},
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+            width: width / 4,
+            child: ListView(
+              children: [
+                // otherAccounts
+                if (otherAccounts.isNotEmpty)
+                  for (int i = 0; i < otherAccounts.length; i++)
+                    AccountTile(
+                      user: otherAccounts[i],
+                      height: height,
+                      width: width,
+                      onPressed: () {
+                        ref.read(routerProvider).goNamed(
+                              'user-entry',
+                              pathParameters: {'isLogin': 'true'},
+                              extra: otherAccounts[i].username!,
+                            );
+                      },
+                      repeatedName: repeatedNames.isNotEmpty
+                          ? repeatedNames.contains(otherAccounts[i].fullName)
+                          : false,
+                    ),
+                // add new account
+                AddNewAccount(height: height, width: width),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AddNewAccount extends ConsumerWidget {
+  const AddNewAccount({
+    required this.height,
+    required this.width,
+    super.key,
+  });
+
+  final double height;
+  final double width;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding:
+          EdgeInsets.symmetric(vertical: height / 32, horizontal: width / 16),
+      child: Row(
+        children: [
+          // icon
+          Icon(
+            FontAwesomeIcons.plus,
+            size: 24,
+            color: AppColors.darkerGrey,
+          ),
+          SizedBox(width: width / 32),
+          // name
+          TextButton(
+            child: Text(
+              "افزودن حساب کاربری",
+              style: MyTextStyles.bodyMD
+                  .copyWith(color: AppColors.darkestGrey, height: 1.5),
+            ),
+            onPressed: () {
+              ref.read(routerProvider).goNamed(
+                'user-entry',
+                pathParameters: {'isLogin': 'true'},
+              );
+            },
           ),
         ],
       ),

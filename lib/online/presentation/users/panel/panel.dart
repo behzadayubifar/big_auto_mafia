@@ -236,11 +236,9 @@ class Panel extends HookConsumerWidget {
                             ),
                             // Active rooms
                             SizedBox(height: height / 24),
-                            Padding(
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: width / 16),
-                              child: activeRooms.maybeWhen(
-                                data: (rooms) {
+                            activeRooms.maybeWhen(
+                              data: (rooms) {
+                                if (rooms.length != 0)
                                   return MyListView(
                                       height: height / 4,
                                       width: width,
@@ -255,18 +253,28 @@ class Panel extends HookConsumerWidget {
                                           leading: rooms[index]!
                                               .numberOfPlayers
                                               .toString(),
+                                          onTap: () async {
+                                            await ref
+                                                .read(activeRoomsProvider
+                                                    .notifier)
+                                                .getRoomById(rooms[index]!.id!);
+                                            await ref
+                                                .read(routerProvider)
+                                                .pushNamed(
+                                                  'waiting-room',
+                                                );
+                                          },
                                         );
                                       });
-                                },
-                                loading: () =>
-                                    LoadingAnimationWidget.prograssiveDots(
-                                  color: AppColors.green,
-                                  size: width / 4,
-                                ),
-                                orElse: () => SizedBox(),
+                                return SizedBox();
+                              },
+                              loading: () =>
+                                  LoadingAnimationWidget.prograssiveDots(
+                                color: AppColors.green,
+                                size: width / 4,
                               ),
+                              orElse: () => SizedBox(),
                             ),
-
                             Spacer(),
                           ],
                         ),

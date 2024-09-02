@@ -34,7 +34,9 @@ class AccountTile extends StatelessWidget {
               shape: LinearBorder.end()),
           child: Container(
             padding: EdgeInsets.symmetric(
-                vertical: height / 32, horizontal: width / 16),
+              vertical: height / 32,
+              horizontal: width / 128,
+            ),
             child: Row(
               children: [
                 // icon
@@ -45,25 +47,30 @@ class AccountTile extends StatelessWidget {
                 ),
                 SizedBox(width: width / 32),
                 // name (if name is repeated we show the name and the username)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.fullName,
-                      style: MyTextStyles.bodyLarge.copyWith(
-                        color: AppColors.grey,
-                        height: 1.5,
-                      ),
-                    ),
-                    if (repeatedName!)
+                SizedBox(
+                  width: width / 2.4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        user.username!,
-                        style: MyTextStyles.bodyMD.copyWith(
-                          color: AppColors.darkerGrey,
+                        user.fullName,
+                        overflow: TextOverflow.ellipsis,
+                        style: MyTextStyles.bodyLarge.copyWith(
+                          color: AppColors.grey,
                           height: 1.5,
                         ),
                       ),
-                  ],
+                      if (repeatedName!)
+                        Text(
+                          user.username!,
+                          overflow: TextOverflow.ellipsis,
+                          style: MyTextStyles.bodyMD.copyWith(
+                            color: AppColors.darkerGrey,
+                            height: 1.5,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -19,42 +19,45 @@ class MyListView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      controller: scrollController,
-      scrollbarOrientation: ScrollbarOrientation.right,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: width / 48,
-          vertical: height / 32,
-        ),
-        height: height,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.darkerGrey,
-              blurRadius: 16,
-              spreadRadius: 8,
-            ),
-          ],
-          gradient: LinearGradient(
-            colors: [
-              AppColors.darkerGrey,
-              AppColors.grey,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: width / 16),
+      child: Scrollbar(
+        controller: scrollController,
+        scrollbarOrientation: ScrollbarOrientation.right,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: width / 48,
+            vertical: height / 32,
           ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: ListView.separated(
-          controller: scrollController,
-          itemCount: children.length,
-          separatorBuilder: (context, index) => index != children.length
-              ? SizedBox(
-                  height: height / 16,
-                )
-              : SizedBox(),
-          itemBuilder: itemBuilder,
+          height: height,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.darkerGrey,
+                blurRadius: 16,
+                spreadRadius: 8,
+              ),
+            ],
+            gradient: LinearGradient(
+              colors: [
+                AppColors.darkerGrey,
+                AppColors.grey,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ListView.separated(
+            controller: scrollController,
+            itemCount: children.length,
+            separatorBuilder: (context, index) => index != children.length
+                ? SizedBox(
+                    height: height / 16,
+                  )
+                : SizedBox(),
+            itemBuilder: itemBuilder,
+          ),
         ),
       ),
     );

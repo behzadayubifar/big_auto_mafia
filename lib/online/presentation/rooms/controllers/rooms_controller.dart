@@ -11,6 +11,7 @@ import '../../../data/models/responses/errors.dart';
 import '../../../data/models/responses/rooms.dart';
 import '../../../../routes/routes.dart';
 import '../../../domain/rooms/rooms_repository.dart';
+import 'active_room.dart';
 
 part 'rooms_controller.g.dart';
 
@@ -58,7 +59,7 @@ class RoomsController extends _$RoomsController {
               updatedAt: r.rooms[0].updatedAt,
               usersInfo: r.users![r.rooms[0].id!],
             );
-            ref.read(routerProvider).goNamed(
+            ref.read(routerProvider).pushNamed(
                   'waiting-room',
                   extra: createRoomResult
                       .getRight()
@@ -89,7 +90,10 @@ class RoomsController extends _$RoomsController {
         },
         (r) async {
           log('join room success');
+          // Save current room to shared prefs
           await SharedPrefs.setModel<Room>('currentRoom', r.rooms[0]);
+
+          // Insert Room to local db
           final isar = await ref.read(isarServiceProvider.future);
           await isar.putRoom(
             id: r.rooms[0].id,
@@ -103,7 +107,13 @@ class RoomsController extends _$RoomsController {
             updatedAt: r.rooms[0].updatedAt,
             usersInfo: r.users![r.rooms[0].id!],
           );
-          ref.read(routerProvider).goNamed(
+          // get all rooms where current user is present
+          await ref
+              .read(activeRoomsProvider.notifier)
+              .getRooms(SharedPrefs.userID!);
+
+          // go to waiting room
+          ref.read(routerProvider).pushNamed(
                 'waiting-room',
                 extra: joinRoomResult
                     .getRight()

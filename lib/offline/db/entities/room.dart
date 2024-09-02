@@ -52,7 +52,14 @@ class Room {
     ..status = json['status']
     ..players = List<String>.from(json['players'])
     ..createdAt = DateTime.parse(json['created_at'])
-    ..updatedAt = DateTime.parse(json['updated_at']);
+    ..updatedAt = DateTime.parse(json['updated_at'])
+    ..usersInfo = json['users'] == null
+        ? null
+        : List<UsersInRoom>.from(
+            json['users'].map(
+              (x) => UsersInRoom.fromJson(x),
+            ),
+          );
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -63,5 +70,13 @@ class Room {
         'players': players,
         'created_at': createdAt.toString(),
         'updated_at': updatedAt.toString(),
+        'users': usersInfo == null
+            ? null
+            : List<dynamic>.from(
+                usersInfo!.map(
+                  (x) => x.toJson(),
+                ),
+              ),
+        // usersInfo!.map((x) => x.toJson()).toList()
       };
 }

@@ -1103,6 +1103,15 @@ class IsarService {
     return rooms;
   }
 
+  // Retrieve all rooms that the user is in
+  Future<List<Room>> retrieveUserRooms(String id) async {
+    final rooms = await isar.rooms.where().findAll();
+    final userRooms = rooms
+        .where((room) => room.usersInfo!.any((user) => user.id == id))
+        .toList();
+    return userRooms;
+  }
+
   Future<bool> deleteRoom(String id) async {
     final roomToDelete = await isar.rooms.filter().idEqualTo(id).findFirst();
     if (roomToDelete != null) {
