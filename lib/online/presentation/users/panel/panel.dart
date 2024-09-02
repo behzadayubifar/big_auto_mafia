@@ -5,7 +5,6 @@ import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dar
 import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
 import 'package:auto_mafia/online/presentation/users/controller/accounts_controller.dart';
-import 'package:auto_mafia/online/presentation/users/controller/users_controller.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -43,6 +42,8 @@ class Panel extends HookConsumerWidget {
 
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     final _formKey = GlobalKey<FormState>();
+
+    // TODO: check if there is not any active room then animate the buttons to the center of the screen
 
     return GlobalLoading(
       child: PageWithDrawerOnDrag(
@@ -207,7 +208,7 @@ class Panel extends HookConsumerWidget {
                                       width: width,
                                       backgroundColor: AppColors.greens[0],
                                       title: 'پیوستن',
-                                      provider: roomsControllerProvider,
+                                      provider: activeRoomsProvider,
                                       onPressed: () async {
                                         if (_formKey.currentState!.validate())
                                           await ref

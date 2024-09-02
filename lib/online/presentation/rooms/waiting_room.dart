@@ -80,129 +80,113 @@ class WaitingRoom extends HookConsumerWidget {
                       .id!);
             },
           ),
-          SizedBox(height: height / 24),
-          // list of users joined the room
-          Container(
-            height: height / 2,
-            width: width / 1.2,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primaries[2],
-                  AppColors.primaries[3],
+          RefreshIndicator(
+            onRefresh: () async {
+              final roomId =
+                  SharedPrefs.getModel<Room>('currentRoom', Room.fromJson)!.id;
+              await ref
+                  .read(activeRoomsProvider.notifier)
+                  .refreshRoomById(roomId!);
+            },
+            // show the list of users joined the room
+            child: SizedBox(
+              height: height / 1.2,
+              width: width / 1.2,
+              child: ListView(
+                children: [
+                  // TODO: Later we put headers in a separate widget and use it here
+                  SizedBox(height: height / 8),
+                  // list of users joined the room
+                  Container(
+                    height: height / 2,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primaries[2],
+                          AppColors.primaries[3],
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListView.custom(
+                        physics: const BouncingScrollPhysics(),
+                        controller: scrollController,
+                        // controller: ,
+                        childrenDelegate: SliverChildListDelegate(
+                          [
+                            activeRoom.maybeWhen(
+                              data: (rooms) {
+                                final room = rooms.firstOrNull;
+                                if (room != null) {
+                                  final owner = room.usersInfo![0];
+                                  final others = room.usersInfo!.sublist(1);
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      UserCard(
+                                        height: height / 12,
+                                        width: width,
+                                        user: owner,
+                                        color: const Color.fromARGB(
+                                            255, 217, 215, 71),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: width / 32,
+                                          // vertical: height / 128,
+                                        ),
+                                      ),
+                                      if (others.isNotEmpty)
+                                        ...others.map(
+                                          (user) => UserCard(
+                                              height: height / 12,
+                                              width: width,
+                                              user: user,
+                                              icon: FontAwesomeIcons.periscope,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: width / 32,
+                                                // vertical: height / 128,
+                                              )),
+                                        ),
+                                    ],
+                                  );
+                                }
+                                return SizedBox();
+                              },
+                              orElse: () => LoadingAnimationWidget.newtonCradle(
+                                size: width / 1,
+                                color: AppColors.primaries[1],
+                              ),
+                            ),
+                            // show the rest of the players who joined the room after the first player
+                            liveEvents.maybeWhen(
+                              data: (events) {
+                                events.where((event) {
+                                  switch (event.type) {
+                                    case JoinRoomEvent:
+                                      return true;
+                                    case _:
+                                      return false;
+                                  }
+                                }).map((event) {
+                                  return UserCard(
+                                    height: height,
+                                    width: width,
+                                    user: (event as JoinRoomEvent).user,
+                                  );
+                                });
+                                return SizedBox();
+                              },
+                              orElse: () => LoadingAnimationWidget.flickr(
+                                size: width / 8,
+                                leftDotColor: AppColors.greens[1],
+                                rightDotColor: AppColors.primaries[1],
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
                 ],
               ),
-              borderRadius: BorderRadius.circular(10),
             ),
-            child: ListView.custom(
-                physics: const BouncingScrollPhysics(),
-                controller: scrollController,
-                // controller: ,
-                childrenDelegate: SliverChildListDelegate(
-                  [
-                    // show first player as the room owner and the rest as ordinary players from alreadyJoinedFuture
-                    // FutureBuilder(
-                    //   future: alreadyJoinedFuture,
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.connectionState == ConnectionState.waiting) {
-                    //       return LoadingAnimationWidget.twistingDots(
-                    //         size: 30,
-                    //         leftDotColor: Colors.green,
-                    //         rightDotColor: Colors.red,
-                    //       );
-                    //     }
-                    //     final players = snapshot.data as List<UsersInRoom>;
-                    //     final owner = players[0];
-                    //     final others = players.sublist(1);
-                    //     return Column(
-                    //       mainAxisSize: MainAxisSize.min,
-                    //       children: [
-                    //         UserCard(
-                    //           height: height,
-                    //           width: width,
-                    //           user: owner,
-                    //           color: const Color.fromARGB(255, 217, 215, 71),
-                    //         ),
-                    //         if (others.isNotEmpty)
-                    //           ...others.map(
-                    //             (user) => UserCard(
-                    //               height: height,
-                    //               width: width,
-                    //               user: user,
-                    //             ),
-                    //           ),
-                    //       ],
-                    //     );
-                    //   },
-                    // ),
-                    // SizedBox(height: height / 32),
-                    activeRoom.maybeWhen(
-                      data: (rooms) {
-                        final room = rooms.firstOrNull;
-                        if (room != null) {
-                          final owner = room.usersInfo![0];
-                          final others = room.usersInfo!.sublist(1);
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              UserCard(
-                                height: height / 12,
-                                width: width,
-                                user: owner,
-                                color: const Color.fromARGB(255, 217, 215, 71),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: width / 32,
-                                  // vertical: height / 128,
-                                ),
-                              ),
-                              if (others.isNotEmpty)
-                                ...others.map(
-                                  (user) => UserCard(
-                                      height: height / 12,
-                                      width: width,
-                                      user: user,
-                                      icon: FontAwesomeIcons.periscope,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: width / 32,
-                                        // vertical: height / 128,
-                                      )),
-                                ),
-                            ],
-                          );
-                        }
-                        return SizedBox();
-                      },
-                      orElse: () => LoadingAnimationWidget.newtonCradle(
-                        size: width / 1,
-                        color: AppColors.primaries[1],
-                      ),
-                    ),
-                    // show the rest of the players who joined the room after the first player
-                    liveEvents.maybeWhen(
-                      data: (events) {
-                        events.where((event) {
-                          switch (event.type) {
-                            case JoinRoomEvent:
-                              return true;
-                            case _:
-                              return false;
-                          }
-                        }).map((event) {
-                          return UserCard(
-                            height: height,
-                            width: width,
-                            user: (event as JoinRoomEvent).user,
-                          );
-                        });
-                        return SizedBox();
-                      },
-                      orElse: () => LoadingAnimationWidget.newtonCradle(
-                        size: width / 2,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ],
-                )),
           ),
         ],
       ),

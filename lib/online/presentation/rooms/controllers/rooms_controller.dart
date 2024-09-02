@@ -151,12 +151,13 @@ class RoomsController extends _$RoomsController {
   }
 
   // get room
-  Future<void> getRoombyId(String roomId) async {
+  Future<RoomResp> getRoombyId(String roomId) async {
     state = const AsyncLoading();
     final roomsRepo = ref.read(roomsRepositoryProvider);
+    Either<ErrorResp, RoomResp> roomResult = right(RoomResp.empty());
     state = await AsyncValue.guard(() async {
-      final getRoomResult = await roomsRepo.getRoomById(roomId);
-      getRoomResult.match(
+      roomResult = await roomsRepo.getRoomById(roomId);
+      roomResult.match(
         (l) {
           log('get room failed');
         },
@@ -178,8 +179,9 @@ class RoomsController extends _$RoomsController {
           });
         },
       );
-      return getRoomResult;
+      return roomResult;
     });
+    return roomResult.getOrElse((_) => RoomResp.empty());
   }
 }
 
