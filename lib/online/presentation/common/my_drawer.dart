@@ -138,7 +138,8 @@ class MyDrawer extends ConsumerWidget {
                             );
                       },
                       repeatedName: repeatedNames.isNotEmpty
-                          ? repeatedNames.contains(otherAccounts[i].fullName)
+                          ? repeatedNames.any((element) =>
+                              element.fullName == otherAccounts[i].fullName)
                           : false,
                     ),
                 // add new account

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_mafia/online/data/models/responses/events.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -22,6 +24,9 @@ class Sse {
     bool withCredentials = false,
     bool closeOnError = true,
   }) {
+    //
+    log('Sse.connect');
+    //
     final streamController = StreamController<String>();
     final eventSource =
         html.EventSource(uri.toString(), withCredentials: withCredentials);
@@ -70,6 +75,7 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
   await for (final event in sse.stream) {
     final appEvent = AppEvent.fromJson(event);
     allEvents = [...allEvents, appEvent];
+    log('appEvents: $allEvents', name: 'appEvents');
     yield allEvents;
   }
 }

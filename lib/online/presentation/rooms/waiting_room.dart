@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
 import 'package:auto_mafia/offline/db/entities/room.dart';
@@ -24,13 +26,8 @@ class WaitingRoom extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final liveEvents = ref.watch(appEventsProvider);
-    // final alreadyJoinedFuture =
-    //     ref.watch(isarServiceProvider.future).then((isar) {
-    //   final roomId = SharedPrefs.getModel('currentRoom', Room.fromJson)!.id;
-    //   return isar.retrieveRoomByID(roomId!).then((room) => room!.usersInfo);
-    // });
     final activeRoom = ref.watch(activeRoomsProvider);
+    final liveEvents = ref.watch(appEventsProvider);
     //
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
@@ -160,6 +157,7 @@ class WaitingRoom extends HookConsumerWidget {
                             liveEvents.maybeWhen(
                               data: (events) {
                                 events.where((event) {
+                                  log('*****event Recieved*****: $event');
                                   switch (event.type) {
                                     case JoinRoomEvent:
                                       return true;

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -23,6 +25,7 @@ class AccountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (repeatedName!) log('repeatedName: $repeatedName');
     return Column(
       children: [
         ElevatedButton(
@@ -65,7 +68,7 @@ class AccountTile extends StatelessWidget {
                           user.username!,
                           overflow: TextOverflow.ellipsis,
                           style: MyTextStyles.bodyMD.copyWith(
-                            color: AppColors.darkerGrey,
+                            color: AppColors.grey,
                             height: 1.5,
                           ),
                         ),

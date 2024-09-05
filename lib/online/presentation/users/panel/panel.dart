@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
@@ -151,7 +153,6 @@ class Panel extends HookConsumerWidget {
                               onPressed: () async {
                                 AwesomeDialog(
                                     context: context,
-                                    title: "ENTER IP",
                                     body: SingleChildScrollView(
                                       child: Form(
                                         key: _formKey,
@@ -169,7 +170,7 @@ class Panel extends HookConsumerWidget {
                                                 validator: (content) {
                                                   if (content == null ||
                                                       content.isEmpty) {
-                                                    return 'لطفا IP را وارد کنید';
+                                                    return 'لطفا id را وارد کنید';
                                                   }
                                                   return null;
                                                 }),
@@ -208,9 +209,9 @@ class Panel extends HookConsumerWidget {
                                       width: width,
                                       backgroundColor: AppColors.greens[0],
                                       title: 'پیوستن',
-                                      provider: activeRoomsProvider,
+                                      provider: roomsControllerProvider,
                                       onPressed: () async {
-                                        if (_formKey.currentState!.validate())
+                                        if (_formKey.currentState!.validate()) {
                                           await ref
                                               .read(roomsControllerProvider
                                                   .notifier)
@@ -218,6 +219,7 @@ class Panel extends HookConsumerWidget {
                                                 roomIdController.text,
                                                 passwordController.text,
                                               );
+                                        }
                                       },
                                     )).show();
                               },

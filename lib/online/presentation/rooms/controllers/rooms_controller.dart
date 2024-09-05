@@ -107,11 +107,10 @@ class RoomsController extends _$RoomsController {
             updatedAt: r.rooms[0].updatedAt,
             usersInfo: r.users![r.rooms[0].id!],
           );
-          // get all rooms where current user is present
+          // get room by id
           await ref
               .read(activeRoomsProvider.notifier)
-              .getRooms(SharedPrefs.userID!);
-
+              .getRoomById(r.rooms[0].id!);
           // go to waiting room
           ref.read(routerProvider).pushNamed(
                 'waiting-room',
@@ -173,10 +172,11 @@ class RoomsController extends _$RoomsController {
             players: r.rooms[0].players,
             createdAt: r.rooms[0].createdAt,
             updatedAt: r.rooms[0].updatedAt,
+            usersInfo: r.users![r.rooms[0].id!],
           );
-          ref.read(routerProvider).goNamed('room', pathParameters: {
-            'name': r.rooms[0].name!,
-          });
+          // ref.read(routerProvider).pushNamed('waiting', pathParameters: {
+          //   'name': r.rooms[0].name!,
+          // });
         },
       );
       return roomResult;

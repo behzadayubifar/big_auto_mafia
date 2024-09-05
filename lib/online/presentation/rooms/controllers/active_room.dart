@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -12,19 +14,14 @@ class ActiveRooms extends _$ActiveRooms {
   @override
   Future<List<Room?>> build() async {
     final currentUserId = await SharedPrefs.userID;
+    log('build active rooms');
     return getRooms(currentUserId!);
   }
 
   Future<List<Room?>> getRooms(String userId) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () async {
-        final isar = await ref.read(isarServiceProvider.future);
-        final rooms = isar.retrieveUserRooms(userId);
-        return rooms;
-      },
-    );
-    return [];
+    final isar = await ref.read(isarServiceProvider.future);
+    final rooms = await isar.retrieveUserRooms(userId);
+    return rooms;
   }
 
   // fetch rooms from local db
@@ -55,7 +52,11 @@ class ActiveRooms extends _$ActiveRooms {
         // TODO: We can use isolates to run the server & local methods in parallel to save time
         final roomsResp =
             await ref.read(roomsControllerProvider.notifier).getRoombyId(id);
-        if (roomsResp.users != null) return roomsResp.rooms;
+        if (roomsResp.users != null) {
+          rooms = roomsResp.rooms;
+          rooms[0]!.usersInfo = roomsResp.users![id];
+          return rooms;
+        }
 
         // if the room couldn't be fetched from the server, we return the room from local db
         rooms = await getRoomById(id);
