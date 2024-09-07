@@ -112,6 +112,9 @@ class RoomsController extends _$RoomsController {
               .read(activeRoomsProvider.notifier)
               .getRoomById(r.rooms[0].id!);
           // go to waiting room
+          // Sse
+
+          //
           ref.read(routerProvider).pushNamed(
                 'waiting-room',
                 extra: joinRoomResult
@@ -150,7 +153,7 @@ class RoomsController extends _$RoomsController {
   }
 
   // get room
-  Future<RoomResp> getRoombyId(String roomId) async {
+  Future<Either<ErrorResp, RoomResp>> getRoombyId(String roomId) async {
     state = const AsyncLoading();
     final roomsRepo = ref.read(roomsRepositoryProvider);
     Either<ErrorResp, RoomResp> roomResult = right(RoomResp.empty());
@@ -181,7 +184,7 @@ class RoomsController extends _$RoomsController {
       );
       return roomResult;
     });
-    return roomResult.getOrElse((_) => RoomResp.empty());
+    return roomResult;
   }
 }
 

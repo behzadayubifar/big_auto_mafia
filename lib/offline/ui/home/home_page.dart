@@ -33,49 +33,60 @@ class _HomePageState extends ConsumerState<HomePage> {
         animType: AnimType.BOTTOMSLIDE,
         dismissOnTouchOutside: false,
         dismissOnBackKeyPress: false,
-        body: SizedBox(
-          height: 320,
-          child: ListView(
-            padding: EdgeInsets.all(8),
-            children: [
-              Text('تذکر مهم در مورد دکمه ها',
-                  style: MyTextStyles.bodyLarge.copyWith(
-                    color: AppColors.secondaries[1],
-                    height: 1.5,
-                  )),
-              SizedBox(
-                height: 12,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: context.size!.height / 3.2,
+              width: context.size!.width / 1.2,
+              child: ListView(
+                padding: EdgeInsets.all(8),
+                children: [
+                  Text('تذکر مهم در مورد دکمه ها',
+                      style: MyTextStyles.bodyLarge.copyWith(
+                        color: AppColors.secondaries[1],
+                        height: 1.5,
+                      )),
+                  SizedBox(
+                    height: context.size!.height / 48,
+                  ),
+                  Text(
+                    'اکثر مواقع برای اجرا شدن دکمه ها نیاز به نگه داشتن آنها برای 2 ثانیه دارید تا از اشتباهی اجرا شدن عملیات ها بر اثر تصادف جلوگیری شود برای اطلاعات بیشتر حتما به راهنما یه سری بزنید لطفا (:)',
+                    style: MyTextStyles.bodyMD.copyWith(
+                      color: AppColors.primaries[3],
+                      height: 1.5,
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                  SizedBox(
+                    height: context.size!.height / 32,
+                  ),
+                ],
               ),
-              Text(
-                'اکثر مواقع برای اجرا شدن دکمه ها نیاز به نگه داشتن آنها برای 2 ثانیه دارید تا از اشتباهی اجرا شدن عملیات ها بر اثر تصادف جلوگیری شود برای اطلاعات بیشتر حتما به راهنما یه سری بزنید لطفا (:)',
-                style: MyTextStyles.bodyMD.copyWith(
-                  color: AppColors.primaries[3],
-                  height: 1.5,
-                ),
+            ),
+            AnimatedButton(
+              color: AppColors.primaries[1],
+              width: 120,
+              buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+                color: AppColors.white,
               ),
-              SizedBox(
-                height: 16,
-              ),
-              AnimatedButton(
-                color: AppColors.primaries[1],
-                width: 120,
-                buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
-                  color: AppColors.white,
-                ),
-                text: 'فهمیدم',
-                pressEvent: () async {
-                  // final isUpdateAvailable = await checkForUpdate();
-                  // print(isUpdateAvailable);
-                  // if (isUpdateAvailable != null) {
-                  //   Navigator.of(context).pop();
-                  //   checkUpdateDialog(context);
-                  //   return;
-                  // }
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          ),
+              text: 'فهمیدم',
+              pressEvent: () async {
+                // final isUpdateAvailable = await checkForUpdate();
+                // print(isUpdateAvailable);
+                // if (isUpdateAvailable != null) {
+                //   Navigator.of(context).pop();
+                //   checkUpdateDialog(context);
+                //   return;
+                // }
+                Navigator.of(context).pop();
+              },
+            ),
+            SizedBox(
+              height: context.size!.height / 64,
+            ),
+          ],
         ),
       ).show();
     });

@@ -21,6 +21,7 @@ class ActiveRooms extends _$ActiveRooms {
   Future<List<Room?>> getRooms(String userId) async {
     final isar = await ref.read(isarServiceProvider.future);
     final rooms = await isar.retrieveUserRooms(userId);
+    state = AsyncValue.data(rooms);
     return rooms;
   }
 
@@ -52,17 +53,56 @@ class ActiveRooms extends _$ActiveRooms {
         // TODO: We can use isolates to run the server & local methods in parallel to save time
         final roomsResp =
             await ref.read(roomsControllerProvider.notifier).getRoombyId(id);
-        if (roomsResp.users != null) {
-          rooms = roomsResp.rooms;
-          rooms[0]!.usersInfo = roomsResp.users![id];
-          return rooms;
-        }
-
-        // if the room couldn't be fetched from the server, we return the room from local db
-        rooms = await getRoomById(id);
+        roomsResp.match(
+          (l) async {
+            // if the room couldn't be fetched from the server, we return the room from local db
+            switch (l.statusCode) {
+              case 404:
+                log('room not found');
+                // so we remove the room from the local db
+                ref.read(isarServiceProvider.future).then(
+                  (isar) async {
+                    await isar.deleteRoom(id);
+                  },
+                );
+                break;
+              default:
+                log('failed to fetch room');
+                rooms = await getRoomById(id);
+                break;
+            }
+          },
+          (r) async {
+            log('room found');
+            if (r.users != null) {
+              rooms = r.rooms;
+              rooms[0]!.usersInfo = r.users![id];
+              return rooms;
+            }
+            // update the room in local db
+            rooms = await updateRoom(r.rooms[0]);
+          },
+        );
         return rooms;
       },
     );
     return rooms;
+  }
+
+  // update room in local db
+  Future<List<Room?>> updateRoom(Room room) async {
+    final isar = await ref.read(isarServiceProvider.future);
+    await isar.putRoom(
+      id: room.id!,
+      name: room.name!,
+      createdAt: room.createdAt!,
+      updatedAt: room.updatedAt!,
+      numberOfPlayers: room.numberOfPlayers!,
+      password: room.password!,
+      players: room.players!,
+      status: room.status!,
+      usersInfo: room.usersInfo!,
+    );
+    return getRooms(await SharedPrefs.userID!);
   }
 }

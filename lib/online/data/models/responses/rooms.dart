@@ -40,6 +40,24 @@ class UsersInRoom {
       'full_name': fullName,
     };
   }
+
+  @override
+  String toString() {
+    return 'UsersInRoom{userName: $userName, id: $id, fullName: $fullName}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UsersInRoom &&
+        other.userName == userName &&
+        other.id == id &&
+        other.fullName == fullName;
+  }
+
+  @override
+  int get hashCode => userName.hashCode ^ id.hashCode ^ fullName.hashCode;
 }
 
 class RoomResp {

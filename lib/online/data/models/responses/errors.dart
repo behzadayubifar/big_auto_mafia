@@ -12,8 +12,14 @@ class ErrorResp {
   String msg;
   dynamic err;
   Map<String, dynamic>? details;
+  int? statusCode;
 
-  ErrorResp({required this.msg, this.err, this.details});
+  ErrorResp({
+    required this.msg,
+    this.err,
+    this.details,
+    this.statusCode,
+  });
 
   factory ErrorResp.fromJson(Map<String, dynamic> json) {
     return ErrorResp(

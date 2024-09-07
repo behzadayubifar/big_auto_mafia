@@ -25,7 +25,6 @@ class AccountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (repeatedName!) log('repeatedName: $repeatedName');
     return Column(
       children: [
         ElevatedButton(

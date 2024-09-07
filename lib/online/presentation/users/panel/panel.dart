@@ -75,6 +75,18 @@ class Panel extends HookConsumerWidget {
                   await ref
                       .read(accountsControllerProvider.notifier)
                       .getAccountFromServer(id);
+
+                  final currentUsersRoom =
+                      await ref.read(activeRoomsProvider.notifier).getRooms(id);
+                  if (currentUsersRoom.isNotEmpty) {
+                    for (final room in currentUsersRoom) {
+                      await ref
+                          .read(activeRoomsProvider.notifier)
+                          .refreshRoomById(room!.id!);
+                    }
+                  } else {
+                    log('no active room');
+                  }
                 },
                 child: SizedBox(
                   height: height / 1.4,
@@ -260,7 +272,8 @@ class Panel extends HookConsumerWidget {
                                             await ref
                                                 .read(activeRoomsProvider
                                                     .notifier)
-                                                .getRoomById(rooms[index]!.id!);
+                                                .refreshRoomById(
+                                                    rooms[index]!.id!);
                                             await ref
                                                 .read(routerProvider)
                                                 .pushNamed(

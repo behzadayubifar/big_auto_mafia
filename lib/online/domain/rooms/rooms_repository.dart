@@ -101,7 +101,10 @@ class RoomsRepository {
       return Right(RoomResp.fromJson(response.data));
     } else {
       log('Failed to fetch room');
-      return Left(ErrorResp.fromJson(response.data));
+      var err = ErrorResp.fromJson(response.data);
+      // add status code to error resp
+      err.statusCode = response.statusCode;
+      return Left(err);
     }
   }
 

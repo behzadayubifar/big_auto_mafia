@@ -1,81 +1,110 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:auto_mafia/online/data/models/responses/events.dart';
+import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
+import 'package:auto_mafia/online/service/dio_provider.dart';
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'dart:async';
-
-import 'package:universal_html/html.dart' as html;
 
 import '../../offline/db/shared_prefs/shared_prefs.dart';
 import '../data/endpoints.dart';
 
 part 'sse.g.dart';
 
-class Sse {
-  final html.EventSourceOutsideBrowser eventSource;
-  final StreamController<String> streamController;
-
-  Sse._internal(this.eventSource, this.streamController);
-
-  factory Sse.connect({
-    required Uri uri,
-    required String token,
-    bool withCredentials = false,
-    bool closeOnError = true,
-  }) {
-    //
-    log('Sse.connect');
-    //
-    final streamController = StreamController<String>();
-    final eventSource =
-        html.EventSource(uri.toString(), withCredentials: withCredentials);
-
-    if (eventSource is html.EventSourceOutsideBrowser) {
-      eventSource.onHttpClientRequest = (eventSource, request) {
-        request.headers.set("Authorization", token);
-      };
-
-      eventSource.addEventListener('message', (html.Event message) {
-        streamController.add((message as html.MessageEvent).data as String);
-      });
-
-      ///close if the endpoint is not working
-      if (closeOnError) {
-        eventSource.onError.listen((event) {
-          eventSource.close();
-          streamController.close();
-        });
-      }
-      return Sse._internal(eventSource, streamController);
-    } else {
-      throw Exception('EventSource is not supported');
-    }
-  }
-
-  Stream get stream => streamController.stream;
-
-  bool isClosed() => this.streamController.isClosed;
-
-  void close() {
-    this.eventSource.close();
-    this.streamController.close();
-  }
-}
-
 @riverpod
 Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
-  final sse = Sse.connect(
-    uri: Uri.parse(Endpoints.events),
-    token: SharedPrefs.getString('token')!,
-    withCredentials: true,
+  final dio = Dio(
+    BaseOptions(
+      baseUrl:
+          Endpoints.http + Endpoints.host + Endpoints.port + Endpoints.apiV1,
+      responseType: ResponseType.stream,
+      headers: {
+        "Accept": "text/event-stream",
+        "Content-Type": "text/event-stream",
+        "Connection": "keep-alive",
+        "Cache-Control": "no-cache",
+        'Authorization': {await SharedPrefs.getString('token')},
+        "Accept-Language": "fa",
+      },
+    ),
   );
-  ref.onDispose(sse.close);
+  Response<ResponseBody> sse = await dio.get(
+    Endpoints.events,
+  );
+  ref.onDispose(() {
+    dio.close(force: true);
+  });
+  //
   var allEvents = const <AppEvent>[];
-  await for (final event in sse.stream) {
+  final joinedEvents = List<JoinRoomEvent>.empty(growable: true);
+  final leftEvents = List<LeftRoomEvent>.empty(growable: true);
+  //
+  await for (var event in sse.data!.stream
+      .transform(unit8Transformer)
+      .transform(const Utf8Decoder())
+      .transform(const LineSplitter())) {
     final appEvent = AppEvent.fromJson(event);
-    allEvents = [...allEvents, appEvent];
-    log('appEvents: $allEvents', name: 'appEvents');
-    yield allEvents;
+    if (appEvent is JoinRoomEvent) {
+      await ref
+          .read(activeRoomsProvider.notifier)
+          .refreshRoomById(appEvent.roomId);
+    } else if (appEvent is LeftRoomEvent) {
+      await ref
+          .read(activeRoomsProvider.notifier)
+          .refreshRoomById(appEvent.roomId);
+    }
+    // // Events Classification -- JoinRoomEvent, LeftRoomEvent
+    // if (appEvent is JoinRoomEvent) {
+    //   if (!joinedEvents.any((e) => e.user.id == appEvent.user.id)) {
+    //     joinedEvents.add(appEvent);
+    //   }
+    // } else if (appEvent is LeftRoomEvent) {
+    //   if (!leftEvents.any((e) => e.user.id == appEvent.user.id)) {
+    //     leftEvents.add(appEvent);
+    //   }
+    // }
+    // // check if a user has joined a room and left the room
+    // if (joinedEvents.isNotEmpty && leftEvents.isNotEmpty) {
+    //   final toRemoveJoined = <JoinRoomEvent>[];
+    //   final toRemoveLeft = <LeftRoomEvent>[];
+    //   joinedEvents.any((joinEvent) {
+    //     leftEvents.any((leftEvent) {
+    //       if (joinEvent.roomId == leftEvent.roomId) {
+    //         if (joinEvent.user.id == leftEvent.user.id) {
+    //           log('User ${joinEvent.user.userName} has joined and left the room ${joinEvent.roomId}');
+    //           // remove the user from the room
+    //           toRemoveJoined.add(joinEvent);
+    //           toRemoveLeft.add(leftEvent);
+    //           return true;
+    //         }
+    //       }
+    //       return false;
+    //     });
+    //     return false;
+    //   });
+    //   joinedEvents.removeWhere((e) => toRemoveJoined.contains(e));
+    //   leftEvents.removeWhere((e) => toRemoveLeft.contains(e));
+    //   // remove also from allEvents
+    //   allEvents.removeWhere(
+    //       (e) => toRemoveJoined.contains(e) || toRemoveLeft.contains(e));
+    //   // update room in local db
+    //   // await ref
+    //   //     .read(activeRoomsProvider.notifier)
+    //   //     .refreshRoomById(joinedEvents[0].roomId);
+    // }
+    // allEvents = [...allEvents, ...joinedEvents, ...leftEvents];
+    // // update
+    // yield allEvents;
   }
 }
+
+StreamTransformer<Uint8List, List<int>> unit8Transformer =
+    StreamTransformer.fromHandlers(
+  handleData: (data, sink) {
+    sink.add(List<int>.from(data));
+  },
+);

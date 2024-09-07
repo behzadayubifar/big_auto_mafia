@@ -1057,6 +1057,7 @@ class IsarService {
     DateTime? createdAt,
     DateTime? updatedAt,
     List<UsersInRoom>? usersInfo,
+    List<String>? roles,
   }) async {
     final roomExists = await isar.rooms.filter().idEqualTo(id).findFirst();
     if (roomExists != null) {
@@ -1070,6 +1071,7 @@ class IsarService {
             createdAt: createdAt,
             updatedAt: updatedAt,
             usersInfo: usersInfo,
+            roles: roles,
           )));
       log('room updated successfully', name: 'putRoom');
       return roomExists;
@@ -1083,7 +1085,8 @@ class IsarService {
         ..status = status
         ..createdAt = createdAt
         ..updatedAt = updatedAt
-        ..usersInfo = usersInfo;
+        ..usersInfo = usersInfo
+        ..roles = roles;
       await isar.writeTxn(() => isar.rooms.put(room));
       log('room inserted successfully', name: 'putRoom');
       return room;
@@ -1120,6 +1123,21 @@ class IsarService {
       return true;
     }
     log('room not found', name: 'deleteRoom');
+    return false;
+  }
+
+  Future<bool> removePlayerFromRoom(String roomID, String playerID) async {
+    final room = await isar.rooms.filter().idEqualTo(roomID).findFirst();
+    if (room != null) {
+      final updatedUsersInfo =
+          room.usersInfo!.where((user) => user.id != playerID).toList();
+      await isar.writeTxn(
+          () => isar.rooms.put(room.copy(usersInfo: updatedUsersInfo)));
+      log('player removed from room successfully',
+          name: 'removePlayerFromRoom');
+      return true;
+    }
+    log('room not found', name: 'removePlayerFromRoom');
     return false;
   }
 

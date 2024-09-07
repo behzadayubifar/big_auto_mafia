@@ -17,6 +17,7 @@ class Room {
   String? status;
   List<String>? players;
   List<UsersInRoom>? usersInfo;
+  List<String>? roles;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -32,6 +33,7 @@ class Room {
     DateTime? createdAt,
     DateTime? updatedAt,
     List<UsersInRoom>? usersInfo,
+    List<String>? roles,
   }) =>
       Room()
         ..id = id
@@ -42,7 +44,8 @@ class Room {
         ..players = players
         ..createdAt = createdAt
         ..updatedAt = updatedAt
-        ..usersInfo = usersInfo;
+        ..usersInfo = usersInfo
+        ..roles = roles;
 
   static Room fromJson(Map<String, dynamic> json) => Room()
     ..id = json['id']
@@ -53,6 +56,7 @@ class Room {
     ..players = List<String>.from(json['players'])
     ..createdAt = DateTime.parse(json['created_at'])
     ..updatedAt = DateTime.parse(json['updated_at'])
+    ..roles = List<String>.from(json['roles'])
     ..usersInfo = json['users'] == null
         ? null
         : List<UsersInRoom>.from(
@@ -70,6 +74,7 @@ class Room {
         'players': players,
         'created_at': createdAt.toString(),
         'updated_at': updatedAt.toString(),
+        'roles': roles,
         'users': usersInfo == null
             ? null
             : List<dynamic>.from(
