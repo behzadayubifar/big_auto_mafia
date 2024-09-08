@@ -154,6 +154,7 @@ class AppDialog extends HookConsumerWidget {
                         style: MyTextStyles.bodyLarge.copyWith(
                           color: AppColors.darkText,
                           height: 1.5,
+                          overflow: TextOverflow.visible,
                         ),
                       ),
                       SizedBox(height: height / 64),
@@ -164,6 +165,7 @@ class AppDialog extends HookConsumerWidget {
                         style: MyTextStyles.bodyMD.copyWith(
                           color: AppColors.darkerGrey,
                           height: 1.5,
+                          overflow: TextOverflow.visible,
                         ),
                       ),
                     ],

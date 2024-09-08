@@ -4,7 +4,6 @@ import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
 import 'package:auto_mafia/offline/db/entities/room.dart';
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
-import 'package:auto_mafia/online/data/models/responses/events.dart';
 import 'package:auto_mafia/online/events/sse.dart';
 import 'package:auto_mafia/online/presentation/common/page_with_drawer_on_drag.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
@@ -17,7 +16,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../data/endpoints.dart';
 import '../../data/models/responses/rooms.dart';
 import '../common/app_bar.dart';
 import '../common/my_drawer.dart';
@@ -30,7 +28,6 @@ class WaitingRoom extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeRoom = ref.watch(activeRoomsProvider);
-    final liveEvents = ref.watch(appEventsProvider);
     //
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;

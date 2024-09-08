@@ -23,6 +23,7 @@ class RoomsRepository {
     required String name,
     required int numberOfPlayers,
     required String password,
+    required List<String> roles,
   }) async {
     final response = await dio.post(
       Endpoints.createRoom,
@@ -30,6 +31,7 @@ class RoomsRepository {
         'name': name,
         'number_of_players': numberOfPlayers,
         'password': password,
+        'roles': roles,
       }),
       options: Options(
         headers: {
@@ -98,7 +100,8 @@ class RoomsRepository {
     if (response.statusCode == 200) {
       log('Room fetched successfully', name: "getRoomById");
       log('response :' + response.data.toString(), name: "getRoomById");
-      return Right(RoomResp.fromJson(response.data));
+      final resp = RoomResp.fromJson(response.data);
+      return Right(resp);
     } else {
       log('Failed to fetch room');
       var err = ErrorResp.fromJson(response.data);

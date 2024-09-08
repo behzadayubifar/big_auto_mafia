@@ -172,11 +172,13 @@ class RoomEntry extends HookConsumerWidget {
             provider: roomsControllerProvider,
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
+                final roles = await ref.read(selectedRolesProvider);
                 await ref.read(roomsControllerProvider.notifier).createRoom(
                       name: roomNameController.text,
                       password: roomPasswordController.text,
                       numberOfPlayers:
                           int.tryParse(numberOfPlayersController.text)!,
+                      roles: roles,
                     );
               }
             }),

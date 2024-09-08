@@ -89,6 +89,7 @@ class ErrorsObserver extends ProviderObserver {
         body: Text(data.msg,
             style: MyTextStyles.bodyMedium.copyWith(
               height: 1.6,
+              overflow: TextOverflow.visible,
             )),
         buttonsTextStyle: MyTextStyles.bodyMedium.copyWith(
           height: 1.2,

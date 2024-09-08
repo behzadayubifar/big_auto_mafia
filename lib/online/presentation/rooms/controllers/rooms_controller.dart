@@ -29,6 +29,7 @@ class RoomsController extends _$RoomsController {
     required String name,
     required int numberOfPlayers,
     required String password,
+    required List<String> roles,
   }) async {
     state = const AsyncLoading();
     final roomsRepo = ref.read(roomsRepositoryProvider);
@@ -38,6 +39,7 @@ class RoomsController extends _$RoomsController {
           name: name,
           numberOfPlayers: numberOfPlayers,
           password: password,
+          roles: roles,
         );
 
         createRoomResult.match(
@@ -57,16 +59,14 @@ class RoomsController extends _$RoomsController {
               players: r.rooms[0].players,
               createdAt: r.rooms[0].createdAt,
               updatedAt: r.rooms[0].updatedAt,
-              usersInfo: r.users![r.rooms[0].id!],
+              usersInfo: r.users != null ? r.users![r.rooms[0].id!] : null,
+              roles: roles,
             );
+            await ref
+                .read(activeRoomsProvider.notifier)
+                .getRoomById(r.rooms[0].id!);
             ref.read(routerProvider).pushNamed(
                   'waiting-room',
-                  extra: createRoomResult
-                      .getRight()
-                      .getOrElse(() => RoomResp.empty())
-                      .users!
-                      .values
-                      .toList()[0],
                 );
           },
         );
@@ -106,6 +106,7 @@ class RoomsController extends _$RoomsController {
             createdAt: r.rooms[0].createdAt,
             updatedAt: r.rooms[0].updatedAt,
             usersInfo: r.users![r.rooms[0].id!],
+            roles: r.rooms[0].roles,
           );
           // get room by id
           await ref
@@ -159,6 +160,7 @@ class RoomsController extends _$RoomsController {
     Either<ErrorResp, RoomResp> roomResult = right(RoomResp.empty());
     state = await AsyncValue.guard(() async {
       roomResult = await roomsRepo.getRoomById(roomId);
+      log('roomResult: $roomResult');
       roomResult.match(
         (l) {
           log('get room failed');
@@ -176,6 +178,7 @@ class RoomsController extends _$RoomsController {
             createdAt: r.rooms[0].createdAt,
             updatedAt: r.rooms[0].updatedAt,
             usersInfo: r.users![r.rooms[0].id!],
+            roles: r.rooms[0].roles,
           );
           // ref.read(routerProvider).pushNamed('waiting', pathParameters: {
           //   'name': r.rooms[0].name!,

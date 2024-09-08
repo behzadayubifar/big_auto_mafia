@@ -1110,7 +1110,9 @@ class IsarService {
   Future<List<Room>> retrieveUserRooms(String id) async {
     final rooms = await isar.rooms.where().findAll();
     final userRooms = rooms
-        .where((room) => room.usersInfo!.any((user) => user.id == id))
+        .where((room) => room.usersInfo != null
+            ? room.usersInfo!.any((user) => user.id == id)
+            : false)
         .toList();
     return userRooms;
   }

@@ -102,6 +102,7 @@ class ActiveRooms extends _$ActiveRooms {
       players: room.players!,
       status: room.status!,
       usersInfo: room.usersInfo!,
+      roles: room.roles!,
     );
     return getRooms(await SharedPrefs.userID!);
   }
