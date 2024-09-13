@@ -143,13 +143,15 @@ class RoomsController extends _$RoomsController {
           log('leave room failed');
         },
         (r) async {
+          ref.read(routerProvider).goNamed('panel');
+          //
           log('leave room success');
           SharedPrefs.remove('currentRoomID');
           final userID = SharedPrefs.userID!;
           final isar = await ref.read(isarServiceProvider.future);
           await isar.deleteRoom(r.rooms[0].id!);
+
           //
-          ref.read(routerProvider).goNamed('panel');
           // get account from server
           await ref
               .read(accountsControllerProvider.notifier)

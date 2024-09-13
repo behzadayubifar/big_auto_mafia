@@ -7,25 +7,31 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OnlineButton extends HookConsumerWidget {
   /* const */ OnlineButton({
-    required this.height,
-    required this.width,
+    this.height,
+    this.width,
     this.padding,
     this.provider,
-    required this.title,
-    required this.onPressed,
+    this.title,
+    this.onPressed,
+    this.child,
     this.shadowColor,
     this.elevation,
     this.backgroundColor,
     this.textColor,
     this.textStyle,
     super.key,
-  });
+  }) : assert(child != null ||
+            (title != null &&
+                width != null &&
+                height != null &&
+                onPressed != null));
 
-  final String title;
+  Widget? child;
+  final String? title;
   final void Function()? onPressed;
   final ProviderListenable? provider;
-  final double height;
-  final double width;
+  final double? height;
+  final double? width;
   final EdgeInsetsGeometry? padding;
   final Color? shadowColor;
   final double? elevation;
@@ -42,39 +48,41 @@ class OnlineButton extends HookConsumerWidget {
       // errorListener(ref, provider!, context);
     }
 
-    return SizedBox(
-      height: height,
-      width: width,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? AppColors.white,
-          shadowColor: shadowColor ?? AppColors.black,
-          elevation: elevation ?? 10.0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          padding: padding ??
-              EdgeInsets.symmetric(
-                vertical: 32.0,
-                horizontal: 32.0,
-              ), // Add padding to make the button bigger
-        ),
-        onPressed: onPressed,
-        child: controller is AsyncLoading
-            ? LoadingAnimationWidget.flickr(
-                size: height / 3.2,
-                leftDotColor: AppColors.green,
-                rightDotColor: AppColors.primary,
-              )
-            : Text(
-                title,
-                style: textStyle ??
-                    MyTextStyles.headlineSmall.copyWith(
-                      color: textColor ?? AppColors.green,
-                      // height: 1.2,
-                    ),
+    return child != null
+        ? child!
+        : SizedBox(
+            height: height,
+            width: width,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: backgroundColor ?? AppColors.white,
+                shadowColor: shadowColor ?? AppColors.black,
+                elevation: elevation ?? 10.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                padding: padding ??
+                    EdgeInsets.symmetric(
+                      vertical: 32.0,
+                      horizontal: 32.0,
+                    ), // Add padding to make the button bigger
               ),
-      ),
-    );
+              onPressed: onPressed,
+              child: controller is AsyncLoading
+                  ? LoadingAnimationWidget.flickr(
+                      size: height! / 3.2,
+                      leftDotColor: AppColors.green,
+                      rightDotColor: AppColors.primary,
+                    )
+                  : Text(
+                      title!,
+                      style: textStyle ??
+                          MyTextStyles.headlineSmall.copyWith(
+                            color: textColor ?? AppColors.green,
+                            // height: 1.2,
+                          ),
+                    ),
+            ),
+          );
   }
 }

@@ -103,8 +103,8 @@ class ColoredButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          maximumSize: Size(width / 10, width / 10),
-          minimumSize: Size(width / 10, width / 10),
+          maximumSize: Size(width / 12, width / 12),
+          minimumSize: Size(width / 12, width / 12),
           alignment: Alignment.center,
           backgroundColor: backgroundColor,
         ),

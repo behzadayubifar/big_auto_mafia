@@ -6,6 +6,7 @@ import 'package:auto_mafia/offline/db/entities/room.dart';
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/online/data/models/responses/events.dart';
 import 'package:auto_mafia/online/events/sse.dart';
+import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dart';
 import 'package:auto_mafia/online/presentation/common/dialogs/app_dialog.dart';
 import 'package:auto_mafia/online/presentation/common/page_with_drawer_on_drag.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
@@ -274,21 +275,24 @@ class WaitingRoom extends HookConsumerWidget {
             SizedBox(height: height / 24),
             // Leave the room button
             if (!fullness.value)
-              AnimatedButton(
-                color: AppColors.darkerGrey,
-                width: width / 2,
-                buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
-                  color: AppColors.lighterGrey,
+              OnlineButton(
+                provider: roomsControllerProvider,
+                child: AnimatedButton(
+                  color: AppColors.darkerGrey,
+                  width: width / 2,
+                  buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+                    color: AppColors.lighterGrey,
+                  ),
+                  text: 'ترک روم',
+                  pressEvent: () async {
+                    final roomId = SharedPrefs.getModel<Room>(
+                            'currentRoom', Room.fromJson)!
+                        .id;
+                    await ref
+                        .read(roomsControllerProvider.notifier)
+                        .leaveRoom(roomId!);
+                  },
                 ),
-                text: 'ترک روم',
-                pressEvent: () async {
-                  final roomId =
-                      SharedPrefs.getModel<Room>('currentRoom', Room.fromJson)!
-                          .id;
-                  await ref
-                      .read(roomsControllerProvider.notifier)
-                      .leaveRoom(roomId!);
-                },
               )
             else
               SizedBox(),
