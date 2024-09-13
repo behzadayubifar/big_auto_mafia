@@ -1,7 +1,7 @@
 import 'package:auto_mafia/online/data/models/responses/rooms.dart';
 import 'package:isar/isar.dart';
 
-import 'fast_hash.dart';
+import '../fast_hash.dart';
 
 part 'room.g.dart';
 

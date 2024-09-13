@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:auto_mafia/online/data/models/responses/rooms.dart';
 
@@ -17,13 +18,26 @@ class AppEvent {
         // data example : {"event_type":"joined_room","data":["{\"user_name\" : \"fariba\", \"first_name\" : \"فاطمه\", \"last_name\" : \"جمشیدی\"}"]}
         final roomId = (data['data'] as Map).keys.firstOrNull;
         final user = UsersInRoom.fromJson(data['data'][roomId][0]);
-        return JoinRoomEvent(roomId: roomId, user: user);
+        return JoinedRoom.JoinRoom(roomId: roomId, user: user);
       case "left_room":
         // data example : {"event_type":"left_room","data":["{\"user_name\" : \"fariba\", \"first_name\" : \"فاطمه\", \"last_name\" : \"جمشیدی\"}"]}
         final roomId = (data['data'] as Map).keys.firstOrNull;
         final user = UsersInRoom.fromJson(data['data'][roomId][0]);
-
-        return LeftRoomEvent(roomId: roomId, user: user);
+        return LeftRoom(roomId: roomId, user: user);
+      case "room_full":
+        // data example : {"event_type":"room_full","data":["{\"room_id\" : \"1\", \"users\" : [{\"user_name\" : \"fariba\", \"first_name\" : \"فاطمه\", \"last_name\" : \"جمشیدی\"}]}"]}
+        final roomId = (data['data'] as Map).keys.firstOrNull;
+        final users = (data['data'][roomId] as List)
+            .map((e) => UsersInRoom.fromJson(e))
+            .toList();
+        return RoomFull(roomId: roomId, users: users);
+      case "finished_joining":
+        return FinishedJoining();
+      case "game_started":
+        // example : {"event_type":"game_started","data": {"player_id": "1", "room_id": "124", "role": "leon", "side": "citizen", "heart": 1}}
+        log("game_started event data: ${data['data']}");
+        final player = PlayerOnline.fromJson(data['data']);
+        return GameStarted(player: player);
       default:
         return AppEvent();
     }
@@ -35,12 +49,12 @@ class AppEvent {
   }
 }
 
-class JoinRoomEvent extends AppEvent {
+class JoinedRoom extends AppEvent {
   final String roomId;
   final UsersInRoom user;
   final type = "joined_room";
 
-  JoinRoomEvent({
+  JoinedRoom.JoinRoom({
     required this.roomId,
     required this.user,
   });
@@ -54,21 +68,19 @@ class JoinRoomEvent extends AppEvent {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is JoinRoomEvent &&
-        other.roomId == roomId &&
-        other.user == user;
+    return other is JoinedRoom && other.roomId == roomId && other.user == user;
   }
 
   @override
   int get hashCode => roomId.hashCode ^ user.hashCode;
 }
 
-class LeftRoomEvent extends AppEvent {
+class LeftRoom extends AppEvent {
   final String roomId;
   final UsersInRoom user;
   final type = "left_room";
 
-  LeftRoomEvent({
+  LeftRoom({
     required this.roomId,
     required this.user,
   });
@@ -79,4 +91,43 @@ class LeftRoomEvent extends AppEvent {
   }
 }
 
-class UserEvent {}
+class RoomFull extends AppEvent {
+  final String roomId;
+  final List<UsersInRoom> users;
+  final type = "room_full";
+
+  RoomFull({
+    required this.roomId,
+    required this.users,
+  });
+
+  @override
+  String toString() {
+    return 'RoomFullEvent{roomId: $roomId, users: $users}';
+  }
+}
+
+class FinishedJoining extends AppEvent {
+  final type = "finished_joining";
+
+  FinishedJoining();
+
+  @override
+  String toString() {
+    return 'FinishedJoining{}';
+  }
+}
+
+class GameStarted extends AppEvent {
+  final PlayerOnline player;
+  final type = "game_started";
+
+  GameStarted({
+    required this.player,
+  });
+
+  @override
+  String toString() {
+    return 'GameStarted{player: $player}';
+  }
+}

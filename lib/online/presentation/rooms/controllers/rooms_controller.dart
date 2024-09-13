@@ -11,6 +11,7 @@ import '../../../data/models/responses/errors.dart';
 import '../../../data/models/responses/rooms.dart';
 import '../../../../routes/routes.dart';
 import '../../../domain/rooms/rooms_repository.dart';
+import '../../users/controller/accounts_controller.dart';
 import 'active_room.dart';
 
 part 'rooms_controller.g.dart';
@@ -144,9 +145,27 @@ class RoomsController extends _$RoomsController {
         (r) async {
           log('leave room success');
           SharedPrefs.remove('currentRoomID');
+          final userID = SharedPrefs.userID!;
           final isar = await ref.read(isarServiceProvider.future);
           await isar.deleteRoom(r.rooms[0].id!);
+          //
           ref.read(routerProvider).goNamed('panel');
+          // get account from server
+          await ref
+              .read(accountsControllerProvider.notifier)
+              .getAccountFromServer(userID);
+          // get all rooms from local db
+          final currentUsersRoom =
+              await ref.read(activeRoomsProvider.notifier).getRooms(userID);
+          if (currentUsersRoom.isNotEmpty) {
+            for (final room in currentUsersRoom) {
+              await ref
+                  .read(activeRoomsProvider.notifier)
+                  .refreshRoomById(room!.id!);
+            }
+          } else {
+            log('rooms must be none');
+          }
         },
       );
       return leaveRoomResult;

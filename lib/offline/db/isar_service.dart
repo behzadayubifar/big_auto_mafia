@@ -978,6 +978,7 @@ class IsarService {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isAdmin,
+    PlayerOnline? playerOnline,
   }) async {
     final userExists = await isar.users.filter().idEqualTo(id).findFirst();
     if (userExists != null) {
@@ -992,6 +993,7 @@ class IsarService {
             createdAt: createdAt,
             updatedAt: updatedAt,
             isAdmin: isAdmin,
+            playerOnline: playerOnline,
           )));
       log('user updated successfully', name: 'putUser');
       return true;
@@ -1006,7 +1008,8 @@ class IsarService {
         ..coins = coins
         ..createdAt = createdAt
         ..updatedAt = updatedAt
-        ..isAdmin = isAdmin;
+        ..isAdmin = isAdmin
+        ..playerOnline = playerOnline;
       await isar.writeTxn(() => isar.users.put(user));
       log('user inserted successfully', name: 'putUser');
       return true;

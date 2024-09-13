@@ -75,7 +75,6 @@ class Panel extends HookConsumerWidget {
                   await ref
                       .read(accountsControllerProvider.notifier)
                       .getAccountFromServer(id);
-
                   final currentUsersRoom =
                       await ref.read(activeRoomsProvider.notifier).getRooms(id);
                   if (currentUsersRoom.isNotEmpty) {
@@ -274,6 +273,7 @@ class Panel extends HookConsumerWidget {
                                                     .notifier)
                                                 .refreshRoomById(
                                                     rooms[index]!.id!);
+                                            // go to appropiate page based on the room status
                                             await ref
                                                 .read(routerProvider)
                                                 .pushNamed(

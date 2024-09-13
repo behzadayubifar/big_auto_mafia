@@ -1,8 +1,46 @@
 import 'package:isar/isar.dart';
 
-import 'fast_hash.dart';
+import '../fast_hash.dart';
 
 part 'user.g.dart';
+
+@embedded
+class PlayerOnline {
+  String? roomId;
+  String? role;
+  String? side;
+  int? heart;
+
+  PlayerOnline({
+    this.roomId,
+    this.role,
+    this.side,
+    this.heart,
+  });
+
+  factory PlayerOnline.fromJson(Map<String, dynamic> json) {
+    return PlayerOnline(
+      roomId: json['room_id'],
+      role: json['role'],
+      side: json['side'],
+      heart: json['heart'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'room_id': roomId,
+      'role': role,
+      'side': side,
+      'heart': heart,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'PlayerOnline{roomId: $roomId, role: $role, side: $side, heart: $heart}';
+  }
+}
 
 @Collection()
 class User {
@@ -19,7 +57,7 @@ class User {
   DateTime? createdAt;
   DateTime? updatedAt;
   bool? isAdmin;
-
+  PlayerOnline? playerOnline;
 // -------------------------------------
 
   User copy({
@@ -33,6 +71,7 @@ class User {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isAdmin,
+    PlayerOnline? playerOnline,
   }) =>
       User()
         ..id = id
@@ -44,7 +83,8 @@ class User {
         ..coins = coins
         ..createdAt = createdAt
         ..updatedAt = updatedAt
-        ..isAdmin = isAdmin;
+        ..isAdmin = isAdmin
+        ..playerOnline = playerOnline;
 
   static User fromJson(Map<String, dynamic> json) => User()
     ..id = json['id']
@@ -56,7 +96,10 @@ class User {
     ..coins = json['coins']
     ..createdAt = DateTime.parse(json['created_at'])
     ..updatedAt = DateTime.parse(json['updated_at'])
-    ..isAdmin = json['is_admin'] == "true";
+    ..isAdmin = json['is_admin'] == "true"
+    ..playerOnline = json['player_online'] == null
+        ? null
+        : PlayerOnline.fromJson(json['player_online']);
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -69,6 +112,7 @@ class User {
         'created_at': createdAt,
         'updated_at': updatedAt,
         'is_admin': isAdmin,
+        'player_online': playerOnline?.toJson(),
       };
 
   // get full name

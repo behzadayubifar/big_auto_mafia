@@ -4,6 +4,7 @@ import 'package:auto_mafia/routes/routes.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../offline/constants/app_colors.dart';
 import '../../../../offline/models/role_datasets.dart';
@@ -44,6 +45,86 @@ class AppDialog extends HookConsumerWidget {
           // actions: actions,
         ),
       ],
+    );
+  }
+
+  factory AppDialog.roomIsFull({
+    required double height,
+    required double width,
+    required BuildContext context,
+    required WidgetRef ref, // Add ref as a parameter
+    required bool isCreator,
+  }) {
+    return AppDialog(
+      context: context,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'تمام بازیکنان به اتاق پیوسته‌اند',
+            style: MyTextStyles.bodyLarge.copyWith(
+              color: AppColors.darkText,
+              height: 1.5,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+          SizedBox(height: height / 32),
+          if (isCreator)
+            // TODO: Later we check if the user has enough coins to start the game
+            OnlineButton(
+              height: height / 12,
+              width: width / 1.6,
+              title: 'شروع بازی',
+              onPressed: () async {
+                // start the game
+
+                ref.read(routerProvider).pop();
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  factory AppDialog.finishedJoining({
+    required double height,
+    required double width,
+    required BuildContext context,
+    required WidgetRef ref, // Add ref as a parameter
+  }) {
+    return AppDialog(
+      context: context,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'بازی درحال شروع شدن است ...',
+            style: MyTextStyles.bodyLarge.copyWith(
+              color: AppColors.darkText,
+              height: 1.5,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+          SizedBox(height: height / 32),
+          LoadingAnimationWidget.waveDots(
+            size: height / 12,
+            color: AppColors.primary,
+          ),
+          SizedBox(height: height / 32),
+          OnlineButton(
+            height: height / 12,
+            width: width / 1.6,
+            title: 'بازی',
+            onPressed: () {
+              ref.read(routerProvider).pop();
+            },
+          ),
+        ],
+      ),
     );
   }
 

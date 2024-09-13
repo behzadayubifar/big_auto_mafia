@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:auto_mafia/offline/constants/my_strings.dart';
 import 'package:auto_mafia/offline/db/entities/player.dart';
+import 'package:auto_mafia/offline/db/entities/user.dart';
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/offline/ui/common/loading.dart';
 import 'package:auto_mafia/offline/ui/day/day.dart';
@@ -32,6 +33,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../offline/db/entities/room.dart';
 import '../online/presentation/rooms/room_entry.dart';
 import '../offline/ui/home/online_offline_page.dart';
+import '../online/presentation/rooms/show_role_online.dart';
 
 part 'routes.g.dart';
 
@@ -199,12 +201,18 @@ GoRouter router(RouterRef ref) {
               path: 'waiting_room',
               name: 'waiting-room',
               builder: (context, state) {
-                // final alreadyJoined =
-                //     SharedPrefs.getModel<Room>('currentRoom', Room.fromJson);
-                return WaitingRoom(
-                    // alreadyJoined: alreadyJoined,
-                    );
+                return WaitingRoom();
               }),
+          GoRoute(
+            path: 'show_role/:role',
+            name: 'show-role',
+            builder: (context, state) {
+              final player = state.extra! as PlayerOnline;
+              return ShowRoleOnline(
+                player: player,
+              );
+            },
+          ),
         ],
       ),
 
