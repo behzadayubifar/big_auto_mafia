@@ -35,17 +35,17 @@ class Room {
     List<UsersInRoom>? usersInfo,
     List<String>? roles,
   }) =>
-      Room()
+      this
         ..id = id
-        ..name = name
-        ..numberOfPlayers = numberOfPlayers
-        ..password = password
-        ..status = status
+        ..name = name ?? this.name
+        ..numberOfPlayers = numberOfPlayers ?? this.numberOfPlayers
+        ..password = password ?? this.password
+        ..status = status ?? this.status
         // ..players = players
-        ..createdAt = createdAt
-        ..updatedAt = updatedAt
-        ..usersInfo = usersInfo
-        ..roles = roles;
+        ..createdAt = createdAt ?? this.createdAt
+        ..updatedAt = updatedAt ?? this.updatedAt
+        ..usersInfo = usersInfo ?? this.usersInfo
+        ..roles = roles ?? this.roles;
 
   static Room fromJson(Map<String, dynamic> json) => Room()
     ..id = json['id']

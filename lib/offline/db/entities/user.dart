@@ -74,17 +74,17 @@ class User {
     PlayerOnline? playerOnline,
   }) =>
       User()
-        ..id = id
-        ..username = username
-        ..email = email
-        ..password = password
-        ..firstName = firstName
-        ..lastName = lastName
-        ..coins = coins
-        ..createdAt = createdAt
-        ..updatedAt = updatedAt
-        ..isAdmin = isAdmin
-        ..playerOnline = playerOnline;
+        ..id = id ?? this.id
+        ..username = username ?? this.username
+        ..email = email ?? this.email
+        ..password = password ?? this.password
+        ..firstName = firstName ?? this.firstName
+        ..lastName = lastName ?? this.lastName
+        ..coins = coins ?? this.coins
+        ..createdAt = createdAt ?? this.createdAt
+        ..updatedAt = updatedAt ?? this.updatedAt
+        ..isAdmin = isAdmin ?? this.isAdmin
+        ..playerOnline = playerOnline ?? this.playerOnline;
 
   static User fromJson(Map<String, dynamic> json) => User()
     ..id = json['id']

@@ -266,7 +266,7 @@ class WaitingRoom extends HookConsumerWidget {
               OnlineButton(
                 provider: gameControllerProvider,
                 child: AnimatedButton(
-                  color: AppColors.primaries[0],
+                  color: AppColors.greens[3],
                   width: width / 2,
                   buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
                     color: AppColors.lighterGrey,

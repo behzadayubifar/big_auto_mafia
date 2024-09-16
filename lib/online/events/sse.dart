@@ -78,8 +78,6 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
           usersInfo: appEvent.users,
         );
         final context = NavigationService.navigatorKey.currentContext!;
-        final height = MediaQuery.sizeOf(context).height;
-        final width = MediaQuery.sizeOf(context).width;
         showDialog(
           barrierDismissible: false,
           context: context,
