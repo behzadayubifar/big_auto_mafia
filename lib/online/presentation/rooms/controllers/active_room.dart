@@ -53,6 +53,7 @@ class ActiveRooms extends _$ActiveRooms {
         // TODO: We can use isolates to run the server & local methods in parallel to save time
         final roomsResp =
             await ref.read(roomsControllerProvider.notifier).getRoombyId(id);
+
         roomsResp.match(
           (l) async {
             // if the room couldn't be fetched from the server, we return the room from local db
@@ -81,6 +82,8 @@ class ActiveRooms extends _$ActiveRooms {
             }
             // update the room in local db
             rooms = await updateRoom(r.rooms[0]);
+            // save to sharedPrefd
+            await SharedPrefs.setModel<Room>('currentRoom', r.rooms[0]);
           },
         );
         return rooms;
@@ -99,11 +102,13 @@ class ActiveRooms extends _$ActiveRooms {
       updatedAt: room.updatedAt!,
       numberOfPlayers: room.numberOfPlayers!,
       password: room.password!,
-      players: room.players!,
+      // players: room.players!,
       status: room.status!,
       usersInfo: room.usersInfo!,
       roles: room.roles!,
     );
     return getRooms(await SharedPrefs.userID!);
   }
+
+  // current room
 }

@@ -15,7 +15,7 @@ class Room {
   int? numberOfPlayers;
   String? password;
   String? status;
-  List<String>? players;
+  // List<String>? players;
   List<UsersInRoom>? usersInfo;
   List<String>? roles;
   DateTime? createdAt;
@@ -29,7 +29,7 @@ class Room {
     int? numberOfPlayers,
     String? password,
     String? status,
-    List<String>? players,
+    // List<String>? players,
     DateTime? createdAt,
     DateTime? updatedAt,
     List<UsersInRoom>? usersInfo,
@@ -41,7 +41,7 @@ class Room {
         ..numberOfPlayers = numberOfPlayers
         ..password = password
         ..status = status
-        ..players = players
+        // ..players = players
         ..createdAt = createdAt
         ..updatedAt = updatedAt
         ..usersInfo = usersInfo
@@ -53,7 +53,7 @@ class Room {
     ..numberOfPlayers = json['number_of_players']
     ..password = json['password']
     ..status = json['status']
-    ..players = List<String>.from(json['players'])
+    // ..players = List<String>.from(json['players'])
     ..createdAt = DateTime.parse(json['created_at'])
     ..updatedAt = DateTime.parse(json['updated_at'])
     ..roles = List<String>.from(json['roles'])
@@ -71,7 +71,7 @@ class Room {
         'number_of_players': numberOfPlayers,
         'password': password,
         'status': status,
-        'players': players,
+        // 'players': players,
         'created_at': createdAt.toString(),
         'updated_at': updatedAt.toString(),
         'roles': roles,

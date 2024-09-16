@@ -9,6 +9,7 @@ import 'package:auto_mafia/online/events/sse.dart';
 import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dart';
 import 'package:auto_mafia/online/presentation/common/dialogs/app_dialog.dart';
 import 'package:auto_mafia/online/presentation/common/page_with_drawer_on_drag.dart';
+import 'package:auto_mafia/online/presentation/game/game_controller.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
 import 'package:auto_mafia/routes/routes.dart';
@@ -38,55 +39,18 @@ class WaitingRoom extends HookConsumerWidget {
     final width = MediaQuery.of(context).size.width;
     //
     final fullness = useState(false);
+    //
 
     liveEvents.maybeWhen(
-      data: (events) {
-        for (final event in events) {
-          if (event is RoomFull) {
-            fullness.value = true;
-            final isCreator = SharedPrefs.userID == event.users[0].id;
-            showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) {
-                return AppDialog.roomIsFull(
-                  height: height,
-                  width: width,
-                  context: context,
-                  ref: ref,
-                  isCreator: isCreator,
-                );
-              },
-            );
-          } else if (event is FinishedJoining) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return AppDialog.finishedJoining(
-                  height: height,
-                  width: width,
-                  context: context,
-                  ref: ref,
-                );
-              },
-            );
-          } else if (event is GameStarted) {
-            final player = event.player;
-            ref.read(routerProvider).goNamed(
-                  'show-role',
-                  extra: player,
-                );
-          }
-        }
-      },
+      data: (events) {},
       orElse: () {},
     );
+
     // initial scroll offset is 0
     final scrollController = useScrollController(initialScrollOffset: 0);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (scrollController.hasClients)
+      if (scrollController.hasClients) {
         Future.delayed(Duration(milliseconds: 1500), () {
           scrollController.animateTo(
             height / 2.4,
@@ -94,15 +58,15 @@ class WaitingRoom extends HookConsumerWidget {
             curve: Curves.easeInOut,
           );
         }).then((value) {
-          if (scrollController.hasClients)
-            Future.delayed(Duration(milliseconds: 1500), () {
-              scrollController.animateTo(
-                0,
-                duration: Duration(seconds: 1),
-                curve: Curves.easeInOut,
-              );
-            });
+          Future.delayed(Duration(milliseconds: 1500), () {
+            scrollController.animateTo(
+              0,
+              duration: Duration(seconds: 1),
+              curve: Curves.easeInOut,
+            );
+          });
         });
+      }
     });
 
     return PopScope(
@@ -161,6 +125,9 @@ class WaitingRoom extends HookConsumerWidget {
                         final room = rooms.firstOrNull;
                         if (room != null) {
                           final numberOfJoinedPlayers = room.usersInfo!.length;
+                          if (numberOfJoinedPlayers == room.numberOfPlayers) {
+                            fullness.value = true;
+                          }
                           final owner = room.usersInfo![0];
                           final others = room.usersInfo!.sublist(1);
                           return Column(
@@ -259,7 +226,7 @@ class WaitingRoom extends HookConsumerWidget {
                         return SizedBox();
                       },
                       orElse: () => LoadingAnimationWidget.newtonCradle(
-                        size: width / 1,
+                        size: width / 2,
                         color: AppColors.primaries[1],
                       ),
                     ),
@@ -295,7 +262,27 @@ class WaitingRoom extends HookConsumerWidget {
                 ),
               )
             else
-              SizedBox(),
+              // start the game button
+              OnlineButton(
+                provider: gameControllerProvider,
+                child: AnimatedButton(
+                  color: AppColors.primaries[0],
+                  width: width / 2,
+                  buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+                    color: AppColors.lighterGrey,
+                  ),
+                  text: 'شروع بازی',
+                  pressEvent: () async {
+                    final roomId = SharedPrefs.getModel<Room>(
+                            'currentRoom', Room.fromJson)!
+                        .id;
+                    await ref.read(gameControllerProvider.notifier).startGame(
+                          userId: SharedPrefs.userID!,
+                          roomId: roomId!,
+                        );
+                  },
+                ),
+              ),
           ],
         ),
         scaffoldKey: _scaffoldKey,

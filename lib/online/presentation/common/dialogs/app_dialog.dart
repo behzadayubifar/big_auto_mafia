@@ -1,12 +1,21 @@
+import 'dart:developer';
+
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
+import 'package:auto_mafia/online/data/models/responses/events.dart';
+import 'package:auto_mafia/online/events/sse.dart';
+import 'package:auto_mafia/online/presentation/game/game_controller.dart';
+import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../offline/constants/app_colors.dart';
+import '../../../../offline/db/entities/room.dart';
+import '../../../../offline/db/shared_prefs/shared_prefs.dart';
 import '../../../../offline/models/role_datasets.dart';
 import '../buttons/online_buttons.dart';
 import '../checkboxes/roles_selection_checkbox.dart';
@@ -52,8 +61,8 @@ class AppDialog extends HookConsumerWidget {
     required double height,
     required double width,
     required BuildContext context,
-    required WidgetRef ref, // Add ref as a parameter
-    required bool isCreator,
+    required Ref ref, // Add ref as a parameter
+    // required bool isCreator,
   }) {
     return AppDialog(
       context: context,
@@ -71,18 +80,24 @@ class AppDialog extends HookConsumerWidget {
             ),
           ),
           SizedBox(height: height / 32),
-          if (isCreator)
-            // TODO: Later we check if the user has enough coins to start the game
-            OnlineButton(
-              height: height / 12,
-              width: width / 1.6,
-              title: 'شروع بازی',
-              onPressed: () async {
-                // start the game
-
-                ref.read(routerProvider).pop();
-              },
-            ),
+          // if (isCreator)
+          // TODO: Later we check if the user has enough coins to start the game
+          OnlineButton(
+            provider: gameControllerProvider,
+            height: height / 12,
+            width: width / 1.6,
+            title: 'آماده برای شروع بازی',
+            onPressed: () async {
+              final roomId =
+                  SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
+              final userId = SharedPrefs.userID;
+              await ref.read(gameControllerProvider.notifier).startGame(
+                    roomId: roomId!,
+                    userId: userId!,
+                  );
+              ref.read(routerProvider).pop();
+            },
+          ),
         ],
       ),
     );
@@ -255,6 +270,90 @@ class AppDialog extends HookConsumerWidget {
               }
             },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class ReadyForNextPhaseDialog extends HookConsumerWidget {
+  const ReadyForNextPhaseDialog({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    //
+    final live = ref.watch(appEventsProvider);
+    //
+    final redinessStated = useState(false);
+    //
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    //
+    return AppDialog(
+      context: context,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'تمام بازیکنان به اتاق پیوسته‌اند',
+            style: MyTextStyles.bodyLarge.copyWith(
+              color: AppColors.darkText,
+              height: 1.5,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+          SizedBox(height: height / 32),
+          // if (isCreator)
+          // TODO: Later we check if the user has enough coins to start the game
+          if (!redinessStated.value)
+            OnlineButton(
+              provider: gameControllerProvider,
+              height: height / 12,
+              width: width / 1.6,
+              title: 'آماده برای شروع بازی',
+              onPressed: () async {
+                final roomId =
+                    SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
+                final userId = SharedPrefs.userID;
+                final result =
+                    await ref.read(gameControllerProvider.notifier).startGame(
+                          roomId: roomId!,
+                          userId: userId!,
+                        );
+                result.match(
+                  (l) {},
+                  (r) {
+                    log(r.msg, name: 'ReadyForNextPhaseDialog');
+                    redinessStated.value = true;
+                  },
+                );
+                ref.read(routerProvider).pop();
+              },
+            )
+          else
+            live.maybeWhen(
+              data: (events) {
+                final event = events.firstOrNull;
+                if (event is PlayerAddedToWaitingQueue) {
+                  final numberOfPlayersStatedRedinessUntilNow =
+                      event.numberOfWaiters;
+                  return Text(
+                    'تعداد بازیکنان آماده‌ی شروع بازی: $numberOfPlayersStatedRedinessUntilNow',
+                    style: MyTextStyles.bodyLarge.copyWith(
+                      color: AppColors.darkText,
+                      height: 1.5,
+                      overflow: TextOverflow.visible,
+                    ),
+                  );
+                }
+                return SizedBox();
+              },
+              orElse: () => LoadingAnimationWidget.waveDots(
+                size: height / 12,
+                color: AppColors.primary,
+              ),
+            )
         ],
       ),
     );

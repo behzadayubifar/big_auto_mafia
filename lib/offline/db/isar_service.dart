@@ -1054,7 +1054,7 @@ class IsarService {
     String? id,
     String? name,
     int? numberOfPlayers,
-    List<String>? players,
+    // List<String>? players,
     String? password,
     String? status,
     DateTime? createdAt,
@@ -1068,7 +1068,7 @@ class IsarService {
             id: id,
             name: name,
             numberOfPlayers: numberOfPlayers,
-            players: players,
+            // players: players,
             password: password,
             status: status,
             createdAt: createdAt,
@@ -1077,13 +1077,14 @@ class IsarService {
             roles: roles,
           )));
       log('room updated successfully', name: 'putRoom');
+      // TODO: this is not the updated room but the old one so look for a way to return the updated room or return a boolean
       return roomExists;
     } else {
       final room = Room()
         ..id = id
         ..name = name
         ..numberOfPlayers = numberOfPlayers
-        ..players = players
+        // ..players = players
         ..password = password
         ..status = status
         ..createdAt = createdAt

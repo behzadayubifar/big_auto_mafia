@@ -8,11 +8,13 @@ import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dar
 import 'package:auto_mafia/online/service/dio_provider.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'dart:async';
 
+import '../../offline/db/isar_service.dart';
 import '../../offline/db/shared_prefs/shared_prefs.dart';
 import '../data/endpoints.dart';
 
@@ -69,6 +71,27 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
         await ref
             .read(activeRoomsProvider.notifier)
             .refreshRoomById(appEvent.roomId);
+        // save the users who joined the room in the room collection
+        final isar = await ref.read(isarServiceProvider.future);
+        await isar.putRoom(
+          id: appEvent.roomId,
+          usersInfo: appEvent.users,
+        );
+        final context = NavigationService.navigatorKey.currentContext!;
+        final height = MediaQuery.sizeOf(context).height;
+        final width = MediaQuery.sizeOf(context).width;
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return ReadyForNextPhaseDialog();
+          },
+        );
+      } else if (appEvent is PlayerAddedToWaitingQueue) {
+        allEvents.clear();
+        allEvents.add(appEvent);
+      } else if (appEvent is GameStarted) {
+        // await ref.read(routerProvider).pushNamed('game');
       }
     },
   );
@@ -78,30 +101,7 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
     streamSubscription.cancel();
   });
 
-  // await for (var event in sse.data!.stream
-  //     .transform(unit8Transformer)
-  //     .transform(const Utf8Decoder())
-  //     .transform(const LineSplitter())) {
-  //   final appEvent = AppEvent.fromJson(event);
-  //   if (appEvent is JoinedRoom) {
-  //     await ref
-  //         .read(activeRoomsProvider.notifier)
-  //         .refreshRoomById(appEvent.roomId);
-  //   } else if (appEvent is LeftRoom) {
-  //     await ref
-  //         .read(activeRoomsProvider.notifier)
-  //         .refreshRoomById(appEvent.roomId);
-  //   } else if (appEvent is RoomFull) {
-  //     await ref
-  //         .read(activeRoomsProvider.notifier)
-  //         .refreshRoomById(appEvent.roomId);
-  //   }
-  //   //
-  //   ref.onDispose(() {
-  //     // cancel the stream subscription even if events are still coming
-  //     streamSubscription.cancel();
-  //   });
-  // }
+  yield allEvents;
 }
 
 StreamTransformer<Uint8List, List<int>> unit8Transformer =
@@ -110,3 +110,30 @@ StreamTransformer<Uint8List, List<int>> unit8Transformer =
     sink.add(List<int>.from(data));
   },
 );
+
+/* 
+  await for (var event in sse.data!.stream
+      .transform(unit8Transformer)
+      .transform(const Utf8Decoder())
+      .transform(const LineSplitter())) {
+    final appEvent = AppEvent.fromJson(event);
+    if (appEvent is JoinedRoom) {
+      await ref
+          .read(activeRoomsProvider.notifier)
+          .refreshRoomById(appEvent.roomId);
+    } else if (appEvent is LeftRoom) {
+      await ref
+          .read(activeRoomsProvider.notifier)
+          .refreshRoomById(appEvent.roomId);
+    } else if (appEvent is RoomFull) {
+      await ref
+          .read(activeRoomsProvider.notifier)
+          .refreshRoomById(appEvent.roomId);
+    }
+    //
+    ref.onDispose(() {
+      // cancel the stream subscription even if events are still coming
+      streamSubscription.cancel();
+    });
+  }
+ */

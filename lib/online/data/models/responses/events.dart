@@ -31,8 +31,6 @@ class AppEvent {
             .map((e) => UsersInRoom.fromJson(e))
             .toList();
         return RoomFull(roomId: roomId, users: users);
-      case "finished_joining":
-        return FinishedJoining();
       case "game_started":
         // example : {"event_type":"game_started","data": {"player_id": "1", "room_id": "124", "role": "leon", "side": "citizen", "heart": 1}}
         log("game_started event data: ${data['data']}");
@@ -107,17 +105,6 @@ class RoomFull extends AppEvent {
   }
 }
 
-class FinishedJoining extends AppEvent {
-  final type = "finished_joining";
-
-  FinishedJoining();
-
-  @override
-  String toString() {
-    return 'FinishedJoining{}';
-  }
-}
-
 class GameStarted extends AppEvent {
   final PlayerOnline player;
   final type = "game_started";
@@ -129,5 +116,19 @@ class GameStarted extends AppEvent {
   @override
   String toString() {
     return 'GameStarted{player: $player}';
+  }
+}
+
+class PlayerAddedToWaitingQueue extends AppEvent {
+  final int numberOfWaiters;
+  final type = "player_added_to_waiting_queue";
+
+  PlayerAddedToWaitingQueue({
+    required this.numberOfWaiters,
+  });
+
+  @override
+  String toString() {
+    return '$numberOfWaiters are waiting ...';
   }
 }

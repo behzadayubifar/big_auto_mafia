@@ -1,3 +1,4 @@
+// TODO: MAKE ALL NEEDED CHANGES TO BE LIKE 'START GAME' ENDPOINT
 class Endpoints {
   Endpoints._();
 
@@ -31,4 +32,12 @@ class Endpoints {
 
   // -- Events
   static const String events = "/events/"; // get
+
+  // -- Game
+
+  // /{room_id}/confirm_readiness
+  static String rediness(
+    String roomId,
+  ) =>
+      "/$roomId/confirm_readiness"; // post
 }
