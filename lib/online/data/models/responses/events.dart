@@ -36,6 +36,11 @@ class AppEvent {
         log("game_started event data: ${data['data']}");
         final player = PlayerOnline.fromJson(data['data']);
         return GameStarted(player: player);
+      case "player_added_to_waiting_queue":
+        // example : {"event_type":"player_added_to_waiting_queue","data":1,"created_at":1726544502}
+        log("player_added_to_waiting_queue event data: ${data['data']}");
+        final numberOfWaiters = data['data'];
+        return PlayerAddedToWaitingQueue(numberOfWaiters: numberOfWaiters);
       default:
         return AppEvent();
     }

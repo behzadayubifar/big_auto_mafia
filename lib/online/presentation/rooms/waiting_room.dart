@@ -50,23 +50,23 @@ class WaitingRoom extends HookConsumerWidget {
     final scrollController = useScrollController(initialScrollOffset: 0);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (scrollController.hasClients) {
-        Future.delayed(Duration(milliseconds: 1500), () {
+      Future.delayed(Duration(milliseconds: 1500), () {
+        if (scrollController.hasClients)
           scrollController.animateTo(
             height / 2.4,
             duration: Duration(seconds: 1),
             curve: Curves.easeInOut,
           );
-        }).then((value) {
-          Future.delayed(Duration(milliseconds: 1500), () {
+      }).then((value) {
+        Future.delayed(Duration(milliseconds: 1500), () {
+          if (scrollController.hasClients)
             scrollController.animateTo(
               0,
               duration: Duration(seconds: 1),
               curve: Curves.easeInOut,
             );
-          });
         });
-      }
+      });
     });
 
     return PopScope(
@@ -239,7 +239,7 @@ class WaitingRoom extends HookConsumerWidget {
                 ),
               ),
             ),
-            SizedBox(height: height / 24),
+            SizedBox(height: height / 48),
             // Leave the room button
             if (!fullness.value)
               OnlineButton(
@@ -260,10 +260,58 @@ class WaitingRoom extends HookConsumerWidget {
                         .leaveRoom(roomId!);
                   },
                 ),
-              )
-            else
-              // start the game button
-              OnlineButton(
+              ),
+            liveEvents.maybeWhen(
+              data: (events) {
+                final event = events.firstOrNull;
+                if (event != null) {
+                  if (event is PlayerAddedToWaitingQueue) {
+                    final numberOfPlayersStatedRedinessUntilNow =
+                        event.numberOfWaiters;
+                    return Text(
+                      'تعداد بازیکنان آماده‌ی شروع بازی\n $numberOfPlayersStatedRedinessUntilNow',
+                      textAlign: TextAlign.center,
+                      style: MyTextStyles.bodyLarge.copyWith(
+                        color: AppColors.lightestGrey,
+                        height: 2,
+                        overflow: TextOverflow.visible,
+                      ),
+                    );
+                  }
+                }
+                // return SizedBox();
+                return OnlineButton(
+                  provider: gameControllerProvider,
+                  child: AnimatedButton(
+                    color: AppColors.greens[3],
+                    width: width / 2,
+                    buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+                      color: AppColors.lighterGrey,
+                    ),
+                    text: 'شروع بازی',
+                    pressEvent: () async {
+                      final roomId =
+                          SharedPrefs.getModel("currentRoom", Room.fromJson)!
+                              .id;
+                      final userId = SharedPrefs.userID;
+                      final result = await ref
+                          .read(gameControllerProvider.notifier)
+                          .startGame(
+                            roomId: roomId!,
+                            userId: userId!,
+                          );
+                      result.match(
+                        (l) {},
+                        (r) {
+                          log(r.msg, name: 'ReadyForNextPhaseDialog');
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+              orElse: () => // start the game button
+                  OnlineButton(
                 provider: gameControllerProvider,
                 child: AnimatedButton(
                   color: AppColors.greens[3],
@@ -273,16 +321,25 @@ class WaitingRoom extends HookConsumerWidget {
                   ),
                   text: 'شروع بازی',
                   pressEvent: () async {
-                    final roomId = SharedPrefs.getModel<Room>(
-                            'currentRoom', Room.fromJson)!
-                        .id;
-                    await ref.read(gameControllerProvider.notifier).startGame(
-                          userId: SharedPrefs.userID!,
+                    final roomId =
+                        SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
+                    final userId = SharedPrefs.userID;
+                    final result = await ref
+                        .read(gameControllerProvider.notifier)
+                        .startGame(
                           roomId: roomId!,
+                          userId: userId!,
                         );
+                    result.match(
+                      (l) {},
+                      (r) {
+                        log(r.msg, name: 'ReadyForNextPhaseDialog');
+                      },
+                    );
                   },
                 ),
               ),
+            ),
           ],
         ),
         scaffoldKey: _scaffoldKey,

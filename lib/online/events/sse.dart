@@ -46,6 +46,8 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
   final joinedEvents = List<JoinedRoom>.empty(growable: true);
   final leftEvents = List<LeftRoom>.empty(growable: true);
   //
+  final streamController = StreamController<List<AppEvent>>();
+  //
   final streamSubscription = sse.data!.stream
       .transform(
         unit8Transformer,
@@ -79,27 +81,32 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
         );
         final context = NavigationService.navigatorKey.currentContext!;
         showDialog(
-          barrierDismissible: false,
+          // barrierDismissible: false,
           context: context,
           builder: (context) {
             return ReadyForNextPhaseDialog();
           },
         );
       } else if (appEvent is PlayerAddedToWaitingQueue) {
-        allEvents.clear();
-        allEvents.add(appEvent);
+        allEvents = [];
+        allEvents = [...allEvents, appEvent];
+        streamController.add(allEvents);
       } else if (appEvent is GameStarted) {
         // await ref.read(routerProvider).pushNamed('game');
       }
     },
   );
+  // yield allEvents;
+
+  print('allEvents: $allEvents');
 
   ref.onDispose(() {
     // cancel the stream subscription even if events are still coming
     streamSubscription.cancel();
+    streamController.close();
   });
 
-  yield allEvents;
+  yield* streamController.stream;
 }
 
 StreamTransformer<Uint8List, List<int>> unit8Transformer =

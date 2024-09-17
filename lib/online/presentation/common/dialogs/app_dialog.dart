@@ -26,10 +26,12 @@ class AppDialog extends HookConsumerWidget {
     super.key,
     required this.content,
     required this.context,
+    this.dialogType,
   });
 
   final Widget? content;
   final BuildContext context;
+  final DialogType? dialogType;
 
   @override
   Widget build(_, WidgetRef ref) {
@@ -44,7 +46,7 @@ class AppDialog extends HookConsumerWidget {
             height: height / 8,
             width: width / 4,
             child: FlareHeader(
-              dialogType: DialogType.QUESTION,
+              dialogType: dialogType ?? DialogType.QUESTION,
               loop: false,
             ),
           ),
@@ -84,9 +86,13 @@ class AppDialog extends HookConsumerWidget {
           // TODO: Later we check if the user has enough coins to start the game
           OnlineButton(
             provider: gameControllerProvider,
-            height: height / 12,
-            width: width / 1.6,
-            title: 'آماده برای شروع بازی',
+            height: height / 8,
+            width: width,
+            title: 'شروع بازی',
+            textStyle: MyTextStyles.bodySmall.copyWith(
+              color: AppColors.green,
+              height: 1.5,
+            ),
             onPressed: () async {
               final roomId =
                   SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
@@ -290,6 +296,7 @@ class ReadyForNextPhaseDialog extends HookConsumerWidget {
     //
     return AppDialog(
       context: context,
+      dialogType: DialogType.INFO,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -297,11 +304,12 @@ class ReadyForNextPhaseDialog extends HookConsumerWidget {
         children: [
           Text(
             'تمام بازیکنان به اتاق پیوسته‌اند',
-            style: MyTextStyles.bodyLarge.copyWith(
+            style: MyTextStyles.headlineSmall.copyWith(
               color: AppColors.darkText,
               height: 1.5,
               overflow: TextOverflow.visible,
             ),
+            textAlign: TextAlign.center,
           ),
           SizedBox(height: height / 32),
           // if (isCreator)
@@ -309,9 +317,14 @@ class ReadyForNextPhaseDialog extends HookConsumerWidget {
           if (!redinessStated.value)
             OnlineButton(
               provider: gameControllerProvider,
+              backgroundColor: AppColors.greens[0],
               height: height / 12,
-              width: width / 1.6,
+              width: width,
               title: 'آماده برای شروع بازی',
+              textStyle: MyTextStyles.bodyLarge.copyWith(
+                color: AppColors.primaries[2],
+                height: .2,
+              ),
               onPressed: () async {
                 final roomId =
                     SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
@@ -328,7 +341,7 @@ class ReadyForNextPhaseDialog extends HookConsumerWidget {
                     redinessStated.value = true;
                   },
                 );
-                ref.read(routerProvider).pop();
+                // ref.read(routerProvider).pop();
               },
             )
           else

@@ -39,5 +39,5 @@ class Endpoints {
   static String rediness(
     String roomId,
   ) =>
-      "/$roomId/confirm_readiness"; // post
+      "/situations/$roomId/confirm_readiness"; // post
 }

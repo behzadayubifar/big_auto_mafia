@@ -24,7 +24,7 @@ class GameRepository {
       queryParameters: {"next_phase": "game_start"},
       options: Options(
         headers: {
-          'Authorization': SharedPrefs.userID,
+          'Authorization': SharedPrefs.getString("token"),
         },
       ),
     );
