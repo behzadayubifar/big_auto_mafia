@@ -20,11 +20,12 @@ class OnlineButton extends HookConsumerWidget {
     this.textColor,
     this.textStyle,
     super.key,
-  }) : assert(child != null ||
+  }) /*  : assert(child != null ||
             (title != null &&
                 width != null &&
                 height != null &&
-                onPressed != null));
+                onPressed != null)) */
+  ;
 
   Widget? child;
   final String? title;

@@ -92,7 +92,16 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
         allEvents = [...allEvents, appEvent];
         streamController.add(allEvents);
       } else if (appEvent is GameStarted) {
-        // await ref.read(routerProvider).pushNamed('game');
+        // save player in the local db
+        final isar = await ref.read(isarServiceProvider.future);
+        await isar.putUser(
+          id: appEvent.playerId,
+          playerOnline: appEvent.player,
+        );
+        ref.read(routerProvider).pushNamed(
+              'show-role',
+              extra: appEvent.player,
+            );
       }
     },
   );

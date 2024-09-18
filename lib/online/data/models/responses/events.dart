@@ -35,7 +35,8 @@ class AppEvent {
         // example : {"event_type":"game_started","data": {"player_id": "1", "room_id": "124", "role": "leon", "side": "citizen", "heart": 1}}
         log("game_started event data: ${data['data']}");
         final player = PlayerOnline.fromJson(data['data']);
-        return GameStarted(player: player);
+        final playerId = data['data']['player_id'];
+        return GameStarted(player: player, playerId: playerId);
       case "player_added_to_waiting_queue":
         // example : {"event_type":"player_added_to_waiting_queue","data":1,"created_at":1726544502}
         log("player_added_to_waiting_queue event data: ${data['data']}");
@@ -112,15 +113,17 @@ class RoomFull extends AppEvent {
 
 class GameStarted extends AppEvent {
   final PlayerOnline player;
+  final String playerId;
   final type = "game_started";
 
   GameStarted({
     required this.player,
+    required this.playerId,
   });
 
   @override
   String toString() {
-    return 'GameStarted{player: $player}';
+    return 'GameStarted{player: $player} with id: $playerId';
   }
 }
 

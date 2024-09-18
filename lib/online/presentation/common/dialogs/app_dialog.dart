@@ -97,9 +97,10 @@ class AppDialog extends HookConsumerWidget {
               final roomId =
                   SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
               final userId = SharedPrefs.userID;
-              await ref.read(gameControllerProvider.notifier).startGame(
+              await ref.read(gameControllerProvider.notifier).ready(
                     roomId: roomId!,
                     userId: userId!,
+                    nextPhase: "game_started",
                   );
               ref.read(routerProvider).pop();
             },
@@ -330,14 +331,15 @@ class ReadyForNextPhaseDialog extends HookConsumerWidget {
                     SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
                 final userId = SharedPrefs.userID;
                 final result =
-                    await ref.read(gameControllerProvider.notifier).startGame(
+                    await ref.read(gameControllerProvider.notifier).ready(
                           roomId: roomId!,
                           userId: userId!,
+                          nextPhase: "game_started",
                         );
                 result.match(
                   (l) {},
                   (r) {
-                    log(r.msg, name: 'ReadyForNextPhaseDialog');
+                    log(r.msg!, name: 'ReadyForNextPhaseDialog');
                     redinessStated.value = true;
                   },
                 );

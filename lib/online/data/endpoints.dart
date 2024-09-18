@@ -40,4 +40,10 @@ class Endpoints {
     String roomId,
   ) =>
       "/situations/$roomId/confirm_readiness"; // post
+
+  // /players/{room_id}/
+  static String getPlayerById({
+    required String roomId,
+  }) =>
+      "/players/$roomId"; // get
 }

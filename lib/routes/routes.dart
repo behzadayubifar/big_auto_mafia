@@ -31,6 +31,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../offline/db/entities/room.dart';
+import '../online/presentation/game/game_page.dart';
 import '../online/presentation/rooms/room_entry.dart';
 import '../offline/ui/home/online_offline_page.dart';
 import '../online/presentation/rooms/show_role_online.dart';
@@ -204,13 +205,28 @@ GoRouter router(RouterRef ref) {
                 return WaitingRoom();
               }),
           GoRoute(
-            path: 'show_role/:role',
+            path: 'show_role',
             name: 'show-role',
             builder: (context, state) {
-              final player = state.extra! as PlayerOnline;
+              final PlayerOnline player;
+              switch (state.extra.runtimeType) {
+                case PlayerOnline:
+                  player = state.extra as PlayerOnline;
+                  break;
+                default:
+                  player = PlayerOnline.fromJson(
+                      state.extra! as Map<String, dynamic>);
+              }
               return ShowRoleOnline(
                 player: player,
               );
+            },
+          ),
+          GoRoute(
+            path: 'game_page',
+            name: 'game-page',
+            builder: (context, state) {
+              return GamePage();
             },
           ),
         ],

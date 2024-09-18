@@ -1,9 +1,13 @@
+import 'package:auto_mafia/offline/db/entities/user.dart';
+
 class GameResp {
-  String msg;
+  String? msg;
+  PlayerOnline? playerOnline;
   // int? numberOfReadyPlayers;
 
   GameResp({
-    required this.msg,
+    this.msg,
+    this.playerOnline,
     // this.numberOfReadyPlayers,
   });
 
@@ -13,7 +17,10 @@ class GameResp {
 
   factory GameResp.fromJson(Map<String, dynamic> json) {
     return GameResp(
-      msg: json['msg'],
+      msg: json['msg'] ?? '',
+      playerOnline: json['player_online'] != null
+          ? PlayerOnline.fromJson(json['player_online'])
+          : null,
       // numberOfReadyPlayers: json['number_of_ready_players'],
     );
   }

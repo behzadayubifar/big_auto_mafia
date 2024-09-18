@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
+import 'package:auto_mafia/offline/db/entities/user.dart';
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dart';
+import 'package:auto_mafia/online/presentation/game/game_controller.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
 import 'package:auto_mafia/online/presentation/users/controller/accounts_controller.dart';
@@ -15,6 +17,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../../../../offline/db/isar_service.dart';
 import '../../../../routes/routes.dart';
 import '../../../../offline/ui/common/loading.dart';
 import '../../common/app_bar.dart';
@@ -273,12 +276,72 @@ class Panel extends HookConsumerWidget {
                                                     .notifier)
                                                 .refreshRoomById(
                                                     rooms[index]!.id!);
-                                            // go to appropiate page based on the room status
-                                            await ref
-                                                .read(routerProvider)
-                                                .pushNamed(
-                                                  'waiting-room',
-                                                );
+                                            //TODO: go to appropiate page based on the room status
+                                            switch (rooms[index]?.status) {
+                                              case "joining":
+                                                await ref
+                                                    .read(routerProvider)
+                                                    .pushNamed(
+                                                      'waiting-room',
+                                                    );
+                                                break;
+                                              case "running":
+                                                final isar = await ref.read(
+                                                    isarServiceProvider.future);
+                                                PlayerOnline? player =
+                                                    (await isar
+                                                            .retrieveUserByID(
+                                                                SharedPrefs
+                                                                    .userID!))
+                                                        ?.playerOnline;
+                                                if (player != null) {
+                                                  if (player.roomId ==
+                                                      rooms[index]!.id) {
+                                                    await ref
+                                                        .read(routerProvider)
+                                                        .pushNamed(
+                                                          'show-role',
+                                                          extra: player,
+                                                        );
+                                                  }
+                                                } else {
+                                                  log('player is null');
+                                                  // get the player from the server
+                                                  player = await ref
+                                                      .read(
+                                                          gameControllerProvider
+                                                              .notifier)
+                                                      .getPlayerById(
+                                                        userId:
+                                                            SharedPrefs.userID!,
+                                                        roomId:
+                                                            rooms[index]!.id!,
+                                                      )
+                                                      .then((value) {
+                                                    return value.match(
+                                                      (l) {
+                                                        log('error');
+                                                        return null;
+                                                      },
+                                                      (r) {
+                                                        return r.playerOnline;
+                                                      },
+                                                    );
+                                                  });
+                                                  if (player != null) {
+                                                    await isar.putUser(
+                                                      id: SharedPrefs.userID,
+                                                      playerOnline: player,
+                                                    );
+                                                    await ref
+                                                        .read(routerProvider)
+                                                        .pushNamed(
+                                                          'game-page',
+                                                        );
+                                                  }
+                                                }
+                                              default:
+                                            }
                                           },
                                         );
                                       });

@@ -5,25 +5,96 @@ import '../fast_hash.dart';
 part 'user.g.dart';
 
 @embedded
+class ETC {
+  bool? IsSavedOnce;
+  bool? HasGuessedOnce;
+  bool? Handcuffed;
+  bool? IsReversible;
+  int? Bullet;
+  bool? HasBuyed;
+  bool? HasReturned;
+  String? WhichSideWillWin;
+  bool? IsSaved;
+  bool? IsSlaughtered;
+  bool? IsSilent;
+  int? DayOfSilence;
+
+  ETC({
+    this.IsSavedOnce,
+    this.HasGuessedOnce,
+    this.Handcuffed,
+    this.IsReversible,
+    this.Bullet,
+    this.HasBuyed,
+    this.HasReturned,
+    this.WhichSideWillWin,
+    this.IsSaved,
+    this.IsSlaughtered,
+    this.IsSilent,
+    this.DayOfSilence,
+  });
+
+  factory ETC.fromJson(Map<String, dynamic> json) {
+    return ETC(
+      IsSavedOnce: json['is_saved_once'],
+      HasGuessedOnce: json['has_guessed_once'],
+      Handcuffed: json['handcuffed'],
+      IsReversible: json['is_reversible'],
+      Bullet: json['bullet'],
+      HasBuyed: json['has_buyed'],
+      HasReturned: json['has_returned'],
+      WhichSideWillWin: json['which_side_will_win'],
+      IsSaved: json['is_saved'],
+      IsSlaughtered: json['is_slaughtered'],
+      IsSilent: json['is_silent'],
+      DayOfSilence: json['day_of_silence'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'is_saved_once': IsSavedOnce,
+      'has_guessed_once': HasGuessedOnce,
+      'handcuffed': Handcuffed,
+      'is_reversible': IsReversible,
+      'bullet': Bullet,
+      'has_buyed': HasBuyed,
+      'has_returned': HasReturned,
+      'which_side_will_win': WhichSideWillWin,
+      'is_saved': IsSaved,
+      'is_slaughtered': IsSlaughtered,
+      'is_silent': IsSilent,
+      'day_of_silence': DayOfSilence,
+    };
+  }
+}
+
+@embedded
 class PlayerOnline {
   String? roomId;
   String? role;
   String? side;
   int? heart;
+  bool? isDefused;
+  ETC? etc;
 
   PlayerOnline({
     this.roomId,
     this.role,
     this.side,
     this.heart,
+    this.isDefused,
+    this.etc,
   });
 
   factory PlayerOnline.fromJson(Map<String, dynamic> json) {
     return PlayerOnline(
       roomId: json['room_id'],
-      role: json['role'],
-      side: json['side'],
-      heart: json['heart'],
+      role: json['role'] ?? '',
+      side: json['side'] ?? '',
+      heart: json['heart'] ?? 0,
+      isDefused: json['is_defused'] ?? false,
+      etc: json['etc'] == null ? null : ETC.fromJson(json['etc']),
     );
   }
 
@@ -33,7 +104,18 @@ class PlayerOnline {
       'role': role,
       'side': side,
       'heart': heart,
+      'is_defused': isDefused,
+      'etc': etc,
     };
+  }
+
+  PlayerOnline.empty() {
+    roomId = '';
+    role = '';
+    side = '';
+    heart = 0;
+    isDefused = false;
+    etc = ETC();
   }
 
   @override

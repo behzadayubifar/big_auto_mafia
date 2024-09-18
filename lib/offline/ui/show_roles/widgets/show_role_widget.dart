@@ -8,20 +8,22 @@ class ShowRoleWidget extends StatelessWidget {
     required double width,
     required double height,
     required this.image,
-    required this.title,
+    this.title,
     this.textStyle,
     this.onLongPress,
     this.isComplete,
+    this.button,
   })  : _width = width,
         _height = height;
 
   final double _width;
   final double _height;
   final String image;
-  final String title;
+  final String? title;
   final TextStyle? textStyle;
   final void Function()? onLongPress;
   final bool? isComplete;
+  final Widget? button;
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +47,12 @@ class ShowRoleWidget extends StatelessWidget {
           if (isComplete ?? true)
             SizedBox(
               height: _height / 10,
-              child: MyButton(
-                  title: title, textStyle: textStyle, onLongPress: onLongPress),
+              child: button ??
+                  MyButton(
+                    title: title ?? '',
+                    textStyle: textStyle,
+                    onLongPress: onLongPress,
+                  ),
             ),
         ],
       ),

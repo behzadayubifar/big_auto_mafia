@@ -1,13 +1,3 @@
-/* 
-
-
-type RoomResponse struct {
-	Rooms []Room `json:"rooms"`
-	Msg   string `json:"msg"`
-}
-
- */
-
 import '../../../../offline/db/entities/user.dart';
 
 class UserResp {
