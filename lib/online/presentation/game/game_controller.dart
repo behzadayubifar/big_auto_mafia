@@ -12,7 +12,7 @@ import '../../domain/game/game_repository.dart';
 
 part 'game_controller.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class GameController extends _$GameController {
   @override
   FutureOr<Either<ErrorResp, GameResp>> build() {
@@ -70,6 +70,25 @@ class GameController extends _$GameController {
         },
         (r) {
           log('start game success');
+        },
+      );
+      return result;
+    });
+    return result;
+  }
+
+  Future<Either<ErrorResp, GameResp>> getGameSituation(String roomId) async {
+    state = const AsyncLoading();
+    final gameRepo = ref.read(gameRepositoryProvider);
+    Either<ErrorResp, GameResp> result = right(GameResp.empty());
+    state = await AsyncValue.guard(() async {
+      result = await gameRepo.getGameSituation(roomId);
+      result.match(
+        (l) {
+          log('get game situation failed');
+        },
+        (r) {
+          log('get game situation success');
         },
       );
       return result;

@@ -21,9 +21,7 @@ class GameRepository {
     required String roomId,
   }) async {
     final response = await dio.get(
-      Endpoints.getPlayerById(
-        roomId: roomId,
-      ),
+      Endpoints.getPlayerById(roomId),
       options: Options(
         headers: {
           'Authorization': SharedPrefs.getString("token"),
@@ -45,6 +43,22 @@ class GameRepository {
     final response = await dio.post(
       Endpoints.rediness(roomId),
       queryParameters: {"next_phase": nextPhase},
+      options: Options(
+        headers: {
+          'Authorization': SharedPrefs.getString("token"),
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      return Right(GameResp.fromJson(response.data));
+    } else {
+      return Left(ErrorResp.fromJson(response.data));
+    }
+  }
+
+  Future<Either<ErrorResp, GameResp>> getGameSituation(String roomId) async {
+    final response = await dio.get(
+      Endpoints.getGameSituation(roomId),
       options: Options(
         headers: {
           'Authorization': SharedPrefs.getString("token"),

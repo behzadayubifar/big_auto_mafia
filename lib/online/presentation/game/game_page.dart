@@ -24,6 +24,7 @@ class GamePage extends HookConsumerWidget {
               // TODO: handle l case
               (l) {},
               (r) {
+                // if (r.playerOnline == null) {}
                 return Container(
                   height: height,
                   width: width,

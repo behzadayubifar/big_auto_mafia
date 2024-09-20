@@ -64,15 +64,15 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
       if (appEvent is JoinedRoom) {
         await ref
             .read(activeRoomsProvider.notifier)
-            .refreshRoomById(appEvent.roomId);
+            .refreshRoomsById([appEvent.roomId]);
       } else if (appEvent is LeftRoom) {
         await ref
             .read(activeRoomsProvider.notifier)
-            .refreshRoomById(appEvent.roomId);
+            .refreshRoomsById([appEvent.roomId]);
       } else if (appEvent is RoomFull) {
         await ref
             .read(activeRoomsProvider.notifier)
-            .refreshRoomById(appEvent.roomId);
+            .refreshRoomsById([appEvent.roomId]);
         // save the users who joined the room in the room collection
         final isar = await ref.read(isarServiceProvider.future);
         await isar.putRoom(
@@ -98,6 +98,7 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
           id: appEvent.playerId,
           playerOnline: appEvent.player,
         );
+
         ref.read(routerProvider).pushNamed(
               'show-role',
               extra: appEvent.player,

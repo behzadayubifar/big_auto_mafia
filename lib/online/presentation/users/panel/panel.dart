@@ -81,11 +81,10 @@ class Panel extends HookConsumerWidget {
                   final currentUsersRoom =
                       await ref.read(activeRoomsProvider.notifier).getRooms(id);
                   if (currentUsersRoom.isNotEmpty) {
-                    for (final room in currentUsersRoom) {
-                      await ref
-                          .read(activeRoomsProvider.notifier)
-                          .refreshRoomById(room!.id!);
-                    }
+                    await ref
+                        .read(activeRoomsProvider.notifier)
+                        .refreshRoomsById(
+                            currentUsersRoom.map((e) => e!.id!).toList());
                   } else {
                     log('no active room');
                   }
@@ -274,8 +273,9 @@ class Panel extends HookConsumerWidget {
                                             await ref
                                                 .read(activeRoomsProvider
                                                     .notifier)
-                                                .refreshRoomById(
-                                                    rooms[index]!.id!);
+                                                .refreshRoomsById(
+                                              [rooms[index]!.id!],
+                                            );
                                             //TODO: go to appropiate page based on the room status
                                             switch (rooms[index]?.status) {
                                               case "joining":
@@ -286,61 +286,44 @@ class Panel extends HookConsumerWidget {
                                                     );
                                                 break;
                                               case "running":
-                                                final isar = await ref.read(
-                                                    isarServiceProvider.future);
-                                                PlayerOnline? player =
-                                                    (await isar
-                                                            .retrieveUserByID(
-                                                                SharedPrefs
-                                                                    .userID!))
-                                                        ?.playerOnline;
+                                                // get the player from the server
+                                                final player = await ref
+                                                    .read(gameControllerProvider
+                                                        .notifier)
+                                                    .getPlayerById(
+                                                      userId:
+                                                          SharedPrefs.userID!,
+                                                      roomId: rooms[index]!.id!,
+                                                    )
+                                                    .then((value) {
+                                                  return value.match(
+                                                    (l) {
+                                                      log('error');
+                                                      return null;
+                                                    },
+                                                    (r) {
+                                                      return r.playerOnline;
+                                                    },
+                                                  );
+                                                });
+
                                                 if (player != null) {
-                                                  if (player.roomId ==
-                                                      rooms[index]!.id) {
-                                                    ref
-                                                        .read(routerProvider)
-                                                        .goNamed(
-                                                          'game-page',
-                                                          extra: player,
-                                                        );
-                                                  }
-                                                } else {
-                                                  log('player is null');
-                                                  // get the player from the server
-                                                  player = await ref
-                                                      .read(
-                                                          gameControllerProvider
-                                                              .notifier)
-                                                      .getPlayerById(
-                                                        userId:
-                                                            SharedPrefs.userID!,
-                                                        roomId:
-                                                            rooms[index]!.id!,
-                                                      )
-                                                      .then((value) {
-                                                    return value.match(
-                                                      (l) {
-                                                        log('error');
-                                                        return null;
-                                                      },
-                                                      (r) {
-                                                        return r.playerOnline;
-                                                      },
-                                                    );
-                                                  });
-                                                  if (player != null) {
-                                                    await isar.putUser(
-                                                      id: SharedPrefs.userID,
-                                                      playerOnline: player,
-                                                    );
-                                                    ref
-                                                        .read(routerProvider)
-                                                        .goNamed(
-                                                          'game-page',
-                                                        );
-                                                  }
+                                                  final isar = await ref.read(
+                                                      isarServiceProvider
+                                                          .future);
+                                                  await isar.putUser(
+                                                    id: SharedPrefs.userID,
+                                                    playerOnline: player,
+                                                  );
+
+                                                  // get situation of the game
+
+                                                  ref
+                                                      .read(routerProvider)
+                                                      .goNamed(
+                                                        'game-page',
+                                                      );
                                                 }
-                                              default:
                                             }
                                           },
                                         );

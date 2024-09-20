@@ -163,7 +163,7 @@ class RoomsController extends _$RoomsController {
             for (final room in currentUsersRoom) {
               await ref
                   .read(activeRoomsProvider.notifier)
-                  .refreshRoomById(room!.id!);
+                  .refreshRoomsById([room!.id!]);
             }
           } else {
             log('rooms must be none');
@@ -175,7 +175,7 @@ class RoomsController extends _$RoomsController {
   }
 
   // get room
-  Future<Either<ErrorResp, RoomResp>> getRoombyId(String roomId) async {
+  Future<Either<ErrorResp, RoomResp>> getRoomById(String roomId) async {
     state = const AsyncLoading();
     final roomsRepo = ref.read(roomsRepositoryProvider);
     Either<ErrorResp, RoomResp> roomResult = right(RoomResp.empty());

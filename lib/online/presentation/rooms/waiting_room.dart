@@ -39,13 +39,6 @@ class WaitingRoom extends HookConsumerWidget {
     final width = MediaQuery.of(context).size.width;
     //
     final fullness = useState(false);
-    //
-
-    liveEvents.maybeWhen(
-      data: (events) {},
-      orElse: () {},
-    );
-
     // initial scroll offset is 0
     final scrollController = useScrollController(initialScrollOffset: 0);
 
@@ -109,7 +102,7 @@ class WaitingRoom extends HookConsumerWidget {
                         .id;
                 await ref
                     .read(activeRoomsProvider.notifier)
-                    .refreshRoomById(roomId!);
+                    .refreshRoomsById([roomId!]);
               },
               // show the list of users joined the room
               child: SizedBox(
@@ -265,54 +258,55 @@ class WaitingRoom extends HookConsumerWidget {
 
             // Start the game button / show the number of players who stated their readiness
             liveEvents.maybeWhen(
-              data: (events) {
-                final event = events.firstOrNull;
-                if (event != null) {
-                  if (event is PlayerAddedToWaitingQueue) {
-                    final numberOfPlayersStatedRedinessUntilNow =
-                        event.numberOfWaiters;
-                    return Text(
-                      'تعداد بازیکنان آماده‌ی شروع بازی\n $numberOfPlayersStatedRedinessUntilNow',
-                      textAlign: TextAlign.center,
-                      style: MyTextStyles.bodyLarge.copyWith(
-                        color: AppColors.lightestGrey,
-                        height: 2,
-                        overflow: TextOverflow.visible,
-                      ),
-                    );
+                data: (events) {
+                  final event = events.firstOrNull;
+                  if (event != null) {
+                    if (event is PlayerAddedToWaitingQueue) {
+                      final numberOfPlayersStatedRedinessUntilNow =
+                          event.numberOfWaiters;
+                      return Text(
+                        'تعداد بازیکنان آماده‌ی شروع بازی\n $numberOfPlayersStatedRedinessUntilNow',
+                        textAlign: TextAlign.center,
+                        style: MyTextStyles.bodyLarge.copyWith(
+                          color: AppColors.lightestGrey,
+                          height: 2,
+                          overflow: TextOverflow.visible,
+                        ),
+                      );
+                    }
                   }
-                }
-                return SizedBox();
-              },
-              orElse: () => OnlineButton(
-                provider: gameControllerProvider,
-                child: AnimatedButton(
-                  color: AppColors.greens[3],
-                  width: width / 2,
-                  buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
-                    color: AppColors.lighterGrey,
-                  ),
-                  text: 'شروع بازی',
-                  pressEvent: () async {
-                    final roomId =
-                        SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
-                    final userId = SharedPrefs.userID;
-                    final result =
-                        await ref.read(gameControllerProvider.notifier).ready(
+                  return OnlineButton(
+                    provider: gameControllerProvider,
+                    child: AnimatedButton(
+                      color: AppColors.greens[3],
+                      width: width / 2,
+                      buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+                        color: AppColors.lighterGrey,
+                      ),
+                      text: 'شروع بازی',
+                      pressEvent: () async {
+                        final roomId =
+                            SharedPrefs.getModel("currentRoom", Room.fromJson)!
+                                .id;
+                        final userId = SharedPrefs.userID;
+                        final result = await ref
+                            .read(gameControllerProvider.notifier)
+                            .ready(
                               roomId: roomId!,
                               userId: userId!,
                               nextPhase: "game_started",
                             );
-                    result.match(
-                      (l) {},
-                      (r) {
-                        log(r.msg!, name: 'ReadyForNextPhaseDialog');
+                        result.match(
+                          (l) {},
+                          (r) {
+                            log(r.msg!, name: 'ReadyForNextPhaseDialog');
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
-              ),
-            ),
+                    ),
+                  );
+                },
+                orElse: () => SizedBox()),
           ],
         ),
         scaffoldKey: _scaffoldKey,

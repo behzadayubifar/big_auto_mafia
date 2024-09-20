@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/db/entities/user.dart';
 import 'package:auto_mafia/offline/ui/show_roles/widgets/show_role_widget.dart';
+import 'package:auto_mafia/online/presentation/game/game_controller.dart';
 import 'package:auto_mafia/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -11,6 +14,9 @@ import 'package:page_flip_builder/page_flip_builder.dart';
 import '../../../offline/constants/info_strings.dart';
 import '../../../offline/constants/my_strings.dart';
 import '../../../offline/constants/my_text_styles.dart';
+import '../../../offline/db/entities/room.dart';
+import '../../../offline/db/isar_service.dart';
+import '../../../offline/db/shared_prefs/shared_prefs.dart';
 import '../../../offline/my_assets.dart';
 import '../common/buttons/online_buttons.dart';
 
@@ -60,8 +66,41 @@ class ShowRoleOnline extends ConsumerWidget {
                 color: AppColors.lightestGrey,
                 height: .05,
               ),
-              onPressed: () {
-                ref.read(routerProvider).goNamed('game-page');
+              onPressed: () async {
+                final player = await ref
+                    .read(gameControllerProvider.notifier)
+                    .getPlayerById(
+                      userId: SharedPrefs.userID!,
+                      roomId:
+                          SharedPrefs.getModel("currentRoom", Room.fromJson)!
+                              .id!,
+                    )
+                    .then(
+                  (value) {
+                    return value.match(
+                      (l) {
+                        log('error');
+                        return null;
+                      },
+                      (r) {
+                        return r.playerOnline;
+                      },
+                    );
+                  },
+                );
+                if (player != null) {
+                  final isar = await ref.read(isarServiceProvider.future);
+                  await isar.putUser(
+                    id: SharedPrefs.userID,
+                    playerOnline: player,
+                  );
+
+                  // get situation of the game
+
+                  ref.read(routerProvider).goNamed(
+                        'game-page',
+                      );
+                }
               },
             ),
           );
