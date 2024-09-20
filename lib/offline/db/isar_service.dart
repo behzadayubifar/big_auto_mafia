@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'package:auto_mafia/offline/constants/my_strings.dart';
+import 'package:auto_mafia/offline/db/entities/night_choices.dart';
 import 'package:auto_mafia/offline/db/entities/night_results.dart';
 import 'package:auto_mafia/offline/db/entities/room.dart';
+import 'package:auto_mafia/offline/db/entities/situation.dart';
 import 'package:auto_mafia/offline/db/entities/user.dart';
 import 'package:auto_mafia/offline/db/shared_prefs/shared_prefs.dart';
 import 'package:auto_mafia/offline/utils/dev_log.dart';
@@ -426,6 +428,8 @@ class IsarService {
           ResultsSchema,
           UserSchema,
           RoomSchema,
+          SituationSchema,
+          NightChoicesSchema,
         ],
         inspector: true,
         directory: dir.path,
@@ -1144,6 +1148,125 @@ class IsarService {
       return true;
     }
     log('room not found', name: 'removePlayerFromRoom');
+    return false;
+  }
+
+  // --- Situations --------------------------------------------------------------------------
+  /* 
+     bool? isDay,
+    int? dayNumber,
+    String? situation,
+    String? winnerSide,
+    List<String?>? usedLastMoves,
+    int? remainedEnquiry,
+    */
+  Future<Situation> putSituation({
+    String? roomId,
+    bool? isDay,
+    int? dayNumber,
+    String? situation,
+    String? winnerSide,
+    List<String?>? usedLastMoves,
+    int? remainedEnquiry,
+  }) async {
+    final si = Situation()
+      ..roomId = roomId
+      ..isDay = isDay
+      ..dayNumber = dayNumber
+      ..situation = situation
+      ..winnerSide = winnerSide
+      ..usedLastMoves = usedLastMoves
+      ..remainedEnquiry = remainedEnquiry;
+    await isar.writeTxn(() => isar.situations.put(si));
+    return si;
+  }
+
+  Future<Situation?> retrieveSituation(String roomId) async {
+    final situation =
+        await isar.situations.filter().roomIdEqualTo(roomId).findFirst();
+    if (situation != null) {
+      return situation;
+    }
+    return null;
+  }
+
+  Future<bool> deleteSituation(String roomId) async {
+    final situationToDelete =
+        await isar.situations.filter().roomIdEqualTo(roomId).findFirst();
+    if (situationToDelete != null) {
+      await isar
+          .writeTxn(() => isar.situations.delete(situationToDelete.isarId));
+      log('situation deleted successfully', name: 'deleteSituation');
+      return true;
+    }
+    log('situation not found', name: 'deleteSituation');
+    return false;
+  }
+
+  // --- Night Choices -----------------------------------------------------------------------
+/* 
+String? mafiaShot;
+  String? slaughtery;
+  String? theRoleGuessedByGodfather;
+  String? matador;
+  int? nightOfRightGuessOfKane;
+  String? saul;
+  String? watson;
+  String? leon;
+  String? kane;
+  String? konstantin;
+  List<String>? nostradamous;
+ */
+  Future<NightChoices> putNightChoices({
+    String? roomId,
+    String? mafiaShot,
+    String? slaughtery,
+    String? theRoleGuessedByGodfather,
+    String? matador,
+    int? nightOfRightGuessOfKane,
+    String? saul,
+    String? watson,
+    String? leon,
+    String? kane,
+    String? konstantin,
+    List<String>? nostradamous,
+  }) async {
+    final nc = NightChoices()
+      ..roomId = roomId
+      ..mafiaShot = mafiaShot
+      ..slaughtery = slaughtery
+      ..theRoleGuessedByGodfather = theRoleGuessedByGodfather
+      ..matador = matador
+      ..nightOfRightGuessOfKane = nightOfRightGuessOfKane
+      ..saul = saul
+      ..watson = watson
+      ..leon = leon
+      ..kane = kane
+      ..konstantin = konstantin
+      ..nostradamous = nostradamous;
+    await isar.writeTxn(() => isar.nightChoices.put(nc));
+    return nc;
+  }
+
+  Future<NightChoices?> retrieveNightChoices(String roomId) async {
+    final nightChoices =
+        await isar.nightChoices.filter().roomIdEqualTo(roomId).findFirst();
+    if (nightChoices != null) {
+      return nightChoices;
+    }
+    return null;
+  }
+
+  Future<bool> deleteNightChoices(String roomId) async {
+    final nightChoicesToDelete =
+        await isar.nightChoices.filter().roomIdEqualTo(roomId).findFirst();
+    if (nightChoicesToDelete != null) {
+      await isar.writeTxn(
+          () => isar.nightChoices.delete(nightChoicesToDelete.isarId));
+      log('night choices deleted successfully', name: 'deleteNightChoices');
+      return true;
+    }
+    log('night choices not found', name: 'deleteNightChoices');
     return false;
   }
 

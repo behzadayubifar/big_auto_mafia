@@ -310,35 +310,7 @@ class WaitingRoom extends HookConsumerWidget {
                   ),
                 );
               },
-              orElse: () => // start the game button
-                  OnlineButton(
-                provider: gameControllerProvider,
-                child: AnimatedButton(
-                  color: AppColors.greens[3],
-                  width: width / 2,
-                  buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
-                    color: AppColors.lighterGrey,
-                  ),
-                  text: 'شروع بازی',
-                  pressEvent: () async {
-                    final roomId =
-                        SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
-                    final userId = SharedPrefs.userID;
-                    final result =
-                        await ref.read(gameControllerProvider.notifier).ready(
-                              roomId: roomId!,
-                              userId: userId!,
-                              nextPhase: "game_started",
-                            );
-                    result.match(
-                      (l) {},
-                      (r) {
-                        log(r.msg!, name: 'ReadyForNextPhaseDialog');
-                      },
-                    );
-                  },
-                ),
-              ),
+              orElse: () => SizedBox(),
             ),
           ],
         ),

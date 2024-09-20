@@ -1,19 +1,18 @@
-import 'dart:io';
-
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/online/presentation/common/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../routes/routes.dart';
 import '../common/buttons/online_buttons.dart';
 import '../common/fields/text_form_fields.dart';
 import '../common/forms_block.dart';
 import 'controllers/rooms_controller.dart';
 
 class RoomEntry extends HookConsumerWidget {
-  const RoomEntry({super.key});
+  RoomEntry({super.key});
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,24 +24,8 @@ class RoomEntry extends HookConsumerWidget {
     final roomPasswordController = useTextEditingController();
     final roomConfirmPasswordController = useTextEditingController();
     final numberOfPlayersController = useTextEditingController();
-
+    //
     final isNumberOfPlayersControllerValid = useState(false);
-
-    // ------------------ Form Key ------------------
-    final _formKey = GlobalKey<FormState>();
-
-// TODO FIX THIS listening is wrong here?
-    // useEffect(() {
-    //   final listener = () {
-    //     final text = numberOfPlayersController.text;
-    //     final number = int.tryParse(text);
-    //     isNumberOfPlayersControllerValid.value =
-    //         number != null && number >= 7 && number <= 11;
-    //   };
-
-    //   numberOfPlayersController.addListener(listener);
-    //   return () => numberOfPlayersController.removeListener(listener);
-    // }, [numberOfPlayersController]);
 
     return FormBlock(
       height: height,
@@ -52,6 +35,7 @@ class RoomEntry extends HookConsumerWidget {
         MyTextField(
           textDirection: TextDirection.rtl,
           labelText: 'نام روم',
+          nextController: roomPasswordController,
           controller: roomNameController,
           fillColor: AppColors.lightestGrey,
           // labelColor: const Color.fromARGB(207, 189, 68, 88),
@@ -67,6 +51,7 @@ class RoomEntry extends HookConsumerWidget {
         MyTextField(
           textDirection: TextDirection.ltr,
           labelText: 'رمز روم',
+          nextController: roomConfirmPasswordController,
           maxLength: 32,
           keyboardType: TextInputType.visiblePassword,
           obscureText: true,
@@ -86,6 +71,7 @@ class RoomEntry extends HookConsumerWidget {
         MyTextField(
           textDirection: TextDirection.ltr,
           labelText: 'تکرار رمز روم',
+          nextController: numberOfPlayersController,
           controller: roomConfirmPasswordController,
           keyboardType: TextInputType.visiblePassword,
           obscureText: true,
@@ -109,11 +95,12 @@ class RoomEntry extends HookConsumerWidget {
           controller: numberOfPlayersController,
           fillColor: AppColors.lightestGrey,
           textInputAction: TextInputAction.done,
-          onSubmitted: (_) {
-            final text = numberOfPlayersController.text;
-            final number = int.tryParse(text);
-            isNumberOfPlayersControllerValid.value =
-                number != null && number >= 7 && number <= 11;
+          onChanged: (content) {
+            // delay the validation
+            final number = int.tryParse(content);
+            if (number != null)
+              isNumberOfPlayersControllerValid.value =
+                  number >= 7 && number <= 11;
           },
           validator: (content) {
             if (content == null || content.isEmpty) {
@@ -125,6 +112,7 @@ class RoomEntry extends HookConsumerWidget {
             } else if (int.tryParse(content)! > 11) {
               return 'تعداد بازیکنان باید حداکثر 11 نفر باشد';
             }
+
             return null;
           },
         ),
@@ -138,7 +126,7 @@ class RoomEntry extends HookConsumerWidget {
           elevation: 12,
           shadowColor: AppColors.primaries[0],
           title: 'انتخاب نقش‌ها',
-          onPressed: isNumberOfPlayersControllerValid.value
+          onPressed: isNumberOfPlayersControllerValid.value == true
               ? () {
                   // show a dialog to select the roles
                   // TODO; Later add this feature --> being chosen roles based on the number of players

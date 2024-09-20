@@ -20,6 +20,7 @@ class MyTextField extends HookWidget {
     this.fillColor,
     this.labelColor,
     this.onSubmitted,
+    this.onChanged,
     super.key,
   });
 
@@ -36,20 +37,21 @@ class MyTextField extends HookWidget {
   final Color? fillColor;
   final Color? labelColor;
   final Function(String)? onSubmitted;
+  void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     final _focusNode = useFocusNode();
-    final isFocused = useState(false);
+    // final isFocused = useState(false);
 
-    useEffect(() {
-      void listener() {
-        isFocused.value = _focusNode.hasFocus;
-      }
+    // useEffect(() {
+    //   void listener() {
+    //     isFocused.value = _focusNode.hasFocus;
+    //   }
 
-      _focusNode.addListener(listener);
-      return () => _focusNode.removeListener(listener);
-    }, [_focusNode]);
+    //   _focusNode.addListener(listener);
+    //   return () => _focusNode.removeListener(listener);
+    // }, [_focusNode]);
 
     return TextFormField(
       textDirection: textDirection ?? TextDirection.rtl,
@@ -57,6 +59,7 @@ class MyTextField extends HookWidget {
       validator: (value) => (validator != null) ? validator!(value) : null,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       enableInteractiveSelection: true,
+      onChanged: onChanged,
       onAppPrivateCommand: (action, data) {
         if (action == 'onCut') {
           final text = controller!.text;

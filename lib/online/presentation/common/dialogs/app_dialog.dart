@@ -237,7 +237,6 @@ class AppDialog extends HookConsumerWidget {
             width: width / 1.6,
             title: 'ثبت نقش‌ها',
             onPressed: () {
-              print('submit the selected roles');
               // submit the selected roles
               final selectedRoles = ref.read(selectedRolesProvider);
               if (selectedRoles.length == numberOfPlayers) {

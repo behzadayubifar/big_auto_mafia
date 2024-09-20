@@ -297,10 +297,10 @@ class Panel extends HookConsumerWidget {
                                                 if (player != null) {
                                                   if (player.roomId ==
                                                       rooms[index]!.id) {
-                                                    await ref
+                                                    ref
                                                         .read(routerProvider)
-                                                        .pushNamed(
-                                                          'show-role',
+                                                        .goNamed(
+                                                          'game-page',
                                                           extra: player,
                                                         );
                                                   }
@@ -333,9 +333,9 @@ class Panel extends HookConsumerWidget {
                                                       id: SharedPrefs.userID,
                                                       playerOnline: player,
                                                     );
-                                                    await ref
+                                                    ref
                                                         .read(routerProvider)
-                                                        .pushNamed(
+                                                        .goNamed(
                                                           'game-page',
                                                         );
                                                   }

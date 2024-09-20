@@ -11,7 +11,10 @@ class GamePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final height = MediaQuery.sizeOf(context).height;
     final width = MediaQuery.sizeOf(context).width;
+    //
     final game = ref.watch(gameControllerProvider);
+
+    //
     return Scaffold(
       backgroundColor: AppColors.backGround,
       body: Center(
@@ -38,7 +41,9 @@ class GamePage extends HookConsumerWidget {
             );
           },
           orElse: () => LoadingAnimationWidget.bouncingBall(
-              color: AppColors.secondaries[0], size: 50),
+            color: AppColors.secondaries[0],
+            size: width / 4,
+          ),
         ),
       ),
     );
