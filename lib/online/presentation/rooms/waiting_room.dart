@@ -240,6 +240,7 @@ class WaitingRoom extends HookConsumerWidget {
               ),
             ),
             SizedBox(height: height / 48),
+
             // Leave the room button
             if (!fullness.value)
               OnlineButton(
@@ -261,6 +262,8 @@ class WaitingRoom extends HookConsumerWidget {
                   },
                 ),
               ),
+
+            // Start the game button / show the number of players who stated their readiness
             liveEvents.maybeWhen(
               data: (events) {
                 final event = events.firstOrNull;
@@ -279,38 +282,36 @@ class WaitingRoom extends HookConsumerWidget {
                     );
                   }
                 }
-                // return SizedBox();
-                return OnlineButton(
-                  provider: gameControllerProvider,
-                  child: AnimatedButton(
-                    color: AppColors.greens[3],
-                    width: width / 2,
-                    buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
-                      color: AppColors.lighterGrey,
-                    ),
-                    text: 'شروع بازی',
-                    pressEvent: () async {
-                      final roomId =
-                          SharedPrefs.getModel("currentRoom", Room.fromJson)!
-                              .id;
-                      final userId = SharedPrefs.userID;
-                      final result =
-                          await ref.read(gameControllerProvider.notifier).ready(
-                                roomId: roomId!,
-                                userId: userId!,
-                                nextPhase: "game_started",
-                              );
-                      result.match(
-                        (l) {},
-                        (r) {
-                          log(r.msg!, name: 'ReadyForNextPhaseDialog');
-                        },
-                      );
-                    },
-                  ),
-                );
+                return SizedBox();
               },
-              orElse: () => SizedBox(),
+              orElse: () => OnlineButton(
+                provider: gameControllerProvider,
+                child: AnimatedButton(
+                  color: AppColors.greens[3],
+                  width: width / 2,
+                  buttonTextStyle: MyTextStyles.bodyLarge.copyWith(
+                    color: AppColors.lighterGrey,
+                  ),
+                  text: 'شروع بازی',
+                  pressEvent: () async {
+                    final roomId =
+                        SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
+                    final userId = SharedPrefs.userID;
+                    final result =
+                        await ref.read(gameControllerProvider.notifier).ready(
+                              roomId: roomId!,
+                              userId: userId!,
+                              nextPhase: "game_started",
+                            );
+                    result.match(
+                      (l) {},
+                      (r) {
+                        log(r.msg!, name: 'ReadyForNextPhaseDialog');
+                      },
+                    );
+                  },
+                ),
+              ),
             ),
           ],
         ),

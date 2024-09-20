@@ -16,11 +16,11 @@ part 'game_controller.g.dart';
 class GameController extends _$GameController {
   @override
   FutureOr<Either<ErrorResp, GameResp>> build() {
-    final userId = SharedPrefs.userID;
-    final roomId = SharedPrefs.getModel('currentRoom', Room.fromJson)!.id;
-    if (userId != null && roomId != null) {
-      return getPlayerById(userId: userId, roomId: roomId);
-    }
+    // final userId = SharedPrefs.userID;
+    // final roomId = SharedPrefs.getModel('currentRoom', Room.fromJson)!.id;
+    // if (userId != null && roomId != null) {
+    //   return getPlayerById(userId: userId, roomId: roomId);
+    // }
     return right(GameResp.empty());
   }
 
