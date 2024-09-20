@@ -20,10 +20,12 @@ class Situation {
   static Situation fromJson(Map<String, dynamic> json) => Situation()
     ..roomId = json['room_id']
     ..isDay = json['is_day']
-    ..dayNumber = json['day_number']
-    ..situation = json['situation']
-    ..winnerSide = json['winner_side']
-    ..usedLastMoves = List<String?>.from(json['used_last_moves'])
+    ..dayNumber = json['day_num']
+    ..situation = json['situation']['String']
+    ..winnerSide = json['winner_side']['String']
+    ..usedLastMoves = json['used_last_moves'] != null
+        ? List<String?>.from(json['used_last_moves'])
+        : null
     ..remainedEnquiry = json['remained_enquiry'];
 
   Map<String, dynamic> toJson() => {

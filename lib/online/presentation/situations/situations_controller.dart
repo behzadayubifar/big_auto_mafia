@@ -6,13 +6,18 @@ import 'package:auto_mafia/online/domain/situations/situations_repository.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../offline/db/entities/room.dart';
+import '../../../offline/db/shared_prefs/shared_prefs.dart';
+
 part 'situations_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class SituationsController extends _$SituationsController {
   @override
   FutureOr<Either<ErrorResp, SituationsResp>> build() {
-    return right(SituationsResp());
+    final roomId = SharedPrefs.getModel("currentRoom", Room.fromJson)!.id;
+    if (roomId != null) return getSituation(roomId);
+    return right(SituationsResp.empty());
   }
 
   Future<Either<ErrorResp, SituationsResp>> getSituation(String roomId) async {
