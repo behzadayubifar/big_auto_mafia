@@ -84,56 +84,6 @@ class ActiveRooms extends _$ActiveRooms {
     return rooms;
   }
 
-  // // fetch room from server
-  // Future<List<Room?>> refreshRoomById(String id) async {
-  //   state = const AsyncLoading();
-  //   List<Room?> rooms = [];
-  //   state = await AsyncValue.guard(
-  //     () async {
-  //       // server
-  //       // TODO: Later we must return the room from like these methods in rooms_controller.dart and ...
-  //       // TODO: So we won't need to call the local methods -- DONE
-
-  //       // TODO: We can use isolates to run the server & local methods in parallel to save time
-  //       final roomsResp =
-  //           await ref.read(roomsControllerProvider.notifier).getRoombyId(id);
-  //       // save to sharedPrefd
-  //       roomsResp.match(
-  //         (l) async {
-  //           // if the room couldn't be fetched from the server, we return the room from local db
-  //           switch (l.statusCode) {
-  //             case 404:
-  //               log('room not found');
-  //               // so we remove the room from the local db
-  //               ref.read(isarServiceProvider.future).then(
-  //                 (isar) async {
-  //                   await isar.deleteRoom(id);
-  //                 },
-  //               );
-  //               break;
-  //             default:
-  //               log('failed to fetch room');
-  //               rooms = await getRoomById(id);
-  //               break;
-  //           }
-  //         },
-  //         (r) async {
-  //           log('room found');
-  //           if (r.users != null) {
-  //             rooms = r.rooms;
-  //             rooms[0]!.usersInfo = r.users![id];
-  //             return rooms;
-  //           }
-  //           // update the room in local db
-  //           rooms = await updateRoom(r.rooms[0]);
-  //         },
-  //       );
-  //       return rooms;
-  //     },
-  //   );
-  //   return rooms;
-  // }
-
   // update room in local db
   Future<List<Room?>> updateRoom(List<Room> rooms) async {
     final isar = await ref.read(isarServiceProvider.future);
