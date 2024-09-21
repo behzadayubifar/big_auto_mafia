@@ -265,6 +265,13 @@ class Panel extends HookConsumerWidget {
                                           height: height / 16,
                                           width: width,
                                           index: index,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: AppColors.darkestGrey,
+                                              blurRadius: 2,
+                                              spreadRadius: .5,
+                                            ),
+                                          ],
                                           title: rooms[index]!.name!,
                                           leading: rooms[index]!
                                               .numberOfPlayers
@@ -316,11 +323,9 @@ class Panel extends HookConsumerWidget {
                                                     playerOnline: player,
                                                   );
 
-                                                  // get situation of the game
-
                                                   ref
                                                       .read(routerProvider)
-                                                      .goNamed(
+                                                      .pushNamed(
                                                         'game-page',
                                                       );
                                                 }
