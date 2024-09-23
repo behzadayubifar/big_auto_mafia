@@ -1,5 +1,6 @@
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
+import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dart';
 import 'package:auto_mafia/online/presentation/common/lists/my_list_tile.dart';
 import 'package:auto_mafia/online/presentation/game/game_controller.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
@@ -26,6 +27,8 @@ class GamePage extends HookConsumerWidget {
     final game = ref.watch(gameControllerProvider);
     final situationsCtrl = ref.watch(situationsControllerProvider);
     final roomsCtrl = ref.watch(activeRoomsProvider);
+    //
+    final voteds = useState(<String>[]);
     //
     final user = roomsCtrl.whenData((rooms) {
       final userId = SharedPrefs.userID;
@@ -146,39 +149,73 @@ class GamePage extends HookConsumerWidget {
                   roomsCtrl.maybeWhen(
                     data: (data) {
                       final players = data[0]!.usersInfo!;
-                      return Positioned(
-                        top: height / 2.1,
-                        bottom: height / 8,
-                        width: width,
-                        child: MyListView(
-                            height: height / 2.2,
-                            width: width,
-                            children: players,
-                            scrollController: scrollController,
-                            // title: 'به کیا رأی میدی؟',
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                AppColors.primaries[1],
-                                AppColors.lightestGrey,
-                              ],
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height: height / 2.4),
+                          // list of players
+                          MyListView(
+                              height: height / 2.4,
+                              width: width,
+                              children: players,
+                              scrollController: scrollController,
+                              // title: 'به کیا رأی میدی؟',
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  AppColors.primaries[1],
+                                  AppColors.lightestGrey,
+                                ],
+                              ),
+                              itemBuilder: (context, index) {
+                                return MyListTile(
+                                  height: height / 14,
+                                  width: width,
+                                  index: index,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      if (!voteds.value
+                                          .contains(players[index].id)) ...[
+                                        AppColors.primaries[2],
+                                        AppColors.primaries[3],
+                                      ] else ...[
+                                        AppColors.secondaries[2],
+                                        AppColors.secondaries[3],
+                                      ]
+                                    ],
+                                  ),
+                                  title: players[index].fullName!,
+                                  onTap: () {
+                                    if (voteds.value
+                                        .contains(players[index].id)) {
+                                      voteds.value = voteds.value
+                                          .where(
+                                              (id) => id != players[index].id)
+                                          .toList();
+                                    } else {
+                                      voteds.value = [
+                                        ...voteds.value,
+                                        players[index].id!
+                                      ];
+                                    }
+                                  },
+                                );
+                              }),
+
+                          SizedBox(height: height / 24),
+
+                          // confirm button
+                          OnlineButton(
+                            title: "تأیید آراء",
+                            textStyle: MyTextStyles.headlineSmall.copyWith(
+                              color: AppColors.lightestGrey,
+                              height: .1,
                             ),
-                            itemBuilder: (context, index) {
-                              return MyListTile(
-                                height: height / 14,
-                                width: width,
-                                index: index,
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.primaries[2],
-                                    AppColors.primaries[3],
-                                  ],
-                                ),
-                                title: players[index].fullName!,
-                                onTap: () {},
-                              );
-                            }),
+                            backgroundColor: AppColors.greens[3],
+                            onPressed: () => print('confirm'),
+                          ),
+                        ],
                       );
                     },
                     orElse: () => LoadingAnimationWidget.twoRotatingArc(

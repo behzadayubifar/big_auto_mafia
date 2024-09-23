@@ -49,4 +49,16 @@ class Endpoints {
 
   // /situations/{room_id}
   static String getGameSituation(String roomId) => "/situations/$roomId"; // get
+
+  // Votes --------------------------------
+
+  // http://localhost:8080/api/v1/votes/?level=1
+  /* 
+    {
+  "room_id": "55647ae6-224f-49bc-af48-c6fe9d08d1bb",
+  "day_num": 1,
+  "voted": "3667cd55-29e5-42d8-9976-8176bf5142ba"
+}
+   */
+  static String vote(String level) => "/votes/?level=$level"; // post
 }
