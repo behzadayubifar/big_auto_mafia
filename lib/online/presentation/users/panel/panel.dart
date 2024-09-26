@@ -8,7 +8,9 @@ import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dar
 import 'package:auto_mafia/online/presentation/game/game_controller.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/rooms_controller.dart';
+import 'package:auto_mafia/online/presentation/situations/situations_controller.dart';
 import 'package:auto_mafia/online/presentation/users/controller/accounts_controller.dart';
+import 'package:auto_mafia/online/presentation/votes/votes_controller.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,6 +19,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../../../../offline/db/entities/room.dart';
 import '../../../../offline/db/isar_service.dart';
 import '../../../../routes/routes.dart';
 import '../../../../offline/ui/common/loading.dart';
@@ -277,12 +280,21 @@ class Panel extends HookConsumerWidget {
                                               .numberOfPlayers
                                               .toString(),
                                           onTap: () async {
-                                            await ref
+                                            final updatedRoom = await ref
                                                 .read(activeRoomsProvider
                                                     .notifier)
                                                 .refreshRoomsById(
                                               [rooms[index]!.id!],
                                             );
+                                            final isar = await ref.read(
+                                                isarServiceProvider.future);
+                                            // insert the updated room to shared prefs
+                                            if (updatedRoom.isNotEmpty)
+                                              await SharedPrefs.setModel<Room>(
+                                                'currentRoom',
+                                                updatedRoom.single!,
+                                              );
+
                                             //TODO: go to appropiate page based on the room status
                                             switch (rooms[index]?.status) {
                                               case "joining":
@@ -293,6 +305,54 @@ class Panel extends HookConsumerWidget {
                                                     );
                                                 break;
                                               case "running":
+                                                final si = await ref
+                                                    .read(
+                                                        situationsControllerProvider
+                                                            .notifier)
+                                                    .getSituation(
+                                                        rooms[index]!.id!);
+                                                si.match(
+                                                  (l) {
+                                                    log('error');
+                                                  },
+                                                  (r) async {
+                                                    final si =
+                                                        await isar.putSituation(
+                                                      roomId: rooms[index]!.id,
+                                                      situation: r
+                                                          .situation?.situation,
+                                                      dayNumber: r
+                                                          .situation?.dayNumber,
+                                                      isDay: r.situation?.isDay,
+                                                      remainedEnquiry: r
+                                                          .situation
+                                                          ?.remainedEnquiry,
+                                                      usedLastMoves: r.situation
+                                                          ?.usedLastMoves,
+                                                      winnerSide: r.situation
+                                                          ?.winnerSide,
+                                                    );
+                                                    log('situation: $si');
+
+                                                    switch (r
+                                                        .situation?.situation) {
+                                                      case "court":
+                                                        await SharedPrefs
+                                                            .setModel<Room>(
+                                                          'currentRoom',
+                                                          rooms[index]!,
+                                                        );
+                                                        // fetch votes
+                                                        final votes = await ref
+                                                            .read(
+                                                                votesControllerProvider
+                                                                    .notifier)
+                                                            .getVotes(level: 1);
+                                                        break;
+                                                      default:
+                                                    }
+                                                  },
+                                                );
                                                 // get the player from the server
                                                 final player = await ref
                                                     .read(gameControllerProvider
@@ -315,9 +375,6 @@ class Panel extends HookConsumerWidget {
                                                 });
 
                                                 if (player != null) {
-                                                  final isar = await ref.read(
-                                                      isarServiceProvider
-                                                          .future);
                                                   await isar.putUser(
                                                     id: SharedPrefs.userID,
                                                     playerOnline: player,

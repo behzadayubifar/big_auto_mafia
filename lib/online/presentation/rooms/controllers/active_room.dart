@@ -71,6 +71,12 @@ class ActiveRooms extends _$ActiveRooms {
                 final room = r.rooms;
                 room[0].usersInfo = r.users![id];
                 rooms.addAll(room);
+
+                final currentRoom =
+                    SharedPrefs.getModel('currentRoom', Room.fromJson);
+                if (currentRoom != null && currentRoom.id == id) {
+                  await SharedPrefs.setModel<Room>('currentRoom', room[0]);
+                }
               }
 
               // update the room in local db

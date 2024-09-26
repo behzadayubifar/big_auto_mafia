@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:auto_mafia/online/data/models/responses/rooms.dart';
 
 import '../../../../offline/db/entities/user.dart';
+import '../../../../offline/db/entities/vote.dart';
 
 class AppEvent {
   final type;
@@ -42,6 +43,21 @@ class AppEvent {
         log("player_added_to_waiting_queue event data: ${data['data']}");
         final numberOfWaiters = data['data'];
         return PlayerAddedToWaitingQueue(numberOfWaiters: numberOfWaiters);
+      case "voting_finished":
+        // example : {"event_type":"voting_finished","data": {"votes": [{"voter": "1", "voted": "2", "level": 1}]}}
+        log("voting_finished event data: ${data['data']}");
+        return VotingFinished();
+      case "votes_processed":
+        // example : {"event_type":"votes_processed","data": {"enough_voted": {"1": 2, "2": 1}}}
+        log("votes_processed event data: ${data['data']}");
+        //TODO:_TypeError (type 'List<dynamic>' is not a subtype of type 'List<String>' in type cast)
+        final collection = Map<String, List<String>>.from(
+          (data['data']['collection'] as Map<String, dynamic>).map(
+            (key, value) => MapEntry(key, List<String>.from(value as List)),
+          ),
+        );
+        return VotesProcessed(collection: collection);
+
       default:
         return AppEvent();
     }
@@ -138,5 +154,41 @@ class PlayerAddedToWaitingQueue extends AppEvent {
   @override
   String toString() {
     return '$numberOfWaiters are waiting ...';
+  }
+}
+
+class VotingFinished extends AppEvent {
+  final type = "voting_finished";
+
+  VotingFinished();
+
+  @override
+  String toString() {
+    return 'VotingFinished';
+  }
+}
+
+class VotesProcessed extends AppEvent {
+  final Map<String, List<String?>> collection;
+  final type = "votes_processed";
+
+  VotesProcessed({
+    required this.collection,
+  });
+
+  @override
+  String toString() {
+    return 'VotesProcessed{collection: $collection}';
+  }
+}
+
+class NightStarted extends AppEvent {
+  final type = "night_started";
+
+  NightStarted();
+
+  @override
+  String toString() {
+    return 'NightStarted';
   }
 }

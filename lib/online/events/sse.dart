@@ -14,6 +14,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'dart:async';
 
+import '../../offline/db/entities/room.dart';
 import '../../offline/db/isar_service.dart';
 import '../../offline/db/shared_prefs/shared_prefs.dart';
 import '../data/endpoints.dart';
@@ -88,9 +89,6 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
           },
         );
       } else if (appEvent is PlayerAddedToWaitingQueue) {
-        allEvents = [];
-        allEvents = [...allEvents, appEvent];
-        streamController.add(allEvents);
       } else if (appEvent is GameStarted) {
         // save player in the local db
         final isar = await ref.read(isarServiceProvider.future);
@@ -103,7 +101,41 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
               'show-role',
               extra: appEvent.player,
             );
+      } else if (appEvent is VotesProcessed) {
+        // transform the collection to a map of player name and voted players names
+        // use local db
+        final isar = await ref.read(isarServiceProvider.future);
+        final roomId = SharedPrefs.getModel('currentRoom', Room.fromJson);
+        final players = await isar.retrieveRoomByID(roomId!.id!).then(
+              (room) => room!.usersInfo,
+            );
+        final transformedCollection = appEvent.collection.map(
+          (voted, voters) {
+            final votedName = players
+                ?.where(
+                  (player) => player.id == voted,
+                )
+                .firstOrNull
+                ?.fullName;
+            final votersNames = players
+                ?.where(
+                  (player) => voters.contains(player.id),
+                )
+                .map(
+                  (player) => player.fullName,
+                )
+                .toList();
+            return MapEntry(votedName!, votersNames!);
+          },
+        );
+        final newAppEvent = VotesProcessed(
+          collection: transformedCollection,
+        );
+        allEvents = [];
+        allEvents = [...allEvents, newAppEvent];
       }
+      allEvents = [...allEvents, appEvent];
+      streamController.add(allEvents);
     },
   );
   // yield allEvents;

@@ -1151,6 +1151,22 @@ class IsarService {
     return false;
   }
 
+  // retrieve usersInfo by roomID & playerID
+  Future<List<UsersInRoom>?> retrieveUsersInfo(
+      String roomID, List<String> playersID) async {
+    final room = await isar.rooms.filter().idEqualTo(roomID).findFirst();
+    if (room != null) {
+      final usersInfo = room.usersInfo!
+          .where(
+            (u) => playersID.contains(u.id),
+          )
+          .toList();
+
+      return usersInfo;
+    }
+    return null;
+  }
+
   // --- Situations --------------------------------------------------------------------------
   /* 
      bool? isDay,

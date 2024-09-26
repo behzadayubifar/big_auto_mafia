@@ -21,8 +21,8 @@ class Situation {
     ..roomId = json['room_id']
     ..isDay = json['is_day']
     ..dayNumber = json['day_num']
-    ..situation = json['situation']['String']
-    ..winnerSide = json['winner_side']['String']
+    ..situation = json['situation']
+    ..winnerSide = json['winner_side']
     ..usedLastMoves = json['used_last_moves'] != null
         ? List<String?>.from(json['used_last_moves'])
         : null
@@ -60,4 +60,18 @@ class Situation {
   String toString() {
     return 'Situation{isDay: $isDay, dayNumber: $dayNumber, situation: $situation, winnerSide: $winnerSide, usedLastMoves: $usedLastMoves, remainedEnquiry: $remainedEnquiry}';
   }
+}
+
+// Situations ----------------------------------------------------
+
+class Situations {
+  Situations._();
+// CREATE TYPE status AS ENUM ('day', 'night', 'renight', 'night_result', 'vote', 'vote_result', 'court');
+  static const String day = 'day';
+  static const String night = 'night';
+  static const String renight = 'renight';
+  static const String nightResult = 'night_result';
+  static const String vote = 'vote';
+  static const String voteResult = 'vote_result';
+  static const String court = 'court';
 }
