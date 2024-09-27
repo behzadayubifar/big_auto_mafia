@@ -305,6 +305,35 @@ class Panel extends HookConsumerWidget {
                                                     );
                                                 break;
                                               case "running":
+                                                // get the player from the server
+                                                final player = await ref
+                                                    .read(gameControllerProvider
+                                                        .notifier)
+                                                    .getPlayerById(
+                                                      userId:
+                                                          SharedPrefs.userID!,
+                                                      roomId: rooms[index]!.id!,
+                                                    )
+                                                    .then((value) {
+                                                  return value.match(
+                                                    (l) {
+                                                      log('error');
+                                                      return null;
+                                                    },
+                                                    (r) {
+                                                      return r.playerOnline;
+                                                    },
+                                                  );
+                                                });
+
+                                                if (player != null) {
+                                                  await isar.putUser(
+                                                    id: SharedPrefs.userID,
+                                                    playerOnline: player,
+                                                  );
+                                                }
+
+                                                // get the situation from the server
                                                 final si = await ref
                                                     .read(
                                                         situationsControllerProvider
@@ -337,55 +366,31 @@ class Panel extends HookConsumerWidget {
                                                     switch (r
                                                         .situation?.situation) {
                                                       case "court":
-                                                        await SharedPrefs
-                                                            .setModel<Room>(
-                                                          'currentRoom',
-                                                          rooms[index]!,
-                                                        );
                                                         // fetch votes
-                                                        final votes = await ref
+                                                        await ref
                                                             .read(
                                                                 votesControllerProvider
                                                                     .notifier)
-                                                            .getVotes(level: 1);
+                                                            .getVotes(level: 1)
+                                                            .then((_) {
+                                                          ref
+                                                              .read(
+                                                                  routerProvider)
+                                                              .pushNamed(
+                                                                'game-page',
+                                                              );
+                                                        });
                                                         break;
                                                       default:
+                                                        ref
+                                                            .read(
+                                                                routerProvider)
+                                                            .pushNamed(
+                                                              'game-page',
+                                                            );
                                                     }
                                                   },
                                                 );
-                                                // get the player from the server
-                                                final player = await ref
-                                                    .read(gameControllerProvider
-                                                        .notifier)
-                                                    .getPlayerById(
-                                                      userId:
-                                                          SharedPrefs.userID!,
-                                                      roomId: rooms[index]!.id!,
-                                                    )
-                                                    .then((value) {
-                                                  return value.match(
-                                                    (l) {
-                                                      log('error');
-                                                      return null;
-                                                    },
-                                                    (r) {
-                                                      return r.playerOnline;
-                                                    },
-                                                  );
-                                                });
-
-                                                if (player != null) {
-                                                  await isar.putUser(
-                                                    id: SharedPrefs.userID,
-                                                    playerOnline: player,
-                                                  );
-
-                                                  ref
-                                                      .read(routerProvider)
-                                                      .pushNamed(
-                                                        'game-page',
-                                                      );
-                                                }
                                             }
                                           },
                                         );

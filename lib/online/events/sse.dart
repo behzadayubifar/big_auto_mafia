@@ -61,7 +61,7 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
       )
       .listen(
     (event) async {
-      final appEvent = AppEvent.fromJson(event);
+      var appEvent = AppEvent.fromJson(event);
       if (appEvent is JoinedRoom) {
         await ref
             .read(activeRoomsProvider.notifier)
@@ -128,11 +128,23 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
             return MapEntry(votedName!, votersNames!);
           },
         );
-        final newAppEvent = VotesProcessed(
-          collection: transformedCollection,
+        //
+        final transformedEnougVoted = appEvent.enoughVoted?.map(
+          (key, value) {
+            final playerName = players
+                ?.where(
+                  (player) => player.id == key,
+                )
+                .firstOrNull
+                ?.fullName;
+            return MapEntry(playerName!, value);
+          },
         );
-        allEvents = [];
-        allEvents = [...allEvents, newAppEvent];
+        //
+        appEvent = VotesProcessed(
+          collection: transformedCollection,
+          enoughVoted: transformedEnougVoted,
+        );
       }
       allEvents = [...allEvents, appEvent];
       streamController.add(allEvents);

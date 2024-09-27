@@ -21,6 +21,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../offline/db/isar_service.dart';
 import '../../../offline/db/shared_prefs/shared_prefs.dart';
 import '../../../offline/my_assets.dart';
+import '../../data/models/responses/votes.dart';
 import '../common/lists/my_list_view.dart';
 
 class GamePage extends HookConsumerWidget {
@@ -37,9 +38,11 @@ class GamePage extends HookConsumerWidget {
     final situationsCtrl = ref.watch(situationsControllerProvider);
     final roomsCtrl = ref.watch(activeRoomsProvider);
     final live = ref.watch(appEventsProvider);
+    final votesCtrl = ref.watch(votesControllerProvider);
     //
     final voteds = useState(<String>[]);
     final firstVotingIsFinished = useState(false);
+    final votesAreFetched = useState(false);
     //
     final user = roomsCtrl.whenData((rooms) {
       final userId = SharedPrefs.userID;
@@ -59,9 +62,11 @@ class GamePage extends HookConsumerWidget {
     // when the voting is finished
     live.whenData(
       (event) {
-        if (event.lastOrNull is VotingFinished) {
-          firstVotingIsFinished.value = true;
+        if (event.any((e) => e is VotingFinished)) {
           // show a loading animation on the screen over the whole screen
+          if (firstVotingIsFinished.value) {
+            return;
+          }
           final overlay = OverlayEntry(
             // opaque: false,
             builder: (context) {
@@ -69,7 +74,7 @@ class GamePage extends HookConsumerWidget {
                 alignment: Alignment.center,
                 children: [
                   ModalBarrier(
-                    // dismissible: false,
+                    dismissible: false,
                     color: AppColors.backGround.withOpacity(.85),
                   ),
                   LoadingAnimationWidget.beat(
@@ -86,6 +91,7 @@ class GamePage extends HookConsumerWidget {
             Overlay.of(context).insertAll(Iterable.generate(
                 _entries.value.length, (index) => _entries.value[index]!));
           });
+          firstVotingIsFinished.value = true;
         }
       },
     );
@@ -189,138 +195,55 @@ class GamePage extends HookConsumerWidget {
                     }).value!,
                   ),
 
-                  // list of votes
+                  // list of votes from events
                   if (firstVotingIsFinished.value)
                     live.whenData(
                           (events) {
-                            final lstEvent = events.firstOrNull;
+                            final lstEvent = events.lastOrNull;
                             if (lstEvent is VotesProcessed) {
-                              WidgetsBinding.instance
-                                  .addPostFrameCallback((timeStamp) {
-                                if (_entries.value.isNotEmpty) {
-                                  _entries.value.forEach((entry) {
-                                    if (entry != null && entry.mounted) {
-                                      entry.remove();
-                                    }
-                                  });
-                                  _entries.value.clear();
-                                }
-                              });
-                              final collection = lstEvent.collection;
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(height: height / 2.4),
-                                  MyListView(
-                                    height: height / 2,
-                                    width: width / 1,
-                                    children: collection.keys.toList(),
-                                    scrollController: scrollController,
-                                    itemBuilder: (context, index) {
-                                      return ExpandablePanel(
-                                        collapsed: Container(),
-                                        header: Container(
-                                            // width: width / 1.2,
-                                            padding: EdgeInsets.fromLTRB(
-                                              width / 24,
-                                              height / 64,
-                                              width / 24,
-                                              height / 64,
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                // voted
-                                                Text(
-                                                  collection.keys
-                                                      .toList()[index],
-                                                  style: MyTextStyles.bodyMD
-                                                      .copyWith(
-                                                    color: AppColors.white,
-                                                    height: 1.5,
-                                                    overflow: TextOverflow.fade,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  collection.values
-                                                      .elementAt(index)
-                                                      .length
-                                                      .toString(),
-                                                  style: MyTextStyles.bodyLarge
-                                                      .copyWith(
-                                                    color: AppColors
-                                                        .secondaries[1],
-                                                    height: 1.5,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            decoration: BoxDecoration(
-                                              // color: AppColors.black20,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              gradient: LinearGradient(
-                                                colors: [
-                                                  AppColors.primaries[4],
-                                                  AppColors.primaries[2],
-                                                ],
-                                                end: Alignment.topLeft,
-                                                begin: Alignment.bottomRight,
-                                                transform: GradientRotation(
-                                                    3.14 / 3.2),
-                                              ),
-                                            )),
-                                        expanded: Row(
-                                          children: [
-                                            SizedBox(width: width / 32),
-                                            Container(
-                                              width: width / 1.5,
-                                              padding: EdgeInsets.fromLTRB(
-                                                width / 24,
-                                                height / 64,
-                                                width / 24,
-                                                height / 64,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.black20,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: collection.values
-                                                    .elementAt(index)
-                                                    .map(
-                                                      (voted) => Text(
-                                                        voted!,
-                                                        style: MyTextStyles
-                                                            .bodyMD
-                                                            .copyWith(
-                                                          color:
-                                                              AppColors.white,
-                                                          height: 1.5,
-                                                          overflow:
-                                                              TextOverflow.fade,
-                                                        ),
-                                                      ),
-                                                    )
-                                                    .toList(),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
+                              // WidgetsBinding.instance
+                              //     .addPostFrameCallback((timeStamp) {});
+                              if (_entries.value.isNotEmpty) {
+                                _entries.value.forEach((entry) {
+                                  if (entry != null && entry.mounted) {
+                                    entry.remove();
+                                  }
+                                });
+                                _entries.value.clear();
+                              }
+                              return showInCourtPlayers(
+                                height,
+                                width,
+                                scrollController,
+                                event: lstEvent,
                               );
                             }
+                          },
+                        ).value ??
+                        SizedBox(),
+
+                  // list of votes from votesCtrl
+                  if (!firstVotingIsFinished.value || votesAreFetched.value)
+                    votesCtrl.whenData(
+                          (resp) {
+                            return resp.match(
+                              (l) {
+                                print('votesCtrl failed');
+                              },
+                              (r) {
+                                firstVotingIsFinished.value = true;
+                                votesAreFetched.value = true;
+                                print('votesCtrl success');
+                                log(r.toString());
+
+                                return showInCourtPlayers(
+                                  height,
+                                  width,
+                                  scrollController,
+                                  resp: r,
+                                );
+                              },
+                            );
                           },
                         ).value ??
                         SizedBox(),
@@ -396,7 +319,7 @@ class GamePage extends HookConsumerWidget {
                               height: height / 12,
                               width: width / 2.4,
                               provider: votesControllerProvider,
-                              backgroundColor: AppColors.greens[3],
+                              backgroundColor: AppColors.greens[2],
                               onPressed: () async {
                                 final isar =
                                     await ref.read(isarServiceProvider.future);
@@ -443,4 +366,133 @@ class GamePage extends HookConsumerWidget {
       ),
     );
   }
+}
+
+Column showInCourtPlayers(
+  double height,
+  double width,
+  ScrollController scrollController, {
+  VotesProcessed? event,
+  VoteResp? resp,
+}) {
+  final Map<String, List<String?>> collection;
+  final Map<String, int> enoughVoted;
+
+  if (event != null) {
+    collection = event.collection;
+    enoughVoted = event.enoughVoted!;
+  } else {
+    collection = resp!.collection!;
+    enoughVoted = resp.enoughVoted!;
+  }
+
+  final sortedVotedNames = collection.entries.toList()
+    ..sort((a, b) => b.value.length.compareTo(a.value.length));
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SizedBox(height: height / 2.4),
+      MyListView(
+        height: height / 2,
+        width: width / 1,
+        children: sortedVotedNames,
+        scrollController: scrollController,
+        itemBuilder: (context, index) {
+          final isAmongEnoughVoted = enoughVoted.containsKey(
+            sortedVotedNames[index].key,
+          );
+          return ExpandablePanel(
+            collapsed: Container(),
+            header: Container(
+              // width: width / 1.2,
+              padding: EdgeInsets.fromLTRB(
+                width / 24,
+                height / 64,
+                width / 24,
+                height / 64,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // voted
+                  Text(
+                    sortedVotedNames[index].key,
+                    style: MyTextStyles.bodyMD.copyWith(
+                      color: AppColors.white,
+                      height: 1.5,
+                      overflow: TextOverflow.fade,
+                    ),
+                  ),
+                  Text(
+                    sortedVotedNames[index].value.length.toString(),
+                    style: MyTextStyles.bodyLarge.copyWith(
+                      color: AppColors.secondaries[1],
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+              decoration: BoxDecoration(
+                // color: AppColors.black20,
+                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  // if the the voted is among the enough voted
+                  // then the gradient is secondary
+                  // otherwise it is primary
+                  colors: isAmongEnoughVoted
+                      ? [
+                          AppColors.secondaries[3],
+                          AppColors.secondaries[4],
+                        ]
+                      : [
+                          AppColors.primaries[2],
+                          AppColors.primaries[3],
+                        ],
+                  end: Alignment.topLeft,
+                  begin: Alignment.bottomRight,
+                  transform: GradientRotation(3.14 / 3.2),
+                ),
+              ),
+            ),
+            expanded: Row(
+              children: [
+                SizedBox(width: width / 32),
+                Container(
+                  width: width / 1.5,
+                  padding: EdgeInsets.fromLTRB(
+                    width / 24,
+                    height / 64,
+                    width / 24,
+                    height / 64,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.black20,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: sortedVotedNames[index]
+                        .value
+                        .map(
+                          (voter) => Text(
+                            voter!,
+                            style: MyTextStyles.bodyMD.copyWith(
+                              color: AppColors.white,
+                              height: 1.5,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    ],
+  );
 }
