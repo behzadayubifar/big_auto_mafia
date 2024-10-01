@@ -60,7 +60,7 @@ class Endpoints {
   "voted": "3667cd55-29e5-42d8-9976-8176bf5142ba"
 }
    */
-  static String vote(int level) => "/votes/?level=$level"; // post
+  static const vote = "/votes/"; // post
 
   /* 
   http://localhost:8080/api/v1/votes/55647ae6-224f-49bc-af48-c6fe9d08d1bb/1?level=2

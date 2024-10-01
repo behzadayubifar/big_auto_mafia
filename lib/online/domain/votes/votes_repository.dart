@@ -18,11 +18,10 @@ class VotesRepository {
   Future<Either<ErrorResp, VoteResp>> vote({
     required String roomId,
     required List<String> voted,
-    required int level,
     required int dayNum,
   }) async {
     final response = await dio.post(
-      Endpoints.vote(level),
+      Endpoints.vote,
       data: {
         'room_id': roomId,
         'day_num': dayNum,

@@ -372,22 +372,25 @@ class Panel extends HookConsumerWidget {
                                                                 votesControllerProvider
                                                                     .notifier)
                                                             .getVotes(level: 1)
-                                                            .then((_) {
-                                                          ref
-                                                              .read(
-                                                                  routerProvider)
-                                                              .pushNamed(
-                                                                'game-page',
-                                                              );
+                                                            .then((result) {
+                                                          result.match(
+                                                            (l) {
+                                                              log('error');
+                                                              log(l.toString());
+                                                            },
+                                                            (r) {
+                                                              ref
+                                                                  .read(
+                                                                      routerProvider)
+                                                                  .pushNamed(
+                                                                    'game-page',
+                                                                  );
+                                                            },
+                                                          );
                                                         });
                                                         break;
                                                       default:
-                                                        ref
-                                                            .read(
-                                                                routerProvider)
-                                                            .pushNamed(
-                                                              'game-page',
-                                                            );
+                                                        print('default');
                                                     }
                                                   },
                                                 );

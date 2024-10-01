@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:auto_mafia/offline/constants/app_colors.dart';
 import 'package:auto_mafia/offline/constants/my_text_styles.dart';
-import 'package:auto_mafia/offline/db/entities/situation.dart';
+import 'package:auto_mafia/offline/db/entities/vote.dart';
 import 'package:auto_mafia/online/data/models/responses/events.dart';
 import 'package:auto_mafia/online/events/sse.dart';
 import 'package:auto_mafia/online/presentation/common/buttons/online_buttons.dart';
@@ -11,18 +11,16 @@ import 'package:auto_mafia/online/presentation/game/game_controller.dart';
 import 'package:auto_mafia/online/presentation/rooms/controllers/active_room.dart';
 import 'package:auto_mafia/online/presentation/situations/situations_controller.dart';
 import 'package:auto_mafia/online/presentation/votes/votes_controller.dart';
-import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../../offline/db/isar_service.dart';
 import '../../../offline/db/shared_prefs/shared_prefs.dart';
 import '../../../offline/my_assets.dart';
 import '../../data/models/responses/votes.dart';
 import '../common/lists/my_list_view.dart';
+import 'players_list_to_vote.dart';
 
 class GamePage extends HookConsumerWidget {
   const GamePage({super.key});
@@ -43,6 +41,7 @@ class GamePage extends HookConsumerWidget {
     final voteds = useState(<String>[]);
     final firstVotingIsFinished = useState(false);
     final votesAreFetched = useState(false);
+    final fetchedVotesCollection = useState(VotesCollection.empty());
     //
     final user = roomsCtrl.whenData((rooms) {
       final userId = SharedPrefs.userID;
@@ -211,15 +210,15 @@ class GamePage extends HookConsumerWidget {
                                 });
                                 _entries.value.clear();
                               }
-                              return showInCourtPlayers(
-                                height,
-                                width,
-                                scrollController,
+                              return PlayersListToVote(
+                                height: height,
+                                width: width,
+                                scrollController: scrollController,
                                 event: lstEvent,
                               );
                             }
                           },
-                        ).value ??
+                        ).valueOrNull ??
                         SizedBox(),
 
                   // list of votes from votesCtrl
@@ -231,21 +230,25 @@ class GamePage extends HookConsumerWidget {
                                 print('votesCtrl failed');
                               },
                               (r) {
-                                firstVotingIsFinished.value = true;
-                                votesAreFetched.value = true;
+                                if (r.collection != null) {
+                                  firstVotingIsFinished.value = true;
+                                  votesAreFetched.value = true;
+                                  fetchedVotesCollection.value = r.collection!;
+                                }
                                 print('votesCtrl success');
-                                log(r.toString());
 
-                                return showInCourtPlayers(
-                                  height,
-                                  width,
-                                  scrollController,
-                                  resp: r,
+                                return PlayersListToVote(
+                                  height: height,
+                                  width: width,
+                                  scrollController: scrollController,
+                                  resp: VoteResp(
+                                    collection: fetchedVotesCollection.value,
+                                  ),
                                 );
                               },
                             );
                           },
-                        ).value ??
+                        ).valueOrNull ??
                         SizedBox(),
 
                   // TODO: FIX this overflowing of the list constrains
@@ -310,28 +313,15 @@ class GamePage extends HookConsumerWidget {
                             SizedBox(height: height / 24),
 
                             // confirm button
-                            OnlineButton(
-                              title: "تأیید آراء",
-                              textStyle: MyTextStyles.headlineSmall.copyWith(
-                                color: AppColors.lightestGrey,
-                                height: .1,
-                              ),
-                              height: height / 12,
-                              width: width / 2.4,
-                              provider: votesControllerProvider,
-                              backgroundColor: AppColors.greens[2],
+                            ConfirmVotesButton(
+                              height: height,
+                              width: width,
+                              voteds: voteds,
                               onPressed: () async {
-                                final isar =
-                                    await ref.read(isarServiceProvider.future);
-                                final si =
-                                    await isar.retrieveSituation(rooms[0]!.id!);
                                 final result = await ref
                                     .read(votesControllerProvider.notifier)
                                     .vote(
                                       voted: voteds.value,
-                                      level: si?.situation == Situations.court
-                                          ? 2
-                                          : 1,
                                     );
                                 result.match(
                                   (l) {
@@ -368,131 +358,33 @@ class GamePage extends HookConsumerWidget {
   }
 }
 
-Column showInCourtPlayers(
-  double height,
-  double width,
-  ScrollController scrollController, {
-  VotesProcessed? event,
-  VoteResp? resp,
-}) {
-  final Map<String, List<String?>> collection;
-  final Map<String, int> enoughVoted;
+class ConfirmVotesButton extends ConsumerWidget {
+  const ConfirmVotesButton({
+    super.key,
+    required this.height,
+    required this.width,
+    required this.voteds,
+    required this.onPressed,
+  });
 
-  if (event != null) {
-    collection = event.collection;
-    enoughVoted = event.enoughVoted!;
-  } else {
-    collection = resp!.collection!;
-    enoughVoted = resp.enoughVoted!;
-  }
+  final double height;
+  final double width;
+  final ValueNotifier<List<String>> voteds;
+  final void Function()? onPressed;
 
-  final sortedVotedNames = collection.entries.toList()
-    ..sort((a, b) => b.value.length.compareTo(a.value.length));
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      SizedBox(height: height / 2.4),
-      MyListView(
-        height: height / 2,
-        width: width / 1,
-        children: sortedVotedNames,
-        scrollController: scrollController,
-        itemBuilder: (context, index) {
-          final isAmongEnoughVoted = enoughVoted.containsKey(
-            sortedVotedNames[index].key,
-          );
-          return ExpandablePanel(
-            collapsed: Container(),
-            header: Container(
-              // width: width / 1.2,
-              padding: EdgeInsets.fromLTRB(
-                width / 24,
-                height / 64,
-                width / 24,
-                height / 64,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // voted
-                  Text(
-                    sortedVotedNames[index].key,
-                    style: MyTextStyles.bodyMD.copyWith(
-                      color: AppColors.white,
-                      height: 1.5,
-                      overflow: TextOverflow.fade,
-                    ),
-                  ),
-                  Text(
-                    sortedVotedNames[index].value.length.toString(),
-                    style: MyTextStyles.bodyLarge.copyWith(
-                      color: AppColors.secondaries[1],
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                // color: AppColors.black20,
-                borderRadius: BorderRadius.circular(8),
-                gradient: LinearGradient(
-                  // if the the voted is among the enough voted
-                  // then the gradient is secondary
-                  // otherwise it is primary
-                  colors: isAmongEnoughVoted
-                      ? [
-                          AppColors.secondaries[3],
-                          AppColors.secondaries[4],
-                        ]
-                      : [
-                          AppColors.primaries[2],
-                          AppColors.primaries[3],
-                        ],
-                  end: Alignment.topLeft,
-                  begin: Alignment.bottomRight,
-                  transform: GradientRotation(3.14 / 3.2),
-                ),
-              ),
-            ),
-            expanded: Row(
-              children: [
-                SizedBox(width: width / 32),
-                Container(
-                  width: width / 1.5,
-                  padding: EdgeInsets.fromLTRB(
-                    width / 24,
-                    height / 64,
-                    width / 24,
-                    height / 64,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.black20,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: sortedVotedNames[index]
-                        .value
-                        .map(
-                          (voter) => Text(
-                            voter!,
-                            style: MyTextStyles.bodyMD.copyWith(
-                              color: AppColors.white,
-                              height: 1.5,
-                              overflow: TextOverflow.fade,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OnlineButton(
+      title: "تأیید آراء",
+      textStyle: MyTextStyles.headlineSmall.copyWith(
+        color: AppColors.lightestGrey,
+        height: .1,
       ),
-    ],
-  );
+      height: height / 12,
+      width: width / 2.4,
+      provider: votesControllerProvider,
+      backgroundColor: AppColors.greens[2],
+      onPressed: onPressed,
+    );
+  }
 }

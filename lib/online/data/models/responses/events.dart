@@ -51,19 +51,10 @@ class AppEvent {
         // example : {"event_type":"votes_processed","data": {"enoughVoted": {"1": 2, "2": 1}}}
         log("votes_processed event data: ${data['data']}");
         //TODO:_TypeError (type 'List<dynamic>' is not a subtype of type 'List<String>' in type cast)
-        final collection = Map<String, List<String>>.from(
-          (data['data']['collection'] as Map<String, dynamic>).map(
-            (key, value) => MapEntry(key, List<String>.from(value as List)),
-          ),
-        );
-        final enoughVoted = data['data']['enough_voted'] != null
-            ? Map<String, int>.from(data['data']['enough_voted'])
-            : null;
+        final collection = votesCollectionFromJson(data['data']);
         return VotesProcessed(
           collection: collection,
-          enoughVoted: enoughVoted,
         );
-
       default:
         return AppEvent();
     }
@@ -175,13 +166,11 @@ class VotingFinished extends AppEvent {
 }
 
 class VotesProcessed extends AppEvent {
-  final Map<String, List<String?>> collection;
-  final Map<String, int>? enoughVoted;
+  final VotesCollection collection;
   final type = "votes_processed";
 
   VotesProcessed({
     required this.collection,
-    this.enoughVoted,
   });
 
   @override

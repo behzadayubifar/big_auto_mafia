@@ -101,51 +101,8 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
               'show-role',
               extra: appEvent.player,
             );
-      } else if (appEvent is VotesProcessed) {
-        // transform the collection to a map of player name and voted players names
-        // use local db
-        final isar = await ref.read(isarServiceProvider.future);
-        final roomId = SharedPrefs.getModel('currentRoom', Room.fromJson);
-        final players = await isar.retrieveRoomByID(roomId!.id!).then(
-              (room) => room!.usersInfo,
-            );
-        final transformedCollection = appEvent.collection.map(
-          (voted, voters) {
-            final votedName = players
-                ?.where(
-                  (player) => player.id == voted,
-                )
-                .firstOrNull
-                ?.fullName;
-            final votersNames = players
-                ?.where(
-                  (player) => voters.contains(player.id),
-                )
-                .map(
-                  (player) => player.fullName,
-                )
-                .toList();
-            return MapEntry(votedName!, votersNames!);
-          },
-        );
-        //
-        final transformedEnougVoted = appEvent.enoughVoted?.map(
-          (key, value) {
-            final playerName = players
-                ?.where(
-                  (player) => player.id == key,
-                )
-                .firstOrNull
-                ?.fullName;
-            return MapEntry(playerName!, value);
-          },
-        );
-        //
-        appEvent = VotesProcessed(
-          collection: transformedCollection,
-          enoughVoted: transformedEnougVoted,
-        );
       }
+
       allEvents = [...allEvents, appEvent];
       streamController.add(allEvents);
     },

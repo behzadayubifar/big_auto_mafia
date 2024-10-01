@@ -22,7 +22,6 @@ class VotesController extends _$VotesController {
 
   Future<Either<ErrorResp, VoteResp>> vote({
     required List<String> voted,
-    required int level,
   }) async {
     state = const AsyncLoading();
     final currentRoom = SharedPrefs.getModel("currentRoom", Room.fromJson);
@@ -35,7 +34,6 @@ class VotesController extends _$VotesController {
         voteResult = await votesRepo.vote(
           roomId: currentRoom.id!,
           voted: voted,
-          level: level,
           dayNum: situation!.dayNumber!,
         );
 
@@ -99,48 +97,6 @@ class VotesController extends _$VotesController {
           (r) async {
             log('get votes success');
             //
-            final roomId = SharedPrefs.getModel('currentRoom', Room.fromJson);
-            final players = await isar.retrieveRoomByID(roomId!.id!).then(
-                  (room) => room!.usersInfo,
-                );
-            final transformedCollection = r.collection?.map(
-              (voted, voters) {
-                final votedName = players
-                    ?.where(
-                      (player) => player.id == voted,
-                    )
-                    .firstOrNull
-                    ?.fullName;
-                final votersNames = players
-                    ?.where(
-                      (player) => voters.contains(player.id),
-                    )
-                    .map(
-                      (player) => player.fullName!,
-                    )
-                    .toList();
-                return MapEntry(votedName!, votersNames!);
-              },
-            );
-            //
-            final transformedEnougVoted = r.enoughVoted?.map(
-              (key, value) {
-                final playerName = players
-                    ?.where(
-                      (player) => player.id == key,
-                    )
-                    .firstOrNull
-                    ?.fullName!;
-                return MapEntry(playerName!, value);
-              },
-            );
-            //
-            r = VoteResp(
-              collection: transformedCollection,
-              enoughVoted: transformedEnougVoted,
-            );
-            //
-            votesResult = right(r);
           },
         );
         print('votesResult: $votesResult');

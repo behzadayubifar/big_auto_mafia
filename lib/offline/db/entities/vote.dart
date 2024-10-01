@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import '../../../online/data/models/responses/rooms.dart';
+
 class Vote {
   String? roomId;
   int? dayNum;
@@ -47,10 +51,44 @@ class Vote {
   }
 }
 
-typedef VotesCollection = Map<String, List<String>>;
+/* 
+type VotesCollection map[rooms.UsersInRoom]struct {
+	Voters         []rooms.UsersInRoom `json:"voters"`
+	HasEnoughVotes bool                `json:"has_enough_votes"`
+}
+ */
+class VotesCollection {
+  Map<UsersInRoom, List<UsersInRoom>> collection;
+  bool? hasEnoughVotes;
 
-// fromJson for VotesCollection
-// VotesCollection? fromJsonVotesCollection(Map<String, dynamic>? json) {
-//   if (json == null) return null;
-//   return Map<String, List<String>>.from(json);
-// }
+  VotesCollection({
+    required this.collection,
+    this.hasEnoughVotes,
+  });
+
+  factory VotesCollection.fromJson(Map<String, dynamic> json) {
+    return VotesCollection(
+      hasEnoughVotes: json['has_enough_votes'],
+      collection: Map<UsersInRoom, List<UsersInRoom>>.from(
+        json.map(
+          (key, value) {
+            final voted = UsersInRoom.fromJson(jsonDecode(key));
+            final voters = List<UsersInRoom>.from(
+              (value['voters'] as List).map(
+                (voter) => UsersInRoom.fromJson(voter),
+              ),
+            );
+            return MapEntry(voted, voters);
+          },
+        ),
+      ),
+    );
+  }
+
+  factory VotesCollection.empty() {
+    return VotesCollection(
+      collection: {},
+      hasEnoughVotes: false,
+    );
+  }
+}

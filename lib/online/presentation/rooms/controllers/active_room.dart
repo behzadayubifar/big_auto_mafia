@@ -41,7 +41,7 @@ class ActiveRooms extends _$ActiveRooms {
   }
 
   Future<List<Room?>> refreshRoomsById(List<String> ids) async {
-    state = const AsyncLoading();
+    // state = const AsyncLoading();
     List<Room?> rooms = [];
     final roomsCtrl = ref.read(roomsControllerProvider.notifier);
     state = await AsyncValue.guard(
