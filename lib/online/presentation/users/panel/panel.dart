@@ -389,6 +389,14 @@ class Panel extends HookConsumerWidget {
                                                           );
                                                         });
                                                         break;
+                                                      case "court_result":
+                                                      case "day":
+                                                        await ref
+                                                            .read(
+                                                                routerProvider)
+                                                            .pushNamed(
+                                                                'game-page');
+                                                        break;
                                                       default:
                                                         print('default');
                                                     }

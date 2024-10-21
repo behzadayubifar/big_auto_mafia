@@ -51,9 +51,24 @@ class AppEvent {
         // example : {"event_type":"votes_processed","data": {"enoughVoted": {"1": 2, "2": 1}}}
         log("votes_processed event data: ${data['data']}");
         //TODO:_TypeError (type 'List<dynamic>' is not a subtype of type 'List<String>' in type cast)
-        final collection = votesCollectionFromJson(data['data']);
+        final collection = VotesCollection.fromJson(data['data']);
         return VotesProcessed(
           collection: collection,
+        );
+      case "court_finished":
+        return CourtFinished();
+      case "night_started":
+        return NightStarted();
+      case "court_result":
+        // example : {"event_type":"court_result","data": {"exited_player_name": "fariba", "exited_player_id": "1", "exit_card": "shield"}}
+        log("court_result event data: ${data['data']}");
+        final exitedPlayerName = data['data']['exited_player_name'];
+        final exitedPlayerId = data['data']['exited_player_id'];
+        final exitCard = data['data']['exit_card'];
+        return CourtResult(
+          exitedPlayerName: exitedPlayerName,
+          exitedPlayerId: exitedPlayerId,
+          exitCard: exitCard,
         );
       default:
         return AppEvent();
@@ -179,6 +194,17 @@ class VotesProcessed extends AppEvent {
   }
 }
 
+class CourtFinished extends AppEvent {
+  final type = "court_finished";
+
+  CourtFinished();
+
+  @override
+  String toString() {
+    return 'CourtFinished';
+  }
+}
+
 class NightStarted extends AppEvent {
   final type = "night_started";
 
@@ -187,5 +213,32 @@ class NightStarted extends AppEvent {
   @override
   String toString() {
     return 'NightStarted';
+  }
+}
+
+/* 
+constants.CourtResult,
+					response.ResponseMap{
+						"exited_player_name": exitedPlayer.FullName,
+						"exited_player_id":   exitedPlayer.ID,
+						"exit_card":          exitCard,
+					},
+ */
+
+class CourtResult extends AppEvent {
+  final String exitedPlayerName;
+  final String exitedPlayerId;
+  final String exitCard;
+  final type = "court_result";
+
+  CourtResult({
+    required this.exitedPlayerName,
+    required this.exitedPlayerId,
+    required this.exitCard,
+  });
+
+  @override
+  String toString() {
+    return 'CourtResult{exitedPlayerName: $exitedPlayerName, exitedPlayerId: $exitedPlayerId, exitCard: $exitCard}';
   }
 }

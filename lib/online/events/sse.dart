@@ -44,8 +44,8 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
 
   //
   var allEvents = const <AppEvent>[];
-  final joinedEvents = List<JoinedRoom>.empty(growable: true);
-  final leftEvents = List<LeftRoom>.empty(growable: true);
+  // final joinedEvents = List<JoinedRoom>.empty(growable: true);
+  // final leftEvents = List<LeftRoom>.empty(growable: true);
   //
   final streamController = StreamController<List<AppEvent>>();
   //
@@ -100,6 +100,10 @@ Stream<List<AppEvent>> appEvents(AppEventsRef ref) async* {
         ref.read(routerProvider).pushNamed(
               'show-role',
               extra: appEvent.player,
+            );
+      } else if (appEvent is NightStarted) {
+        ref.read(routerProvider).pushNamed(
+              'night-game-page',
             );
       }
 

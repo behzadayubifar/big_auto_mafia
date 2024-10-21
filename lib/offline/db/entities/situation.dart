@@ -16,6 +16,7 @@ class Situation {
   String? winnerSide = '';
   List<String?>? usedLastMoves = [];
   int? remainedEnquiry = 2;
+  String? lastDead = '';
 
   static Situation fromJson(Map<String, dynamic> json) => Situation()
     ..roomId = json['room_id']
@@ -26,7 +27,8 @@ class Situation {
     ..usedLastMoves = json['used_last_moves'] != null
         ? List<String?>.from(json['used_last_moves'])
         : null
-    ..remainedEnquiry = json['remained_enquiry'];
+    ..remainedEnquiry = json['remained_enquiry']
+    ..lastDead = json['last_dead'];
 
   Map<String, dynamic> toJson() => {
         'room_id': roomId,
@@ -36,6 +38,7 @@ class Situation {
         'winner_side': winnerSide,
         'used_last_moves': usedLastMoves,
         'remained_enquiry': remainedEnquiry,
+        'last_dead': lastDead,
       };
 
   Situation copy({
@@ -46,6 +49,7 @@ class Situation {
     String? winnerSide,
     List<String?>? usedLastMoves,
     int? remainedEnquiry,
+    String? lastDead,
   }) =>
       Situation()
         ..roomId = roomId ?? this.roomId
@@ -54,11 +58,12 @@ class Situation {
         ..situation = situation ?? this.situation
         ..winnerSide = winnerSide ?? this.winnerSide
         ..usedLastMoves = usedLastMoves ?? this.usedLastMoves
-        ..remainedEnquiry = remainedEnquiry ?? this.remainedEnquiry;
+        ..remainedEnquiry = remainedEnquiry ?? this.remainedEnquiry
+        ..lastDead = lastDead ?? this.lastDead;
 
   @override
   String toString() {
-    return 'Situation{isDay: $isDay, dayNumber: $dayNumber, situation: $situation, winnerSide: $winnerSide, usedLastMoves: $usedLastMoves, remainedEnquiry: $remainedEnquiry}';
+    return 'Situation{isDay: $isDay, dayNumber: $dayNumber, situation: $situation, winnerSide: $winnerSide, usedLastMoves: $usedLastMoves, remainedEnquiry: $remainedEnquiry, lastDead: $lastDead}';
   }
 }
 

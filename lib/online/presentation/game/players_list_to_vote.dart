@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:auto_mafia/offline/db/entities/vote.dart';
+import 'package:auto_mafia/online/data/models/responses/rooms.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import '../../../offline/constants/my_text_styles.dart';
 import '../../data/models/responses/events.dart';
 import '../../data/models/responses/votes.dart';
 import '../common/lists/my_list_view.dart';
+import '../votes/confirm_votes_button.dart';
 import '../votes/votes_controller.dart';
 import 'game_page.dart';
 
@@ -34,7 +36,7 @@ class PlayersListToVote extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chosenForCourt = useState(List<String>.empty());
+    final chosenForCourt = useState(List<UsersInRoom>.empty());
     //
     final VotesCollection votes;
 
@@ -44,7 +46,9 @@ class PlayersListToVote extends HookConsumerWidget {
       votes = resp!.collection!;
     }
 
-    final sortedVotedNames = collection.
+    final sortedVotedNames = votes.collection.entries.toList()
+      ..sort((a, b) => b.value.voters.length.compareTo(a.value.voters.length));
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -55,6 +59,9 @@ class PlayersListToVote extends HookConsumerWidget {
           children: sortedVotedNames,
           scrollController: scrollController,
           itemBuilder: (context, index) {
+            final isAmongEnoughVoted =
+                votes.collection[sortedVotedNames[index].key]!.hasEnoughVotes;
+
             return ExpandablePanel(
               theme: ExpandableThemeData(
                 iconSize: width / 16,
@@ -103,7 +110,7 @@ class PlayersListToVote extends HookConsumerWidget {
                         children: [
                           // voted
                           Text(
-                            sortedVotedNames[index].key,
+                            sortedVotedNames[index].key.fullName!,
                             style: MyTextStyles.bodyMD.copyWith(
                               color: AppColors.white,
                               height: 1.5,
@@ -113,7 +120,11 @@ class PlayersListToVote extends HookConsumerWidget {
                           SizedBox(width: width / 32),
                           // number of votes
                           Text(
-                            sortedVotedNames[index].value.length.toString(),
+                            sortedVotedNames[index]
+                                .value
+                                .voters
+                                .length
+                                .toString(),
                             style: MyTextStyles.bodyLarge.copyWith(
                               color: AppColors.secondaries[1],
                               height: 1.5,
@@ -180,9 +191,10 @@ class PlayersListToVote extends HookConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: sortedVotedNames[index]
                           .value
+                          .voters
                           .map(
                             (voter) => Text(
-                              voter!,
+                              voter.fullName!,
                               style: MyTextStyles.bodyMD.copyWith(
                                 color: AppColors.white,
                                 height: 1.5,
@@ -206,19 +218,19 @@ class PlayersListToVote extends HookConsumerWidget {
           voteds: chosenForCourt,
           onPressed: () async {
             print(chosenForCourt.value);
-            // final result =
-            //     await ref.read(votesControllerProvider.notifier).vote(
-            //           voted: chosenForCourt.value,
-            //         );
-            // result.match(
-            //   (l) {
-            //     print('vote failed');
-            //   },
-            //   (r) {
-            //     print('vote success');
-            //     log(r.toString());
-            //   },
-            // );
+            final result =
+                await ref.read(votesControllerProvider.notifier).vote(
+                      voted: chosenForCourt.value.map((e) => e.id!).toList(),
+                    );
+            result.match(
+              (l) {
+                print('vote failed');
+              },
+              (r) {
+                print('vote success');
+                log(r.toString());
+              },
+            );
           },
         ),
       ],

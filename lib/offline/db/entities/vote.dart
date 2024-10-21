@@ -57,29 +57,43 @@ type VotesCollection map[rooms.UsersInRoom]struct {
 	HasEnoughVotes bool                `json:"has_enough_votes"`
 }
  */
+
+class VotesCollectionValue {
+  final List<UsersInRoom> voters;
+  final bool hasEnoughVotes;
+
+  VotesCollectionValue({
+    required this.voters,
+    required this.hasEnoughVotes,
+  });
+
+  factory VotesCollectionValue.fromJson(Map<String, dynamic> json) {
+    return VotesCollectionValue(
+      voters: List<UsersInRoom>.from(
+        (json['voters'] as List).map(
+          (voter) => UsersInRoom.fromJson(voter),
+        ),
+      ),
+      hasEnoughVotes: json['has_enough_votes'],
+    );
+  }
+}
+
 class VotesCollection {
-  Map<UsersInRoom, List<UsersInRoom>> collection;
-  bool? hasEnoughVotes;
+  Map<UsersInRoom, VotesCollectionValue> collection;
 
   VotesCollection({
     required this.collection,
-    this.hasEnoughVotes,
   });
 
   factory VotesCollection.fromJson(Map<String, dynamic> json) {
     return VotesCollection(
-      hasEnoughVotes: json['has_enough_votes'],
-      collection: Map<UsersInRoom, List<UsersInRoom>>.from(
+      collection: Map<UsersInRoom, VotesCollectionValue>.from(
         json.map(
-          (key, value) {
-            final voted = UsersInRoom.fromJson(jsonDecode(key));
-            final voters = List<UsersInRoom>.from(
-              (value['voters'] as List).map(
-                (voter) => UsersInRoom.fromJson(voter),
-              ),
-            );
-            return MapEntry(voted, voters);
-          },
+          (key, value) => MapEntry(
+            UsersInRoom.fromJson(jsonDecode(key)),
+            VotesCollectionValue.fromJson(value),
+          ),
         ),
       ),
     );
@@ -88,7 +102,6 @@ class VotesCollection {
   factory VotesCollection.empty() {
     return VotesCollection(
       collection: {},
-      hasEnoughVotes: false,
     );
   }
 }

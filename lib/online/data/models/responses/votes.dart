@@ -15,8 +15,8 @@ class VoteResp {
 
   factory VoteResp.fromJson(Map<String, dynamic> json) {
     return VoteResp(
-      collection: json['collection'] != null
-          ? VotesCollection.fromJson(json['collection'])
+      collection: json['votes'] != null
+          ? VotesCollection.fromJson(json['votes'])
           : null,
       vote: json['vote'] != null ? Vote.fromJson(json['vote']) : null,
       msg: json['msg'],

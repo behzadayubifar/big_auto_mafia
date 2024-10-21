@@ -20,6 +20,7 @@ import 'package:auto_mafia/offline/ui/statements/game_over_page.dart';
 import 'package:auto_mafia/offline/ui/statements/nights_results_page.dart';
 import 'package:auto_mafia/offline/ui/ui_widget/names_list_show/naming_page.dart';
 import 'package:auto_mafia/online/data/models/responses/rooms.dart';
+import 'package:auto_mafia/online/presentation/game/nights/night_game_page.dart';
 import 'package:auto_mafia/online/presentation/rooms/waiting_room.dart';
 import 'package:auto_mafia/online/presentation/users/controller/accounts_controller.dart';
 import 'package:auto_mafia/online/presentation/users/panel/panel.dart';
@@ -227,6 +228,13 @@ GoRouter router(RouterRef ref) {
             name: 'game-page',
             builder: (context, state) {
               return GamePage();
+            },
+          ),
+          GoRoute(
+            path: 'night_game_page',
+            name: 'night-game-page',
+            builder: (context, state) {
+              return NightGamePage();
             },
           ),
         ],
